@@ -1,0 +1,116 @@
+name: FlClash APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      core_ref:
+        description: "Core branch/tag in FokySN1K/mihomo"
+        required: true
+        default: "flclash-core"
+      arch:
+        description: "Android ABI"
+        type: choice
+        options:
+          - arm64
+          - arm
+          - amd64
+        default: arm64
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: flclash-apk-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      FLUTTER_VERSION: "3.47.6"
+      GO_VERSION: "1.27.1"
+      NDK_VERSION: r28c
+      CARGO_BUILD_JOBS: "2"
+      ARCH: ${{ inputs.arch || 'arm64' }}
+      CORE_REF: ${{ inputs.core_ref || '' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Select core
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "${CORE_REF}" ]]; then
+            git -C core/Clash.Meta fetch https://github.com/FokySN1K/mihomo.git "${CORE_REF}"
+            git -C core/Clash.Meta checkout FETCH_HEAD
+          fi
+          git -C core/Clash.Meta log --oneline -1
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: core/go.sum
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Setup NDK
+        uses: nttld/setup-ndk@v1
+        id: ndk
+        with:
+          ndk-version: ${{ env.NDK_VERSION }}
+          add-to-path: true
+          link-to-sdk: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        env:
+          ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
+        run: dart setup.dart android --arch "${ARCH}" -v
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flclash-android-${{ env.ARCH }}-${{ github.ref_name }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    name: Publish release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, '-') }}
