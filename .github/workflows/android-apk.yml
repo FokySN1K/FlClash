@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       core_ref:
-        description: "Core branch/tag in FokySN1K/mihomo"
+        description: "Core branch in FokySN1K/mihomo: flclash-core or flclash-stock"
         required: true
         default: "flclash-core"
       arch:
