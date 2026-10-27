@@ -34,8 +34,8 @@ jobs:
       GO_VERSION: "1.27.1"
       NDK_VERSION: r28c
       CARGO_BUILD_JOBS: "2"
-      ARCH: ${{ inputs.arch || 'arm64' }}
-      CORE_REF: ${{ inputs.core_ref || '' }}
+      ARCH: ${{ github.event.inputs.arch || 'arm64' }}
+      CORE_REF: ${{ github.event.inputs.core_ref || '' }}
 
     steps:
       - name: Checkout
