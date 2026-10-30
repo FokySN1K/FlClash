@@ -11,6 +11,11 @@ on:
       version:
         description: 'Release version (1.0.N); empty publishes the next one'
         required: false
+      platforms:
+        description: 'Targets to build'
+        type: choice
+        options: [default, all]
+        default: default
 
 permissions:
   contents: read
@@ -34,6 +39,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       build: ${{ steps.version.outputs.build }}
       tag: ${{ steps.version.outputs.tag }}
+      matrix: ${{ steps.targets.outputs.matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,6 +53,23 @@ jobs:
           # The changelog tool diffs each release against the previous stable
           # tag, and the fork does not carry the upstream tags it needs.
           git fetch --force --no-tags https://github.com/chen08209/FlClash.git 'refs/tags/v*:refs/tags/v*'
+
+      - name: Select targets
+        id: targets
+        shell: bash
+        env:
+          PLATFORMS: ${{ inputs.platforms || 'default' }}
+        run: |
+          set -euo pipefail
+          default='{"include":[{"platform":"android","os":"ubuntu-latest"},{"platform":"windows","os":"windows-2022","arch":"amd64"}]}'
+          all='{"include":[{"platform":"android","os":"ubuntu-latest"},{"platform":"windows","os":"windows-2022","arch":"amd64"},{"platform":"windows","os":"windows-11-arm","arch":"arm64","flutter-channel":"master"},{"platform":"linux","os":"ubuntu-22.04","arch":"amd64"},{"platform":"linux","os":"ubuntu-24.04-arm","arch":"arm64","flutter-channel":"master"},{"platform":"macos","os":"macos-15-intel","arch":"amd64"},{"platform":"macos","os":"macos-latest","arch":"arm64"}]}'
+          if [[ "${PLATFORMS}" == "all" ]]; then
+            matrix="${all}"
+          else
+            matrix="${default}"
+          fi
+          python3 -c 'import json,sys; json.loads(sys.argv[1])' "${matrix}"
+          echo "matrix=${matrix}" >>"$GITHUB_OUTPUT"
 
       - name: Skip an already released commit
         id: guard
@@ -144,14 +167,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 120
     strategy:
-      fail-fast: true
-      matrix:
-        include:
-          - platform: android
-            os: ubuntu-latest
-          - platform: windows
-            os: windows-2022
-            arch: amd64
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     env:
       VERSION: ${{ needs.prepare.outputs.version }}
       BUILD: ${{ needs.prepare.outputs.build }}
