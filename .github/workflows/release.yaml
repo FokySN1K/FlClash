@@ -1,0 +1,378 @@
+name: release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (1.0.N); empty publishes the next one'
+        required: false
+
+permissions:
+  contents: read
+
+# The publish job appends the release commit to main, so runs must not overlap.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: '3.47.6'
+  GO_VERSION: '1.27.1'
+  NDK_VERSION: r28c
+
+jobs:
+  prepare:
+    name: Prepare
+    # A merge from a fork gets a read-only token, and the release commit could
+    # not be pushed; only branches of this repository publish.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.guard.outputs.skip }}
+      version: ${{ steps.version.outputs.version }}
+      build: ${{ steps.version.outputs.build }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Skip an already released merge
+        id: guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          released=0
+          if [[ "${GITHUB_EVENT_NAME}" == 'pull_request' ]] &&
+             [[ -n "$(git tag --contains HEAD --list 'v1.0.*')" ]]; then
+            released=1
+          fi
+          echo "skip=${released}" >>"$GITHUB_OUTPUT"
+
+      - name: Resolve version
+        id: version
+        if: steps.guard.outputs.skip != '1'
+        shell: bash
+        env:
+          REQUESTED: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if [[ -n "${REQUESTED}" ]]; then
+            if [[ ! "${REQUESTED}" =~ ^1\.0\.[0-9]+$ ]]; then
+              echo "version must look like 1.0.N, got: ${REQUESTED}" >&2
+              exit 1
+            fi
+            version="${REQUESTED}"
+          else
+            last="$(git tag --list 'v1.0.*' |
+              sed -n 's/^v1\.0\.\([0-9]\+\)$/\1/p' | sort -n | tail -n 1)"
+            next=0
+            if [[ -n "${last}" ]]; then
+              next=$((last + 1))
+            fi
+            # The checked-in version is the floor, so the first release publishes
+            # what the merge already declares instead of restarting at 1.0.0.
+            declared="$(sed -n 's/^version: 1\.0\.\([0-9]\+\).*/\1/p' pubspec.yaml)"
+            if [[ -n "${declared}" ]] && ((declared > next)); then
+              next="${declared}"
+            fi
+            version="1.0.${next}"
+          fi
+          if git rev-parse -q --verify "refs/tags/v${version}" >/dev/null; then
+            echo "v${version} is already tagged; pass the next version" >&2
+            exit 1
+          fi
+          # Android caps versionCode at 2100000000, which YYYYMMDDNN stays under.
+          build="$(date -u +%Y%m%d)$(printf '%02d' "$((${version##*.} % 100))")"
+          {
+            echo "version=${version}"
+            echo "build=${build}"
+            echo "tag=v${version}"
+          } >>"$GITHUB_OUTPUT"
+
+      - name: Setup Flutter
+        if: steps.guard.outputs.skip != '1'
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Generate release notes
+        if: steps.guard.outputs.skip != '1'
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          # dart run of a root script executes the build hook, and the core and
+          # the Helper are built by the release matrix, not here.
+          yq -i '.hooks.user_defines.setup.build_assets = false | .hooks.user_defines.rust_api.build_assets = false' pubspec.yaml
+          flutter pub get
+          dart run tool/changelog.dart release --version "$VERSION"
+          dart run tool/changelog.dart verify
+          dart run tool/changelog.dart render release --tag "v$VERSION" --out release-notes.md
+          git checkout -- pubspec.yaml
+          git diff --exit-code -- pubspec.yaml
+
+      - name: Upload release metadata
+        if: steps.guard.outputs.skip != '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-meta
+          path: |
+            CHANGELOG.md
+            changelog.json
+            release-notes.md
+          overwrite: true
+
+  build:
+    name: Build ${{ matrix.platform }}${{ matrix.arch && format(' {0}', matrix.arch) }}
+    needs: prepare
+    if: needs.prepare.result == 'success' && needs.prepare.outputs.skip != '1'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - platform: android
+            os: ubuntu-latest
+          - platform: windows
+            os: windows-2022
+            arch: amd64
+          - platform: linux
+            os: ubuntu-22.04
+            arch: amd64
+          - platform: macos
+            os: macos-15-intel
+            arch: amd64
+          - platform: macos
+            os: macos-latest
+            arch: arm64
+          - platform: windows
+            os: windows-11-arm
+            arch: arm64
+            flutter-channel: master
+          - platform: linux
+            os: ubuntu-24.04-arm
+            arch: arm64
+            flutter-channel: master
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+      BUILD: ${{ needs.prepare.outputs.build }}
+      KEYSTORE: ${{ secrets.KEYSTORE }}
+    steps:
+      - name: Setup rust
+        if: startsWith(matrix.os, 'windows-11-arm')
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri "https://win.rustup.rs/aarch64" -OutFile rustup-init.exe
+          .\rustup-init.exe -y --default-toolchain stable
+          $cargoPath = "$env:USERPROFILE\.cargo\bin"
+          Add-Content $env:GITHUB_PATH $cargoPath
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.ref_name }}
+          submodules: recursive
+
+      - name: Set app version
+        shell: bash
+        run: 'sed -i "s/^version: .*/version: ${VERSION}+${BUILD}/" pubspec.yaml'
+
+      - name: Setup Android signing
+        if: matrix.platform == 'android' && env.KEYSTORE != ''
+        shell: bash
+        run: |
+          echo "${KEYSTORE}" | base64 --decode > android/app/keystore.jks
+          {
+            echo "keyAlias=${{ secrets.KEY_ALIAS }}"
+            echo "storePassword=${{ secrets.STORE_PASSWORD }}"
+            echo "keyPassword=${{ secrets.KEY_PASSWORD }}"
+          } >> android/local.properties
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: core/go.sum
+
+      - name: Setup Java
+        if: startsWith(matrix.platform, 'android')
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        if: startsWith(matrix.platform, 'android')
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Enable git long paths (Windows)
+        if: startsWith(matrix.os, 'windows')
+        run: git config --global core.longpaths true
+
+      # Stable publishes no Windows or Linux arm64 archive; master makes the action
+      # clone the SDK at the pinned tag and let it fetch the host's own Dart SDK.
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ matrix.flutter-channel || 'stable' }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Setup Xcode
+        if: startsWith(matrix.platform, 'macos')
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app || sudo xcode-select -s /Applications/Xcode_26.2.app
+          xcodebuild -version
+
+      - name: Setup NDK
+        if: startsWith(matrix.platform, 'android')
+        uses: nttld/setup-ndk@v1
+        id: build-ndk
+        with:
+          ndk-version: ${{ env.NDK_VERSION }}
+          add-to-path: true
+          link-to-sdk: true
+
+      - name: Get Flutter Dependency
+        run: |
+          flutter --version
+          flutter pub get
+
+      # See .agents/flutter-upgrade.md before bumping FLUTTER_VERSION.
+      - name: Disable Impeller on Intel macOS
+        if: matrix.platform == 'macos' && matrix.arch == 'amd64'
+        run: plutil -replace FLTEnableImpeller -bool NO macos/Runner/Info.plist
+
+      # The core embeds this bundle and FlClashHttpOverrides.trustCoreRoots loads it for Dart.
+      # Pinned by hash, so a new bundle from https://curl.se/docs/caextract.html is a reviewed bump.
+      - name: Fetch CA certificates
+        shell: bash
+        env:
+          CA_BUNDLE: cacert-2026-09-25.pem
+          CA_BUNDLE_SHA256: a41b5d356aea97a529fe27e0f7316d2f9d946d75927476cf9cf1b90637d00505
+        run: |
+          bundle=core/Clash.Meta/component/ca/ca-certificates.crt
+          curl -fsSL --retry 3 -o "$bundle" "https://curl.se/ca/$CA_BUNDLE"
+          echo "$CA_BUNDLE_SHA256  $bundle" | sha256sum -c -
+
+      - name: Setup
+        env:
+          ANDROID_NDK_HOME: ${{ steps.build-ndk.outputs.ndk-path }}
+        run: dart setup.dart ${{ matrix.platform }} --env stable -v
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) }}
+          path: ./dist
+          overwrite: true
+
+  publish:
+    name: Publish
+    needs: [prepare, build]
+    if: >-
+      needs.prepare.result == 'success' &&
+      needs.build.result == 'success' &&
+      needs.prepare.outputs.skip != '1'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist/
+          pattern: artifact-*
+          merge-multiple: true
+
+      - name: Download release metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: release-meta
+          path: .
+
+      - name: Compose release body
+        shell: bash
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+          title="$(jq -r '.pull_request.title // empty' "$GITHUB_EVENT_PATH")"
+          url="$(jq -r '.pull_request.html_url // empty' "$GITHUB_EVENT_PATH")"
+          body="$(jq -r '.pull_request.body // empty' "$GITHUB_EVENT_PATH")"
+          {
+            if [[ -n "${title}" ]]; then
+              echo "## ${title}"
+              echo
+              echo "Merged pull request: ${url}"
+              echo
+              if [[ -n "${body}" ]]; then
+                printf '%s\n\n' "${body}"
+              fi
+            fi
+            echo '### Changes'
+            echo
+            cat release-notes.md
+            sed \
+              -e "s|VERSION|${VERSION}|g" \
+              -e "s|chen08209/FlClash|${GITHUB_REPOSITORY}|g" \
+              .github/release_template.md
+          } > release-body.md
+
+      - name: Commit changelog and tag
+        shell: bash
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+          BUILD: ${{ needs.prepare.outputs.build }}
+          TAG: ${{ needs.prepare.outputs.tag }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          sed -i "s/^version: .*/version: ${VERSION}+${BUILD}/" pubspec.yaml
+          git add CHANGELOG.md changelog.json pubspec.yaml
+          git commit -m "chore(release): ${TAG}"
+          git fetch origin main
+          base="$(git rev-parse HEAD^)"
+          if [[ "${base}" != "$(git rev-parse origin/main)" ]]; then
+            echo 'main moved while the release was building.' >&2
+            echo 'Start the release again with workflow_dispatch so the changelog covers the new head.' >&2
+            exit 1
+          fi
+          git push origin HEAD:main
+          git tag "${TAG}"
+          git push origin "refs/tags/${TAG}"
+
+      - name: Generate sha256
+        run: |
+          cd ./dist
+          sha256sum ./* > SHA256SUMS
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.prepare.outputs.tag }}
+          name: Release ${{ needs.prepare.outputs.tag }}
+          body_path: release-body.md
+          files: dist/*
+          fail_on_unmatched_files: true

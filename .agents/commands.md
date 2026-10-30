@@ -284,9 +284,9 @@ tool/release.sh stable --push     # changelog, chore(release) commit, tag, push
 ```
 
 The release commit comes before the tag on purpose: the generated wording is reviewable in the diff before it ships, and
-the tag is what `render release` reads. CI never writes back to the repository; it only runs `verify`. Wording in
-`changelog.json` may be edited by hand as long as no derivable entry disappears and every entry still points at a commit
-inside that version's range.
+the tag is what `render release` reads. The tag-triggered jobs only ever run `verify`; the merge pipeline below owns the
+one step that commits, and only to close a merged pull request. Wording in `changelog.json` may be edited by hand as long
+as no derivable entry disappears and every entry still points at a commit inside that version's range.
 
 Entries at or below `v0.8.96` are frozen: they predate the pipeline, live under the `<!-- changelog:frozen -->` marker
 in `CHANGELOG.md`, and are never regenerated.
@@ -300,6 +300,28 @@ Prerelease tags (`v0.8.96-pre.N`) skip the release commit, and CI renders their 
 Telegram post. They publish no GitHub release, so the update dialog never sees them. `build --unreleased` reads the
 version from `pubspec.yaml` rather than the tag, so the patch has to be bumped before the first `-pre.N` of a cycle:
 while `v<pubspec version>` is still tagged it refuses to collect anything and the release job fails.
+
+### Merge Release Pipeline
+
+`.github/workflows/release.yaml` publishes `Release v1.0.N` from this fork. It runs when a pull request from a branch
+of this repository is merged into `main`, and by hand through `workflow_dispatch`, which is also how a release whose
+build failed is restarted. A merge from a fork is skipped: that run gets a read-only token and could not push its
+release commit.
+
+- `N` is the newest `v1.0.*` tag plus one, raised to the patch `pubspec.yaml` declares, so the first release publishes
+  the checked-in `1.0.2` and later merges continue at `1.0.3`. Every job stamps `version: 1.0.N+YYYYMMDDNN` into
+  `pubspec.yaml`, where `NN` is `N` modulo 100 so the Android `versionCode` stays under its 2100000000 cap.
+- Notes come from `tool/changelog.dart release --version 1.0.N` and keep the `flclash:changelog:json` block the
+  update dialog reads. The pull request title and body, the notes and the download table from `release_template.md`
+  make the release body; the table's `chen08209/FlClash` links are rewritten to the repository that publishes.
+- `publish` commits `CHANGELOG.md`, `changelog.json` and the version to `main` as `chore(release): v1.0.N`, pushes
+  that commit, and then pushes the lightweight tag by name, only after the whole matrix has built. That commit is what
+  keeps `changelog.dart verify` green on `main`.
+- A release commits only onto the merge commit it built from: when `main` moved during the build the job stops with
+  the restart instruction instead of deriving a changelog range the artifacts do not match.
+- The matrix is the release set from `build.yaml`: Android, Windows and Linux amd64 plus arm64, macOS amd64 and arm64.
+- Android signing uses the `KEYSTORE`, `KEY_ALIAS`, `STORE_PASSWORD` and `KEY_PASSWORD` secrets when they exist.
+  Without them the APK is debug signed and carries the `.dev` application id suffix from `android/app/build.gradle.kts`.
 
 ### Website
 
