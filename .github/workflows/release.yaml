@@ -1,8 +1,10 @@
 name: release
 
 on:
-  pull_request:
-    types: [closed]
+  # A push run reads this file from the pushed commit, so the merge that first
+  # brings the pipeline to main releases itself; `pull_request` reads the base
+  # branch and would skip exactly that merge.
+  push:
     branches: [main]
   workflow_dispatch:
     inputs:
@@ -26,12 +28,6 @@ env:
 jobs:
   prepare:
     name: Prepare
-    # A merge from a fork gets a read-only token, and the release commit could
-    # not be pushed; only branches of this repository publish.
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.pull_request.merged == true &&
-      github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     outputs:
       skip: ${{ steps.guard.outputs.skip }}
@@ -42,17 +38,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.merge_commit_sha || github.ref_name }}
           fetch-depth: 0
 
-      - name: Skip an already released merge
+      - name: Skip an already released commit
         id: guard
+        if: github.event_name == 'push'
         shell: bash
         run: |
           set -euo pipefail
           released=0
-          if [[ "${GITHUB_EVENT_NAME}" == 'pull_request' ]] &&
-             [[ -n "$(git tag --contains HEAD --list 'v1.0.*')" ]]; then
+          if [[ -n "$(git tag --contains HEAD --list 'v1.0.*')" ]]; then
             released=1
           fi
           echo "skip=${released}" >>"$GITHUB_OUTPUT"
@@ -183,7 +178,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.merge_commit_sha || github.ref_name }}
           submodules: recursive
 
       - name: Set app version
@@ -295,7 +289,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.merge_commit_sha || github.ref_name }}
           fetch-depth: 0
 
       - name: Download artifacts
@@ -315,11 +308,15 @@ jobs:
         shell: bash
         env:
           VERSION: ${{ needs.prepare.outputs.version }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          title="$(jq -r '.pull_request.title // empty' "$GITHUB_EVENT_PATH")"
-          url="$(jq -r '.pull_request.html_url // empty' "$GITHUB_EVENT_PATH")"
-          body="$(jq -r '.pull_request.body // empty' "$GITHUB_EVENT_PATH")"
+          # A push carries the merge commit, not the request that produced it.
+          pr="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" \
+            --jq '.[0] // {}' 2>/dev/null || printf '{}')"
+          title="$(jq -r '.title // empty' <<<"${pr}")"
+          url="$(jq -r '.html_url // empty' <<<"${pr}")"
+          body="$(jq -r '.body // empty' <<<"${pr}")"
           {
             if [[ -n "${title}" ]]; then
               echo "## ${title}"

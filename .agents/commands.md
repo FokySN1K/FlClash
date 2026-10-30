@@ -303,17 +303,19 @@ while `v<pubspec version>` is still tagged it refuses to collect anything and th
 
 ### Merge Release Pipeline
 
-`.github/workflows/release.yaml` publishes `Release v1.0.N` from this fork. It runs when a pull request from a branch
-of this repository is merged into `main`, and by hand through `workflow_dispatch`, which is also how a release whose
-build failed is restarted. A merge from a fork is skipped: that run gets a read-only token and could not push its
-release commit.
+`.github/workflows/release.yaml` publishes `Release v1.0.N` from this fork. It runs on every push to `main`, which here
+is the merge of a reviewed pull request, and by hand through `workflow_dispatch`, which is how a release whose build
+failed is retried. Pushing is also what makes the first merge release itself: a `push` run reads the workflow from the
+pushed commit, while a `pull_request` run reads the base branch and would miss exactly that merge. Main therefore stays
+merge-only, and a push that a `v1.0.*` tag already covers is skipped, so a redelivered event cannot release twice.
 
 - `N` is the newest `v1.0.*` tag plus one, raised to the patch `pubspec.yaml` declares, so the first release publishes
   the checked-in `1.0.2` and later merges continue at `1.0.3`. Every job stamps `version: 1.0.N+YYYYMMDDNN` into
   `pubspec.yaml`, where `NN` is `N` modulo 100 so the Android `versionCode` stays under its 2100000000 cap.
 - Notes come from `tool/changelog.dart release --version 1.0.N` and keep the `flclash:changelog:json` block the
-  update dialog reads. The pull request title and body, the notes and the download table from `release_template.md`
-  make the release body; the table's `chen08209/FlClash` links are rewritten to the repository that publishes.
+  update dialog reads. The title and body of the pull request merged by that push, looked up through the API, the
+  notes and the download table from `release_template.md` make the release body; the table's `chen08209/FlClash`
+  links are rewritten to the repository that publishes.
 - `publish` commits `CHANGELOG.md`, `changelog.json` and the version to `main` as `chore(release): v1.0.N`, pushes
   that commit, and then pushes the lightweight tag by name, only after the whole matrix has built. That commit is what
   keeps `changelog.dart verify` green on `main`.
