@@ -190,7 +190,10 @@ jobs:
 
       - name: Set app version
         shell: bash
-        run: 'sed -i "s/^version: .*/version: ${VERSION}+${BUILD}/" pubspec.yaml'
+        run: |
+          set -euo pipefail
+          # macOS ships BSD sed, whose -i wants a backup suffix; perl is the same everywhere.
+          perl -i -pe "s/^version: .*/version: ${VERSION}+${BUILD}/" pubspec.yaml
 
       - name: Setup Android signing
         if: matrix.platform == 'android' && env.KEYSTORE != ''
