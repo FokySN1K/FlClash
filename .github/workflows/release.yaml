@@ -40,6 +40,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fetch upstream tags
+        shell: bash
+        run: |
+          set -euo pipefail
+          # The changelog tool diffs each release against the previous stable
+          # tag, and the fork does not carry the upstream tags it needs.
+          git fetch --force --no-tags https://github.com/chen08209/FlClash.git 'refs/tags/v*:refs/tags/v*'
+
       - name: Skip an already released commit
         id: guard
         if: github.event_name == 'push'
