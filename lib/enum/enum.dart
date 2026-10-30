@@ -44,8 +44,12 @@ enum GroupType {
   Selector('select'),
   @JsonValue('url-test')
   URLTest('url-test'),
+  @JsonValue('url-test-pool')
+  URLTestPool('url-test-pool'),
   @JsonValue('fallback')
   Fallback('fallback'),
+  @JsonValue('cascade')
+  Cascade('cascade'),
   @JsonValue('load-balance')
   LoadBalance('load-balance'),
   @JsonValue('relay')
@@ -58,8 +62,10 @@ enum GroupType {
   static GroupType parse(String type) {
     return switch (type.toLowerCase()) {
       'url-test' || 'urltest' => URLTest,
+      'url-test-pool' || 'urltestpool' => URLTestPool,
       'select' || 'selector' => Selector,
       'fallback' => Fallback,
+      'cascade' => Cascade,
       'load-balance' || 'loadbalance' => LoadBalance,
       'relay' => Relay,
       String() => throw UnimplementedError(),
@@ -67,8 +73,11 @@ enum GroupType {
   }
 
   /// The core refuses a relay group, so it stays parseable but unofferable.
-  static List<GroupType> get selectableValues =>
-      values.where((item) => item != Relay).toList();
+  static List<GroupType> get selectableValues => values
+      .where(
+        (item) => item != Relay && item != URLTestPool && item != Cascade,
+      )
+      .toList();
 }
 
 enum LoadBalanceStrategy {
@@ -103,7 +112,12 @@ extension GroupTypeExtension on GroupType {
       GroupType.values.map((e) => e.toString().split('.').last).toList();
 
   bool get isComputedSelected {
-    return [GroupType.URLTest, GroupType.Fallback].contains(this);
+    return [
+      GroupType.URLTest,
+      GroupType.URLTestPool,
+      GroupType.Fallback,
+      GroupType.Cascade,
+    ].contains(this);
   }
 
   static GroupType? getGroupType(String value) {

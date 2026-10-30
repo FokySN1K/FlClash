@@ -216,7 +216,9 @@ Map<String, dynamic> _$GroupToJson(_Group instance) => <String, dynamic>{
 const _$GroupTypeEnumMap = {
   GroupType.Selector: 'select',
   GroupType.URLTest: 'url-test',
+  GroupType.URLTestPool: 'url-test-pool',
   GroupType.Fallback: 'fallback',
+  GroupType.Cascade: 'cascade',
   GroupType.LoadBalance: 'load-balance',
   GroupType.Relay: 'relay',
 };

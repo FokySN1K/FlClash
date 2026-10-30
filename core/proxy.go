@@ -50,7 +50,7 @@ func adapterAs[T any](proxy constant.Proxy) (group T, ok bool) {
 
 func isProxyGroupType(adapterType constant.AdapterType) bool {
 	switch adapterType {
-	case constant.Selector, constant.URLTest, constant.Fallback, constant.Relay, constant.LoadBalance:
+	case constant.Selector, constant.URLTest, constant.URLTestPool, constant.Cascade, constant.Fallback, constant.Relay, constant.LoadBalance:
 		return true
 	default:
 		return false
