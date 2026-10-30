@@ -110,7 +110,7 @@ jobs:
           set -euo pipefail
           # dart run of a root script executes the build hook, and the core and
           # the Helper are built by the release matrix, not here.
-          yq -i '.hooks.user_defines.setup.build_assets = false | .hooks.user_defines.rust_api.build_assets = false' pubspec.yaml
+          sed -i 's/build_assets: true/build_assets: false/g' pubspec.yaml
           flutter pub get
           dart run tool/changelog.dart release --version "$VERSION"
           dart run tool/changelog.dart verify
@@ -144,23 +144,6 @@ jobs:
           - platform: windows
             os: windows-2022
             arch: amd64
-          - platform: linux
-            os: ubuntu-22.04
-            arch: amd64
-          - platform: macos
-            os: macos-15-intel
-            arch: amd64
-          - platform: macos
-            os: macos-latest
-            arch: arm64
-          - platform: windows
-            os: windows-11-arm
-            arch: arm64
-            flutter-channel: master
-          - platform: linux
-            os: ubuntu-24.04-arm
-            arch: arm64
-            flutter-channel: master
     env:
       VERSION: ${{ needs.prepare.outputs.version }}
       BUILD: ${{ needs.prepare.outputs.build }}
