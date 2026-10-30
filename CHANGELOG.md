@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.2 (2026-10-30)
+
+**Features**
+
+- **core** Update the core to Alpha v1.0.2 (6817481)
+- **core** Support the url-test-pool and cascade proxy groups of the fork core (411f4bb)
+
 ## v0.9.2 (2026-10-24)
 
 **Features**
