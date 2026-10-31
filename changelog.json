@@ -2,6 +2,13 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.3",
+      "tag": "v1.0.3",
+      "date": "2026-10-30",
+      "prerelease": false,
+      "groups": []
+    },
+    {
       "version": "1.0.2",
       "tag": "v1.0.2",
       "date": "2026-10-30",
