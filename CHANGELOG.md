@@ -1,6 +1,13 @@
 # Changelog
 
-## v1.0.3 (2026-10-30)
+## v1.0.4 (2026-11-03)
+
+**Features**
+
+- **core** Move to the reworked group dial core (f964928)
+- Import from the clipboard and show a whole node name on a long press (00ef943)
+
+## v1.0.3 (2026-10-31)
 
 Internal improvements only.
 

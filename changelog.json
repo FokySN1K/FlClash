@@ -2,9 +2,31 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.4",
+      "tag": "v1.0.4",
+      "date": "2026-11-03",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "f964928",
+              "scope": "core",
+              "text": "Move to the reworked group dial core"
+            },
+            {
+              "id": "00ef943",
+              "text": "Import from the clipboard and show a whole node name on a long press"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.3",
       "tag": "v1.0.3",
-      "date": "2026-10-30",
+      "date": "2026-10-31",
       "prerelease": false,
       "groups": []
     },
