@@ -1,6 +1,7 @@
 package com.follow.clash.packages
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.ComponentInfo
 import android.content.pm.PackageManager
@@ -50,6 +51,7 @@ internal class PackageResolver(
             @Suppress("DEPRECATION")
             packageManager.getInstalledPackages(flags)
         }
+        val launchablePackages = loadLaunchablePackages()
         return packages.asSequence()
             .filter { info ->
                 info.packageName != appPackageName && info.packageName != ANDROID_PACKAGE_NAME
@@ -59,8 +61,12 @@ internal class PackageResolver(
                     packageName = info.packageName,
                     label = info.applicationInfo?.loadLabel(packageManager)?.toString()
                         ?: info.packageName,
+                    // A preinstalled app the user opens from the launcher is a regular
+                    // app for the per-app list: FLAG_SYSTEM alone would hide YouTube,
+                    // Chrome and other vendor builds behind the system app filter.
                     system = info.applicationInfo?.let { applicationInfo ->
-                        applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
+                        applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0 &&
+                            info.packageName !in launchablePackages
                     } == true,
                     internet = info.requestedPermissions
                         ?.contains(Manifest.permission.INTERNET) == true,
@@ -68,6 +74,20 @@ internal class PackageResolver(
                 )
             }.toList()
     }
+
+    private fun loadLaunchablePackages(): Set<String> = runCatching {
+        val intent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
+        val activities = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.queryIntentActivities(
+                intent,
+                PackageManager.ResolveInfoFlags.of(0L),
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            packageManager.queryIntentActivities(intent, 0)
+        }
+        activities.mapNotNullTo(HashSet()) { it.activityInfo?.packageName }
+    }.getOrDefault(emptySet<String>())
 
     private fun isChinaPackage(packageName: String): Boolean {
         if (ChinaPackageMatcher.isSkipped(packageName)) {
