@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.0.5 (2026-11-03)
+
+**Features**
+
+- **core** Route pool cold starts by the first measured member (9fbf4a1)
+
+**Bug Fixes**
+
+- **android** Show preinstalled launcher apps in the per-app list (d8c3595)
+
 ## v1.0.4 (2026-11-03)
 
 **Features**

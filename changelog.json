@@ -2,6 +2,34 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.5",
+      "tag": "v1.0.5",
+      "date": "2026-11-03",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "9fbf4a1",
+              "scope": "core",
+              "text": "Route pool cold starts by the first measured member"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "d8c3595",
+              "scope": "android",
+              "text": "Show preinstalled launcher apps in the per-app list"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.4",
       "tag": "v1.0.4",
       "date": "2026-11-03",
