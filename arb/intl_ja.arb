@@ -1,4 +1,7 @@
 {
+  "clipboardEmpty": "クリップボードは空です",
+  "clipboardNoLinks": "クリップボードにインポートできるリンクがありません",
+  "proxyProvider": "プロバイダー",
   "rule": "ルール",
   "rules": "ルール",
   "global": "グローバル",

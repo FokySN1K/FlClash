@@ -20,9 +20,18 @@ const _touchDevices = {
 /// otherwise leave covered.
 class ContextMenuRegion extends StatefulWidget {
   final List<CommonPopupMenuItem>? menuItems;
+
+  /// Runs instead of the menu on a touch long press, for a row whose menu is
+  /// meant for a mouse.
+  final VoidCallback? onLongPress;
   final Widget child;
 
-  const ContextMenuRegion({super.key, this.menuItems, required this.child});
+  const ContextMenuRegion({
+    super.key,
+    this.menuItems,
+    this.onLongPress,
+    required this.child,
+  });
 
   @override
   State<ContextMenuRegion> createState() => _ContextMenuRegionState();
@@ -39,6 +48,9 @@ class _ContextMenuRegionState extends State<ContextMenuRegion> {
         items.isNotEmpty &&
         !SortableItem.isSorting(context);
   }
+
+  bool get _longPressEnabled =>
+      widget.onLongPress != null && !SortableItem.isSorting(context);
 
   @override
   void didChangeDependencies() {
@@ -201,9 +213,13 @@ class _ContextMenuRegionState extends State<ContextMenuRegion> {
             : null,
         child: GestureDetector(
           supportedDevices: _touchDevices,
-          onLongPressStart: enabled
+          onLongPressStart: enabled || _longPressEnabled
               ? (details) {
                   Feedback.forLongPress(context);
+                  if (_longPressEnabled) {
+                    widget.onLongPress!();
+                    return;
+                  }
                   _open(details.globalPosition, avoid: true);
                 }
               : null,

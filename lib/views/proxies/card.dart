@@ -8,6 +8,8 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'info_sheet.dart';
+
 void selectGroupProxy(
   WidgetRef ref, {
   required String groupName,
@@ -34,7 +36,7 @@ void selectGroupProxy(
 
 /// Built-ins and groups have no definition, and a custom profile's own proxies
 /// are the local proxies already.
-bool _isAddableToLocal(Proxy proxy, {required bool isCustomProfile}) {
+bool isAddableToLocalProxies(Proxy proxy, {required bool isCustomProfile}) {
   return (proxy.providerName != null || !isCustomProfile) &&
       !reservedCustomProxyNames.contains(proxy.name) &&
       GroupTypeExtension.getGroupType(proxy.type) == null;
@@ -195,7 +197,18 @@ class ProxyCard extends ConsumerWidget {
             ref,
             inUse: inUse,
             pinned: pinned,
-            addable: _isAddableToLocal(proxy, isCustomProfile: isCustomProfile),
+            addable: isAddableToLocalProxies(
+              proxy,
+              isCustomProfile: isCustomProfile,
+            ),
+          ),
+          // A card cuts a long name short; a held press asks for all of it.
+          onLongPress: () => showProxyInfoSheet(
+            context,
+            proxy: proxy,
+            groupName: groupName,
+            groupType: groupType,
+            testUrl: testUrl,
           ),
           child: CommonCard(
             radius: AppCorner.lg,

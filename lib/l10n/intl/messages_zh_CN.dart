@@ -368,8 +368,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "clearDnsCacheFailed": MessageLookupByLibrary.simpleMessage("清除DNS缓存失败"),
     "clearSearch": MessageLookupByLibrary.simpleMessage("清除搜索"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage("客户端指纹"),
+    "clipboardEmpty": MessageLookupByLibrary.simpleMessage("剪贴板为空"),
     "clipboardExport": MessageLookupByLibrary.simpleMessage("导出剪贴板"),
     "clipboardImport": MessageLookupByLibrary.simpleMessage("剪贴板导入"),
+    "clipboardNoLinks": MessageLookupByLibrary.simpleMessage("剪贴板中没有可导入的链接"),
     "clipboardWriteFailed": MessageLookupByLibrary.simpleMessage(
       "无法复制到剪贴板，所选内容可能过大",
     ),
@@ -1082,6 +1084,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "启动后在这里显示策略组",
     ),
     "proxyGroupsCount": m71,
+    "proxyProvider": MessageLookupByLibrary.simpleMessage("提供者"),
     "proxyProviders": MessageLookupByLibrary.simpleMessage("代理集"),
     "proxyType": MessageLookupByLibrary.simpleMessage("代理类型"),
     "pruneCache": MessageLookupByLibrary.simpleMessage("修剪缓存"),

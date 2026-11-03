@@ -499,11 +499,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(
       "Empreinte client",
     ),
+    "clipboardEmpty": MessageLookupByLibrary.simpleMessage(
+      "Le presse-papiers est vide",
+    ),
     "clipboardExport": MessageLookupByLibrary.simpleMessage(
       "Exporter vers le presse-papiers",
     ),
     "clipboardImport": MessageLookupByLibrary.simpleMessage(
       "Importer depuis le presse-papiers",
+    ),
+    "clipboardNoLinks": MessageLookupByLibrary.simpleMessage(
+      "Aucun lien à importer n\'a été trouvé dans le presse-papiers",
     ),
     "clipboardWriteFailed": MessageLookupByLibrary.simpleMessage(
       "Impossible de copier dans le presse-papiers. La sélection est peut-être trop volumineuse",
@@ -1027,9 +1033,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Saisissez le contenu de la règle",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Ce système masque la liste des apps installées tant que l’autorisation n’est pas accordée. Accordez-la pour configurer le proxy par app.",
     ),
@@ -1490,6 +1497,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Les groupes s’affichent ici une fois le cœur démarré",
     ),
     "proxyGroupsCount": m71,
+    "proxyProvider": MessageLookupByLibrary.simpleMessage("Fournisseur"),
     "proxyProviders": MessageLookupByLibrary.simpleMessage(
       "Fournisseurs de proxys",
     ),

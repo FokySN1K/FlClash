@@ -55,6 +55,31 @@ class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
+  /// `The clipboard is empty`
+  String get clipboardEmpty {
+    return Intl.message(
+      'The clipboard is empty',
+      name: 'clipboardEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No link to import was found in the clipboard`
+  String get clipboardNoLinks {
+    return Intl.message(
+      'No link to import was found in the clipboard',
+      name: 'clipboardNoLinks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Provider`
+  String get proxyProvider {
+    return Intl.message('Provider', name: 'proxyProvider', desc: '', args: []);
+  }
+
   /// `Rule`
   String get rule {
     return Intl.message('Rule', name: 'rule', desc: '', args: []);
@@ -7943,8 +7968,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',

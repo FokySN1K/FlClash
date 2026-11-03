@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:fl_clash/common/common.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'card.dart';
 import 'common.dart';
+import 'info_sheet.dart';
 
 const _headerInset = 10.0;
 const _headerButtonInset = 4.0;
@@ -625,7 +627,13 @@ class ListHeader extends ConsumerWidget {
               child: Row(
                 children: [
                   _GroupIcon(src: group.icon, name: groupName),
-                  Flexible(child: _GroupSummary(groupName: groupName)),
+                  Flexible(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onLongPress: () => _toGroupInfo(context, ref),
+                      child: _GroupSummary(groupName: groupName),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -670,6 +678,32 @@ class ListHeader extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  /// The header has room for the selected node's name cut short only, so a
+  /// held press opens the whole of it.
+  void _toGroupInfo(BuildContext context, WidgetRef ref) {
+    final proxyName = ref
+        .read(selectedProxyNameProvider(group.name))
+        .takeFirstValid([]);
+    if (proxyName.isEmpty) {
+      return;
+    }
+    for (final proxy in group.all) {
+      if (proxy.name != proxyName) {
+        continue;
+      }
+      unawaited(
+        showProxyInfoSheet(
+          context,
+          proxy: proxy,
+          groupName: group.name,
+          groupType: group.type,
+          testUrl: group.testUrl,
+        ),
+      );
+      return;
+    }
   }
 }
 

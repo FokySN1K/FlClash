@@ -1,4 +1,7 @@
 {
+  "clipboardEmpty": "El portapapeles está vacío",
+  "clipboardNoLinks": "No se encontró ningún enlace para importar en el portapapeles",
+  "proxyProvider": "Proveedor",
   "rule": "Regla",
   "rules": "Reglas",
   "global": "Global",

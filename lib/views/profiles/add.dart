@@ -21,6 +21,12 @@ class AddProfileMenu extends ConsumerWidget {
     unawaited(ref.read(profilesActionProvider.notifier).addProfileFormFile());
   }
 
+  void _toImportFromClipboard(WidgetRef ref) {
+    unawaited(
+      ref.read(profilesActionProvider.notifier).addProfileFromClipboard(),
+    );
+  }
+
   Future<void> _toScan(BuildContext context, WidgetRef ref) async {
     final profilesAction = ref.read(profilesActionProvider.notifier);
     if (system.isDesktop) {
@@ -145,6 +151,11 @@ class AddProfileMenu extends ConsumerWidget {
             glyph: AppGlyphs.cloudDownload,
             label: appLocalizations.link,
             onPressed: () => _toAdd(context, ref),
+          ),
+          CommonPopupMenuItem(
+            glyph: AppGlyphs.paste,
+            label: appLocalizations.clipboardImport,
+            onPressed: () => _toImportFromClipboard(ref),
           ),
           if (system.isTV)
             CommonPopupMenuItem(

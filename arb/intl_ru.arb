@@ -1,4 +1,7 @@
 {
+  "clipboardEmpty": "Буфер обмена пуст",
+  "clipboardNoLinks": "В буфере обмена нет ссылки для импорта",
+  "proxyProvider": "Провайдер",
   "rule": "Правило",
   "rules": "Правила",
   "global": "Глобальный",

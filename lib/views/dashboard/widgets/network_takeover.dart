@@ -9,6 +9,7 @@ import 'package:material_new_shapes/material_new_shapes.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'card.dart';
+import 'vpn_info_sheet.dart';
 
 typedef _RowMetrics = ({
   EdgeInsets padding,
@@ -209,6 +210,7 @@ class VpnTile extends ConsumerWidget {
     );
     return DashboardCard(
       padding: EdgeInsets.zero,
+      onLongPress: () => showVpnInfoSheet(context),
       child: DashboardSwitchRow(
         glyph: AppGlyphs.vpn,
         title: 'VPN',
@@ -249,6 +251,7 @@ class VpnCard extends ConsumerWidget {
         DashboardDensityScope.of(context),
       ).copyWith(top: 16, bottom: 16),
       onTap: () => change(!enabled),
+      onLongPress: () => showVpnInfoSheet(context),
       child: Row(
         spacing: 14,
         children: [

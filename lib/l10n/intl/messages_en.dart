@@ -459,11 +459,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(
       "Client fingerprint",
     ),
+    "clipboardEmpty": MessageLookupByLibrary.simpleMessage(
+      "The clipboard is empty",
+    ),
     "clipboardExport": MessageLookupByLibrary.simpleMessage(
       "Export to clipboard",
     ),
     "clipboardImport": MessageLookupByLibrary.simpleMessage(
       "Import from clipboard",
+    ),
+    "clipboardNoLinks": MessageLookupByLibrary.simpleMessage(
+      "No link to import was found in the clipboard",
     ),
     "clipboardWriteFailed": MessageLookupByLibrary.simpleMessage(
       "Couldn\'t copy to the clipboard. The selection may be too large",
@@ -961,9 +967,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Enter the rule content",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
     ),
@@ -1380,6 +1387,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Groups show up here once the core starts",
     ),
     "proxyGroupsCount": m71,
+    "proxyProvider": MessageLookupByLibrary.simpleMessage("Provider"),
     "proxyProviders": MessageLookupByLibrary.simpleMessage("Proxy providers"),
     "proxyType": MessageLookupByLibrary.simpleMessage("Proxy type"),
     "pruneCache": MessageLookupByLibrary.simpleMessage("Prune cache"),

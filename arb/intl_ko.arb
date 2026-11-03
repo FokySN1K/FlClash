@@ -1,4 +1,7 @@
 {
+  "clipboardEmpty": "클립보드가 비어 있습니다",
+  "clipboardNoLinks": "클립보드에서 가져올 링크를 찾을 수 없습니다",
+  "proxyProvider": "공급자",
   "rule": "규칙",
   "rules": "규칙",
   "global": "전역",

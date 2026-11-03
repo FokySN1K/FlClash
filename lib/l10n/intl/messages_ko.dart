@@ -384,8 +384,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "clearSearch": MessageLookupByLibrary.simpleMessage("검색 지우기"),
     "clientFingerprint": MessageLookupByLibrary.simpleMessage("클라이언트 핑거프린트"),
+    "clipboardEmpty": MessageLookupByLibrary.simpleMessage("클립보드가 비어 있습니다"),
     "clipboardExport": MessageLookupByLibrary.simpleMessage("클립보드로 내보내기"),
     "clipboardImport": MessageLookupByLibrary.simpleMessage("클립보드에서 가져오기"),
+    "clipboardNoLinks": MessageLookupByLibrary.simpleMessage(
+      "클립보드에서 가져올 링크를 찾을 수 없습니다",
+    ),
     "clipboardWriteFailed": MessageLookupByLibrary.simpleMessage(
       "클립보드에 복사하지 못했습니다. 선택 영역이 너무 클 수 있습니다",
     ),
@@ -1164,6 +1168,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "코어가 시작되면 그룹이 여기에 표시됩니다",
     ),
     "proxyGroupsCount": m71,
+    "proxyProvider": MessageLookupByLibrary.simpleMessage("공급자"),
     "proxyProviders": MessageLookupByLibrary.simpleMessage("프록시 공급자"),
     "proxyType": MessageLookupByLibrary.simpleMessage("프록시 유형"),
     "pruneCache": MessageLookupByLibrary.simpleMessage("캐시 정리"),

@@ -498,11 +498,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(
       "Huella del cliente",
     ),
+    "clipboardEmpty": MessageLookupByLibrary.simpleMessage(
+      "El portapapeles está vacío",
+    ),
     "clipboardExport": MessageLookupByLibrary.simpleMessage(
       "Exportar al portapapeles",
     ),
     "clipboardImport": MessageLookupByLibrary.simpleMessage(
       "Importar desde el portapapeles",
+    ),
+    "clipboardNoLinks": MessageLookupByLibrary.simpleMessage(
+      "No se encontró ningún enlace para importar en el portapapeles",
     ),
     "clipboardWriteFailed": MessageLookupByLibrary.simpleMessage(
       "No se pudo copiar al portapapeles. Puede que la selección sea demasiado grande",
@@ -1028,9 +1034,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Introduce el contenido de la regla",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Este sistema oculta la lista de apps instaladas hasta que se concede el permiso. Autorízalo para configurar el proxy por app.",
     ),
@@ -1489,6 +1496,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Los grupos aparecen aquí cuando se inicia el núcleo",
     ),
     "proxyGroupsCount": m71,
+    "proxyProvider": MessageLookupByLibrary.simpleMessage("Proveedor"),
     "proxyProviders": MessageLookupByLibrary.simpleMessage(
       "Proveedores de proxies",
     ),

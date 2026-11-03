@@ -34,6 +34,7 @@ class DashboardCard extends StatelessWidget {
     super.key,
     this.padding,
     this.onTap,
+    this.onLongPress,
     this.semanticLabel,
     this.clipBehavior = Clip.none,
     required this.child,
@@ -41,6 +42,9 @@ class DashboardCard extends StatelessWidget {
 
   final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
+
+  /// Opens what the card only states, for a summary too short for its detail.
+  final VoidCallback? onLongPress;
   final String? semanticLabel;
 
   /// Off by default so a control swelling under an [ElasticPress] can paint
@@ -68,13 +72,14 @@ class DashboardCard extends StatelessWidget {
         ),
         child: Material(
           type: MaterialType.transparency,
-          child: onTap == null
+          child: onTap == null && onLongPress == null
               ? content
               : FocusRing(
                   shape: shape,
                   child: InkWell(
                     customBorder: shape,
                     onTap: onTap,
+                    onLongPress: onLongPress,
                     child: content,
                   ),
                 ),

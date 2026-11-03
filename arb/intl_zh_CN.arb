@@ -1,4 +1,7 @@
 {
+  "clipboardEmpty": "剪贴板为空",
+  "clipboardNoLinks": "剪贴板中没有可导入的链接",
+  "proxyProvider": "提供者",
   "rule": "规则",
   "rules": "规则",
   "global": "全局",

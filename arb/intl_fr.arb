@@ -1,4 +1,7 @@
 {
+  "clipboardEmpty": "Le presse-papiers est vide",
+  "clipboardNoLinks": "Aucun lien à importer n'a été trouvé dans le presse-papiers",
+  "proxyProvider": "Fournisseur",
   "rule": "Règle",
   "rules": "Règles",
   "global": "Global",

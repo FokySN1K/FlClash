@@ -1,4 +1,7 @@
 {
+  "clipboardEmpty": "The clipboard is empty",
+  "clipboardNoLinks": "No link to import was found in the clipboard",
+  "proxyProvider": "Provider",
   "rule": "Rule",
   "rules": "Rules",
   "global": "Global",

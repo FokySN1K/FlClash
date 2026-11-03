@@ -395,8 +395,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "clientFingerprint": MessageLookupByLibrary.simpleMessage(
       "クライアントフィンガープリント",
     ),
+    "clipboardEmpty": MessageLookupByLibrary.simpleMessage("クリップボードは空です"),
     "clipboardExport": MessageLookupByLibrary.simpleMessage("クリップボードへエクスポート"),
     "clipboardImport": MessageLookupByLibrary.simpleMessage("クリップボードからインポート"),
+    "clipboardNoLinks": MessageLookupByLibrary.simpleMessage(
+      "クリップボードにインポートできるリンクがありません",
+    ),
     "clipboardWriteFailed": MessageLookupByLibrary.simpleMessage(
       "クリップボードにコピーできませんでした。選択範囲が大きすぎる可能性があります",
     ),
@@ -1183,6 +1187,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "起動するとここにグループが表示されます",
     ),
     "proxyGroupsCount": m71,
+    "proxyProvider": MessageLookupByLibrary.simpleMessage("プロバイダー"),
     "proxyProviders": MessageLookupByLibrary.simpleMessage("プロキシプロバイダー"),
     "proxyType": MessageLookupByLibrary.simpleMessage("プロキシタイプ"),
     "pruneCache": MessageLookupByLibrary.simpleMessage("キャッシュを整理"),

@@ -458,6 +458,37 @@ class ProfilesAction extends _$ProfilesAction {
     unawaited(addProfileFromLink(url));
   }
 
+  Future<void> addProfileFromClipboard() async {
+    final data = await globalState.safeRun(
+      () => Clipboard.getData(Clipboard.kTextPlain),
+    );
+    final text = data?.text ?? '';
+    if (text.trim().isEmpty) {
+      dialogs.showNotifier(currentAppLocalizations.clipboardEmpty);
+      return;
+    }
+    final links = parseUrlInput(
+      text,
+      isValid: (url) => url.isUrl || url.isShareLink,
+      existing: {
+        for (final profile in ref.read(profilesProvider))
+          if (profile.url.isNotEmpty) profile.url,
+      },
+    ).entries;
+    if (links.isEmpty) {
+      dialogs.showNotifier(
+        currentAppLocalizations.clipboardNoLinks,
+        level: MessageLevel.warning,
+      );
+      return;
+    }
+    if (links.length == 1) {
+      await addProfileFromLink(links.single);
+      return;
+    }
+    await addProfilesFromLinks(links);
+  }
+
   Future<void> clearEffect(int profileId) async {
     final profilePath = await appPath.getProfilePath(profileId.toString());
     final profileFile = File(profilePath);
