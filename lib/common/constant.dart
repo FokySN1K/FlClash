@@ -57,6 +57,10 @@ const defaultDelayTestTimeout = 8000;
 
 const delayTestGuardDuration = Duration(seconds: 30);
 
+/// A group's own check probes its members at once under a budget of its own
+/// (`groupDelayTestTimeout` in core/delay.go), so its guard outlasts that.
+const groupDelayTestGuardDuration = Duration(seconds: 60);
+
 const delayTimedOutValue = -1;
 
 const probeTimeoutDuration = Duration(seconds: 10);
@@ -121,7 +125,7 @@ const systemDnsRecordKey = 'system_dns_record';
 const bootRecordKey = 'boot_record';
 const appliedConfigMd5Key = 'applied_config_md5';
 const defaultSystemDnsFallback = '223.5.5.5';
-const repository = 'chen08209/FlClash';
+const repository = 'FokySN1K/FlClash';
 const maxMobileWidth = 600;
 const maxLaptopWidth = 840;
 const defaultTestUrl = 'https://www.gstatic.com/generate_204';

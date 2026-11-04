@@ -5,6 +5,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/metacubex/mihomo/adapter/outboundgroup"
 	"github.com/metacubex/mihomo/common/utils"
 	"github.com/metacubex/mihomo/constant"
 )
@@ -97,4 +98,66 @@ func handleTestDelay(params *TestDelayParams) *Delay {
 	}
 	result.Value = delayValue(delay, ctx.Err() != nil)
 	return result
+}
+
+// A group's own check probes every member at once, so the single-node budget
+// the app sends would cut the slow members off and make them look dead; the
+// floor keeps a group test meaningful and still bounds it.
+const groupDelayTestTimeout = 30 * time.Second
+
+// A test through one dial exercises one member and leaves the group's own
+// choice untouched, so a pool would keep routing to a member it excluded and
+// an ordered fallback would never retry a recovered head. A group that knows
+// how to check itself runs its own check instead; the members it measures
+// reach the app through UrlTestHook, and the value returned describes the
+// group's route as it stands after the check.
+func handleTestGroupDelay(params *TestDelayParams) *Delay {
+	group, ok := adapterAs[outboundgroup.ProxyGroup](lookupProxy(params.ProxyName))
+	if !ok {
+		return handleTestDelay(params)
+	}
+	tester, ok := group.(outboundgroup.SelfTester)
+	if !ok {
+		return handleTestDelay(params)
+	}
+
+	url, expected := tester.SelfTestTarget()
+	if url == "" {
+		url = currentTestURL()
+	}
+	result := &Delay{Name: params.ProxyName, Url: url, Value: delayFailed}
+
+	timeout := timeoutFromMillis(params.Timeout, defaultDelayTestTimeout)
+	if timeout < groupDelayTestTimeout {
+		timeout = groupDelayTestTimeout
+	}
+	if !delayTestSlots.acquireWithin(context.Background(), timeout) {
+		return nil
+	}
+	defer delayTestSlots.release()
+
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+	results, err := group.URLTest(ctx, url, expected)
+	if err != nil {
+		result.Value = delayValue(0, ctx.Err() != nil)
+		return result
+	}
+	result.Value = delayValue(groupDelay(results, group.Now()), ctx.Err() != nil)
+	return result
+}
+
+// The delay of a group is the delay of the route it now uses; when this check
+// left that member out, the fastest measured one stands in.
+func groupDelay(results map[string]uint16, now string) uint16 {
+	if delay, ok := results[now]; ok {
+		return delay
+	}
+	var best uint16
+	for _, delay := range results {
+		if best == 0 || delay < best {
+			best = delay
+		}
+	}
+	return best
 }

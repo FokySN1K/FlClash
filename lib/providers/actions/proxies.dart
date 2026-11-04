@@ -315,22 +315,32 @@ class ProxiesAction extends _$ProxiesAction {
     dialogs.showNotifier(appLocalizations.addedToLocalProxies(name));
   }
 
-  Future<void> proxyDelayTest(Proxy proxy, [String? testUrl]) {
-    return _runDelayTests([
+  Future<void> proxyDelayTest(Proxy proxy, [String? testUrl]) async {
+    final group = _selfTestedGroupOf(proxy);
+    if (group != null) {
+      await _runGroupDelayTest(group);
+      _refreshAfterDelayTest(resort: false);
+      return;
+    }
+    await _runDelayTests([
       (proxies: [proxy], testUrl: testUrl),
     ]);
   }
 
   Future<void> delayTest(List<Proxy> proxies, [String? testUrl]) async {
     await _runDelayTests([(proxies: proxies, testUrl: testUrl)]);
-    ref.read(sortNumProvider.notifier).add();
+    _refreshAfterDelayTest();
   }
 
   Future<void> delayTestGroups(List<Group> groups) async {
-    await _runDelayTests([
-      for (final group in groups) (proxies: group.all, testUrl: group.testUrl),
+    await Future.wait([
+      _runDelayTests([
+        for (final group in groups)
+          (proxies: group.all, testUrl: group.testUrl),
+      ]),
+      Future.wait([for (final group in groups) _runGroupDelayTest(group)]),
     ]);
-    ref.read(sortNumProvider.notifier).add();
+    _refreshAfterDelayTest();
   }
 
   Future<void> delayTestPageGroup(
@@ -349,13 +359,70 @@ class ProxiesAction extends _$ProxiesAction {
       final query = SearchQuery(
         matchSearch ? ref.read(queryProvider(QueryTag.proxies)) : '',
       );
-      await delayTest(
-        group.all.whereMatches(query, (proxy) => proxy.searchFields).toList(),
-        group.testUrl,
-      );
+      await Future.wait([
+        _runDelayTests([
+          (
+            proxies: group.all
+                .whereMatches(query, (proxy) => proxy.searchFields)
+                .toList(),
+            testUrl: group.testUrl,
+          ),
+        ]),
+        _runGroupDelayTest(group),
+      ]);
     } finally {
       testing.stop(groupName);
     }
+    _refreshAfterDelayTest();
+  }
+
+  Group? _selfTestedGroupOf(Proxy proxy) {
+    final groupType = GroupTypeExtension.getGroupType(proxy.type);
+    if (groupType == null || !groupType.isSelfTested) {
+      return null;
+    }
+    return ref.read(groupsProvider).getGroup(proxy.name);
+  }
+
+  /// A pool and an ordered fallback re-decide their route only in their own
+  /// check, which the Core runs here against the group's own target; the
+  /// members it measures arrive as delay messages on their own.
+  Future<void> _runGroupDelayTest(Group group) async {
+    if (!group.type.isSelfTested) {
+      return;
+    }
+    final targets = _resolveDelayTestTargets([
+      (proxies: group.all, testUrl: group.testUrl),
+    ]);
+    final keys = [for (final target in targets) target.key];
+    final pending = ref.read(pendingDelayTestsProvider.notifier);
+    pending.apply(acquired: keys, started: keys);
+    try {
+      final delay = await _core.getGroupDelay(
+        group.name,
+        Duration(milliseconds: ref.read(appSettingProvider).delayTestTimeout),
+      );
+      if (delay != null) {
+        setDelay(delay);
+      }
+    } catch (error) {
+      commonPrint.log(
+        'Group delay test failed for ${group.name}: $error',
+        logLevel: coreFailureLogLevel(error),
+      );
+    } finally {
+      pending.apply(finished: keys);
+    }
+  }
+
+  /// Results stream in while a test runs, so the groups are pulled once it
+  /// ends instead of waiting for the debounce those messages schedule.
+  void _refreshAfterDelayTest({bool resort = true}) {
+    _flushDelayResults();
+    if (resort) {
+      ref.read(sortNumProvider.notifier).add();
+    }
+    updateGroupsDebounce(renderThrottleDuration);
   }
 
   List<_DelayTestTarget> _resolveDelayTestTargets(
