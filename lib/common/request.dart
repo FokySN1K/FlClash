@@ -85,6 +85,20 @@ class Request {
     }
   }
 
+  /// Streams a release archive to [path]; the shared download deadline bounds
+  /// a stalled body here rather than the whole transfer a provider download is.
+  Future<void> downloadToFile(String url, String path) async {
+    final target = downloadTarget(url);
+    await _clashDio.downloadUri(
+      target.uri,
+      path,
+      options: Options(
+        headers: target.headers,
+        receiveTimeout: downloadTimeoutDuration,
+      ),
+    );
+  }
+
   /// Null when this build is current; throws when GitHub cannot be asked.
   Future<Map<String, dynamic>?> checkForUpdate() async {
     final release = await latestRelease();

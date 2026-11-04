@@ -25,18 +25,9 @@ class AboutView extends ConsumerWidget {
     Contributor(avatar: 'assets/images/avatar/arue.jpg', name: 'Arue'),
   ];
 
-  Future<void> _checkUpdate(BuildContext context, WidgetRef ref) async {
+  Future<void> _checkUpdate(WidgetRef ref) async {
     if (ref.read(loadingProvider(LoadingTag.checkUpdate))) return;
-    final commonAction = ref.read(commonActionProvider.notifier);
-    final result = await globalState.loadingRun(
-      () async => (release: await request.checkForUpdate()),
-      title: context.appLocalizations.checkUpdate,
-      tag: LoadingTag.checkUpdate,
-    );
-    if (result == null) return;
-    unawaited(
-      commonAction.checkUpdateResultHandle(data: result.release, isUser: true),
-    );
+    await ref.read(commonActionProvider.notifier).checkUpdate(isUser: true);
   }
 
   Widget _buildLinkItem({
@@ -72,7 +63,7 @@ class AboutView extends ConsumerWidget {
           _AboutHero(
             isCheckingUpdate: isLoading,
             onCheckUpdate: () {
-              _checkUpdate(context, ref);
+              _checkUpdate(ref);
             },
             onEnterDeveloperMode: () {
               ref
@@ -97,8 +88,8 @@ class AboutView extends ConsumerWidget {
               _buildLinkItem(
                 glyph: AppGlyphs.cpu,
                 title: appLocalizations.core,
-                url: 'https://github.com/chen08209/Clash.Meta/tree/FlClash',
-                label: 'github.com/chen08209/Clash.Meta',
+                url: 'https://github.com/FokySN1K/mihomo',
+                label: 'github.com/FokySN1K/mihomo',
               ),
               _buildLinkItem(
                 glyph: AppGlyphs.send,
