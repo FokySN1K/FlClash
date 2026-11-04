@@ -2,6 +2,29 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.10",
+      "tag": "v1.0.10",
+      "date": "2026-11-04",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "d3d638f",
+              "scope": "android",
+              "text": "Serve the downloaded update from the external files root"
+            },
+            {
+              "id": "5d8c60a",
+              "scope": "update",
+              "text": "Read the release archives from the page when the API is out"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.9",
       "tag": "v1.0.9",
       "date": "2026-11-04",

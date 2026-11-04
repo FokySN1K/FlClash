@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.10 (2026-11-04)
+
+**Bug Fixes**
+
+- **android** Serve the downloaded update from the external files root (d3d638f)
+- **update** Read the release archives from the page when the API is out (5d8c60a)
+
 ## v1.0.9 (2026-11-04)
 
 **Features**
