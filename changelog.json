@@ -2,6 +2,49 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.6",
+      "tag": "v1.0.6",
+      "date": "2026-11-04",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "52e1a7a",
+              "scope": "app",
+              "text": "Update from inside the app"
+            },
+            {
+              "id": "a6d67d3",
+              "scope": "proxies",
+              "text": "Tint the cards by delay and pulse the tested ones"
+            },
+            {
+              "id": "0f7c920",
+              "scope": "proxies",
+              "text": "Test a group through its own check"
+            },
+            {
+              "id": "cbfaa54",
+              "scope": "core",
+              "text": "Move to the core that re-decides a tested group"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "03a1193",
+              "scope": "core",
+              "text": "Keep the inbounds in the app's hands"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.5",
       "tag": "v1.0.5",
       "date": "2026-11-03",

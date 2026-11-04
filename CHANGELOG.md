@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.0.6 (2026-11-04)
+
+**Features**
+
+- **app** Update from inside the app (52e1a7a)
+- **proxies** Tint the cards by delay and pulse the tested ones (a6d67d3)
+- **proxies** Test a group through its own check (0f7c920)
+- **core** Move to the core that re-decides a tested group (cbfaa54)
+
+**Bug Fixes**
+
+- **core** Keep the inbounds in the app's hands (03a1193)
+
 ## v1.0.5 (2026-11-03)
 
 **Features**
