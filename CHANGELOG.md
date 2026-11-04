@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.9 (2026-11-04)
+
+**Features**
+
+- **disclaimer** Acknowledge the terms with one check box (87bf7ed)
+
 ## v1.0.8 (2026-11-04)
 
 **Features**

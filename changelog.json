@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.9",
+      "tag": "v1.0.9",
+      "date": "2026-11-04",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "87bf7ed",
+              "scope": "disclaimer",
+              "text": "Acknowledge the terms with one check box"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.8",
       "tag": "v1.0.8",
       "date": "2026-11-04",
