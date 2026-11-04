@@ -74,9 +74,7 @@ enum GroupType {
 
   /// The core refuses a relay group, so it stays parseable but unofferable.
   static List<GroupType> get selectableValues => values
-      .where(
-        (item) => item != Relay && item != URLTestPool && item != Cascade,
-      )
+      .where((item) => item != Relay && item != URLTestPool && item != Cascade)
       .toList();
 }
 
@@ -118,6 +116,12 @@ extension GroupTypeExtension on GroupType {
       GroupType.Fallback,
       GroupType.Cascade,
     ].contains(this);
+  }
+
+  /// A pool and an ordered fallback re-decide their route only in their own
+  /// check, so testing one of their members never moves the group.
+  bool get isSelfTested {
+    return [GroupType.URLTestPool, GroupType.Cascade].contains(this);
   }
 
   static GroupType? getGroupType(String value) {

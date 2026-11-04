@@ -52,6 +52,8 @@ mixin CoreInterface {
 
   Future<Delay?> asyncTestDelay(String url, String proxyName, Duration timeout);
 
+  Future<Delay?> testGroupDelay(String groupName, Duration timeout);
+
   Future<ProbeResult?> probe(ProbeParams params);
 
   Future<OutboundIpResult?> outboundIp(OutboundIpParams params);
@@ -599,6 +601,16 @@ abstract class CoreHandlerInterface with CoreInterface {
       method: CoreMethod.asyncTestDelay,
       arguments: delayParams,
       timeout: delayTestGuardDuration,
+    );
+    return data == null ? null : Delay.fromJson(data);
+  }
+
+  @override
+  Future<Delay?> testGroupDelay(String groupName, Duration timeout) async {
+    final data = await _invokeMethod<Map<String, dynamic>>(
+      method: CoreMethod.testGroupDelay,
+      arguments: {'proxy-name': groupName, 'timeout': timeout.inMilliseconds},
+      timeout: groupDelayTestGuardDuration,
     );
     return data == null ? null : Delay.fromJson(data);
   }

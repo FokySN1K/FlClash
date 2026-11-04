@@ -291,6 +291,12 @@ class CoreController {
     return _interface.asyncTestDelay(url, proxyName, timeout);
   }
 
+  /// Runs a group's own check, which is the only test that moves a pool or an
+  /// ordered fallback onto another member.
+  Future<Delay?> getGroupDelay(String groupName, Duration timeout) async {
+    return _interface.testGroupDelay(groupName, timeout);
+  }
+
   Future<ProbeResult?> probe(ProbeParams params) => _interface.probe(params);
 
   Future<OutboundIpResult?> outboundIp(OutboundIpParams params) =>
