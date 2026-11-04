@@ -142,6 +142,43 @@ class CommonAction extends _$CommonAction {
     ];
   }
 
+  /// The check the About page and the tools list share: the automatic request
+  /// with the "already current" answer the background run leaves silent.
+  Future<void> checkUpdate({bool isUser = false}) async {
+    final result = await globalState.loadingRun(
+      () async => (release: await request.checkForUpdate()),
+      title: currentAppLocalizations.checkUpdate,
+      tag: LoadingTag.checkUpdate,
+    );
+    if (result == null) return;
+    await checkUpdateResultHandle(data: result.release, isUser: isUser);
+  }
+
+  /// Downloads the archive this build can install and hands the process over
+  /// to it; a release that never built for this platform keeps the release page
+  /// as the way to its download.
+  Future<void> installRelease(Map<String, dynamic> release) async {
+    final asset = releaseAsset(release);
+    if (asset == null) {
+      unawaited(
+        launchUrl(Uri.parse('https://github.com/$repository/releases/latest')),
+      );
+      return;
+    }
+    final file = await globalState.loadingRun(
+      () => downloadReleaseAsset(asset),
+      title: currentAppLocalizations.download,
+      tag: LoadingTag.checkUpdate,
+    );
+    if (file == null) return;
+    final handedOff = await globalState.safeRun(
+      () => launchReleaseAsset(file),
+      title: currentAppLocalizations.update,
+    );
+    if (handedOff != true) return;
+    await ref.read(systemActionProvider.notifier).handleExit();
+  }
+
   Future<void> checkUpdateResultHandle({
     Map<String, dynamic>? data,
     bool isUser = false,
@@ -159,11 +196,7 @@ class CommonAction extends _$CommonAction {
         cancelText: isUser ? null : currentAppLocalizations.noLongerRemind,
       );
       if (res == true) {
-        unawaited(
-          launchUrl(
-            Uri.parse('https://github.com/$repository/releases/latest'),
-          ),
-        );
+        await installRelease(data);
       } else if (!isUser && res == false) {
         ref
             .read(appSettingProvider.notifier)

@@ -42,6 +42,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
       items: [
         const _DisclaimerItem(),
         if (enableDeveloperMode) const _DeveloperItem(),
+        const _CheckUpdateItem(),
         const _InfoItem(),
       ],
     );
@@ -91,6 +92,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
     ];
     return CommonScaffold(
       title: context.appLocalizations.tools,
+      isLoading: ref.watch(loadingProvider(LoadingTag.checkUpdate)),
       body: Builder(
         builder: (context) => ListView.builder(
           key: toolsStoreKey,
@@ -238,6 +240,24 @@ class _DisclaimerItem extends StatelessWidget {
       title: Text(context.appLocalizations.disclaimer),
       widget: const DisclaimerView(),
     );
+  }
+}
+
+class _CheckUpdateItem extends ConsumerWidget {
+  const _CheckUpdateItem();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isChecking = ref.watch(loadingProvider(LoadingTag.checkUpdate));
+    return ListItem(
+      leading: const GlyphIcon(AppGlyphs.sync),
+      title: Text(context.appLocalizations.checkUpdate),
+      onTap: isChecking ? null : () => _checkUpdate(ref),
+    );
+  }
+
+  Future<void> _checkUpdate(WidgetRef ref) {
+    return ref.read(commonActionProvider.notifier).checkUpdate(isUser: true);
   }
 }
 
