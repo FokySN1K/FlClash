@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- The updater stores the archive in the app's own directories, which the
-     package installer can reach only through a content:// URI from this provider. -->
+     package installer can reach only through a content:// URI from this provider.
+     Android hands the download to the external files directory (the platform
+     maps the downloads folder there), so the provider has to serve that root
+     as well, or the installer never sees the archive. -->
 <paths>
     <files-path
         name="files"
         path="." />
     <cache-path
         name="cache"
+        path="." />
+    <external-files-path
+        name="external_files"
         path="." />
 </paths>
