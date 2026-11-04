@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.7",
+      "tag": "v1.0.7",
+      "date": "2026-11-04",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "6f161f4",
+              "scope": "proxies",
+              "text": "Hold a group's delay test to its own cards"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.6",
       "tag": "v1.0.6",
       "date": "2026-11-04",

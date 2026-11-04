@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.7 (2026-11-04)
+
+**Bug Fixes**
+
+- **proxies** Hold a group's delay test to its own cards (6f161f4)
+
 ## v1.0.6 (2026-11-04)
 
 **Features**
