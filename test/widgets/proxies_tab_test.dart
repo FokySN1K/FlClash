@@ -77,6 +77,12 @@ void main() {
     return key;
   }
 
+  /// Closes the sheet a held press opened, whichever route carries it.
+  Future<void> closeSheet(WidgetTester tester) async {
+    Navigator.of(tester.element(find.text('Select').first)).pop();
+    await tester.pumpAndSettle();
+  }
+
   testWidgets('current group follows the tapped tab', (tester) async {
     final key = await pumpTabView(tester);
 
@@ -308,37 +314,19 @@ void main() {
         .set(_tabState([_group('A'), group]));
     await pumpTabView(tester);
     await tester.pumpAndSettle();
-    final menu = find.byType(CommonPopupMenu);
 
     await tester.longPress(find.text('B-0', findRichText: true));
     await tester.pumpAndSettle();
 
-    expect(
-      find.descendant(of: menu, matching: find.text('Select')),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(of: menu, matching: find.byGlyph(AppGlyphs.check)),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(of: menu, matching: find.text('Add to local proxies')),
-      findsOneWidget,
-    );
+    expect(find.text('Select'), findsOneWidget);
+    expect(find.text('Add to local proxies'), findsOneWidget);
 
-    await tester.tapAt(Offset.zero);
-    await tester.pumpAndSettle();
+    await closeSheet(tester);
     await tester.longPress(find.text('B-1', findRichText: true));
     await tester.pumpAndSettle();
 
-    expect(
-      find.descendant(of: menu, matching: find.text('Select')),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(of: menu, matching: find.text('Add to local proxies')),
-      findsOneWidget,
-    );
+    expect(find.text('Select'), findsOneWidget);
+    expect(find.text('Add to local proxies'), findsOneWidget);
   });
 
   testWidgets('a custom profile offers to add only the proxies of a provider, '
@@ -361,26 +349,18 @@ void main() {
         .set(_tabState([_group('A'), group]));
     await pumpTabView(tester);
     await tester.pumpAndSettle();
-    final menu = find.byType(CommonPopupMenu);
 
     await tester.longPress(find.text('B-0', findRichText: true));
     await tester.pumpAndSettle();
 
-    expect(
-      find.descendant(of: menu, matching: find.text('Select')),
-      findsOneWidget,
-    );
+    expect(find.text('Select'), findsOneWidget);
     expect(find.text('Add to local proxies'), findsNothing);
 
-    await tester.tapAt(Offset.zero);
-    await tester.pumpAndSettle();
+    await closeSheet(tester);
     await tester.longPress(find.text('B-1', findRichText: true));
     await tester.pumpAndSettle();
 
-    expect(
-      find.descendant(of: menu, matching: find.text('Add to local proxies')),
-      findsOneWidget,
-    );
+    expect(find.text('Add to local proxies'), findsOneWidget);
   });
 
   testWidgets('a new current group leaves the visible cards as they were', (
