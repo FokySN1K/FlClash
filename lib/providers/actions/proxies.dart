@@ -23,6 +23,50 @@ class _DelayTestJob {
   bool cancelled = false;
 }
 
+/// A group's own check measures its members in the Core and streams each result
+/// back as a delay message, so a member is released the moment its value lands
+/// instead of the whole group waiting for the slowest one.
+class _GroupDelayTestJob {
+  _GroupDelayTestJob(this.groupName, Iterable<_DelayTestTarget> targets) {
+    for (final target in targets) {
+      final key = delayTestKey(
+        target.testUrl,
+        target.proxyName,
+        groupName: groupName,
+      );
+      held.add(key);
+      (_pendingByMember[target.proxyName] ??= {}).add(key);
+    }
+    held.add(groupDelayTestKey(groupName));
+  }
+
+  final String groupName;
+
+  /// The keys still waiting for a value: the members and the group's own card.
+  final Set<String> held = {};
+
+  /// The members whose values have landed, whatever key held them.
+  final Set<String> settledMembers = {};
+
+  final Map<String, Set<String>> _pendingByMember = {};
+
+  Set<String> settleMember(String proxyName) {
+    settledMembers.add(proxyName);
+    final keys = _pendingByMember.remove(proxyName);
+    if (keys == null) {
+      return const {};
+    }
+    held.removeAll(keys);
+    return keys;
+  }
+
+  /// Releases the group's own card once its route has a fresh value.
+  String? settleSelection() {
+    final key = groupDelayTestKey(groupName);
+    return held.remove(key) ? key : null;
+  }
+}
+
 @Riverpod(keepAlive: true)
 class ProxiesAction extends _$ProxiesAction {
   CoreController get _core => ref.read(coreHandlerProvider);
@@ -30,6 +74,8 @@ class ProxiesAction extends _$ProxiesAction {
   final TaskPool _delayTestPool = TaskPool(maxConcurrentDelayTests);
 
   final List<_DelayTestJob> _delayTestJobs = [];
+
+  final List<_GroupDelayTestJob> _groupDelayTestJobs = [];
 
   final List<Delay> _bufferedDelays = [];
 
@@ -56,6 +102,7 @@ class ProxiesAction extends _$ProxiesAction {
       job.cancelled = true;
       job.held.clear();
     }
+    _groupDelayTestJobs.clear();
     _delayFlushTimer?.cancel();
     _delayFlushTimer = null;
     _bufferedDelays.clear();
@@ -71,14 +118,30 @@ class ProxiesAction extends _$ProxiesAction {
   void _flushDelayResults() {
     _delayFlushTimer?.cancel();
     _delayFlushTimer = null;
+    final settled = <String>{};
     if (_bufferedDelays.isNotEmpty) {
       final delays = List.of(_bufferedDelays);
       _bufferedDelays.clear();
+      // The value lands first, so a card that drops its spinner in the same
+      // frame already shows the number it was waiting for.
       ref.read(delayDataSourceProvider.notifier).setDelays(delays);
+      for (final job in _groupDelayTestJobs) {
+        for (final delay in delays) {
+          settled.addAll(job.settleMember(delay.name));
+        }
+        if (_groupSelectionSettled(job)) {
+          final own = job.settleSelection();
+          if (own != null) {
+            settled.add(own);
+          }
+        }
+      }
     }
-    if (_bufferedStarts.isNotEmpty || _bufferedFinishes.isNotEmpty) {
+    if (_bufferedStarts.isNotEmpty ||
+        _bufferedFinishes.isNotEmpty ||
+        settled.isNotEmpty) {
       final started = List.of(_bufferedStarts);
-      final finished = List.of(_bufferedFinishes);
+      final finished = List.of(_bufferedFinishes)..addAll(settled);
       _bufferedStarts.clear();
       _bufferedFinishes.clear();
       ref
@@ -334,9 +397,12 @@ class ProxiesAction extends _$ProxiesAction {
 
   Future<void> delayTestGroups(List<Group> groups) async {
     await Future.wait([
+      // A pool or an ordered fallback measures its own members inside the
+      // Core's check, so probing them here again would race that check.
       _runDelayTests([
         for (final group in groups)
-          (proxies: group.all, testUrl: group.testUrl),
+          if (!group.type.isSelfTested)
+            (proxies: group.all, testUrl: group.testUrl),
       ]),
       Future.wait([for (final group in groups) _runGroupDelayTest(group)]),
     ]);
@@ -360,14 +426,15 @@ class ProxiesAction extends _$ProxiesAction {
         matchSearch ? ref.read(queryProvider(QueryTag.proxies)) : '',
       );
       await Future.wait([
-        _runDelayTests([
-          (
-            proxies: group.all
-                .whereMatches(query, (proxy) => proxy.searchFields)
-                .toList(),
-            testUrl: group.testUrl,
-          ),
-        ]),
+        if (!group.type.isSelfTested)
+          _runDelayTests([
+            (
+              proxies: group.all
+                  .whereMatches(query, (proxy) => proxy.searchFields)
+                  .toList(),
+              testUrl: group.testUrl,
+            ),
+          ]),
         _runGroupDelayTest(group),
       ]);
     } finally {
@@ -394,9 +461,10 @@ class ProxiesAction extends _$ProxiesAction {
     final targets = _resolveDelayTestTargets([
       (proxies: group.all, testUrl: group.testUrl),
     ]);
-    final keys = [for (final target in targets) target.key];
+    final job = _GroupDelayTestJob(group.name, targets);
+    _groupDelayTestJobs.add(job);
     final pending = ref.read(pendingDelayTestsProvider.notifier);
-    pending.apply(acquired: keys, started: keys);
+    pending.apply(acquired: job.held, started: job.held);
     try {
       final delay = await _core.getGroupDelay(
         group.name,
@@ -411,8 +479,25 @@ class ProxiesAction extends _$ProxiesAction {
         logLevel: coreFailureLogLevel(error),
       );
     } finally {
-      pending.apply(finished: keys);
+      _groupDelayTestJobs.remove(job);
+      _flushDelayResults();
+      final abandoned = job.held.toList();
+      job.held.clear();
+      pending.apply(finished: abandoned);
     }
+  }
+
+  /// Whether the member the group routes to has answered in this run, which is
+  /// what lets the group's own card show a number instead of a spinner.
+  bool _groupSelectionSettled(_GroupDelayTestJob job) {
+    final state = computeRealSelectedProxyState(
+      job.groupName,
+      groups: ref.read(groupsProvider),
+      selectedMap: ref.read(
+        currentProfileProvider.select((state) => state?.selectedMap ?? {}),
+      ),
+    );
+    return job.settledMembers.contains(state.proxyName);
   }
 
   /// Results stream in while a test runs, so the groups are pulled once it

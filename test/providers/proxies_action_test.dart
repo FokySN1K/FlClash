@@ -771,6 +771,150 @@ void main() {
     });
   });
 
+  group('a self tested group', () {
+    const poolName = 'Pool';
+    const poolNode = Proxy(name: 'Pool', type: 'URLTestPool');
+    const members = [_proxy, Proxy(name: 'HK-02', type: 'ss')];
+    Group pool({String? now}) => Group(
+      type: GroupType.URLTestPool,
+      name: poolName,
+      now: now,
+      all: members,
+    );
+
+    test('lights only its own page while its check runs', () async {
+      final release = Completer<Delay?>();
+      when(
+        () => core.testGroupDelay(poolName, any()),
+      ).thenAnswer((_) => release.future);
+      final container = _delayContainer(buildContainer);
+      container.read(groupsProvider.notifier).update((_) => [pool()]);
+
+      final run = actionOf(container).proxyDelayTest(poolNode);
+
+      final pending = container.read(pendingDelayTestsProvider);
+      expect(
+        pending[delayTestKey(_testUrl, 'HK-01', groupName: poolName)],
+        DelayTestPhase.running,
+      );
+      expect(pending[groupDelayTestKey(poolName)], DelayTestPhase.running);
+      // The same node in a group that did not run the check stays still.
+      expect(pending[delayTestKey(_testUrl, 'HK-01')], isNull);
+
+      release.complete(const Delay(name: poolName, url: _testUrl, value: 20));
+      await run;
+
+      expect(container.read(pendingDelayTestsProvider), isEmpty);
+    });
+
+    test('drops a member and the group card as their results land', () async {
+      final release = Completer<Delay?>();
+      when(
+        () => core.testGroupDelay(poolName, any()),
+      ).thenAnswer((_) => release.future);
+      final container = _delayContainer(buildContainer);
+      container
+          .read(groupsProvider.notifier)
+          .update((_) => [pool(now: 'HK-01')]);
+
+      final run = actionOf(container).proxyDelayTest(poolNode);
+
+      actionOf(
+        container,
+      ).setDelay(const Delay(name: 'HK-01', url: _testUrl, value: 35));
+      await Future<void>.delayed(renderThrottleDuration * 2);
+
+      final pending = container.read(pendingDelayTestsProvider);
+      expect(
+        pending[delayTestKey(_testUrl, 'HK-01', groupName: poolName)],
+        isNull,
+      );
+      expect(pending[groupDelayTestKey(poolName)], isNull);
+      expect(
+        pending[delayTestKey(_testUrl, 'HK-02', groupName: poolName)],
+        DelayTestPhase.running,
+      );
+      expect(container.read(delayDataSourceProvider)[_testUrl]?['HK-01'], 35);
+
+      release.complete(const Delay(name: poolName, url: _testUrl, value: 35));
+      await run;
+
+      expect(container.read(pendingDelayTestsProvider), isEmpty);
+    });
+
+    test('leaves its members to the Core check', () async {
+      when(() => core.testGroupDelay(poolName, any())).thenAnswer(
+        (_) async => const Delay(name: poolName, url: _testUrl, value: 20),
+      );
+      final container = _delayContainer(buildContainer);
+      container.read(groupsProvider.notifier).update((_) => [pool()]);
+
+      await actionOf(container).delayTestGroups([pool()]);
+      await actionOf(container).delayTestPageGroup(poolName);
+
+      verifyNever(() => core.asyncTestDelay(any(), any(), any()));
+      verify(() => core.testGroupDelay(poolName, any())).called(2);
+    });
+  });
+
+  group('delayTestPhase', () {
+    test('a group check does not light the node in another group', () {
+      final container = _delayContainer(buildContainer);
+      container
+          .read(groupsProvider.notifier)
+          .update(
+            (_) => [
+              _group('A', const [_proxy]),
+              _group('B', const [_proxy]),
+            ],
+          );
+      final key = delayTestKey(_testUrl, 'HK-01', groupName: 'A');
+      container
+          .read(pendingDelayTestsProvider.notifier)
+          .apply(acquired: [key], started: [key]);
+
+      expect(
+        container.read(
+          delayTestPhaseProvider(
+            proxyName: 'HK-01',
+            testUrl: _testUrl,
+            groupName: 'A',
+          ),
+        ),
+        DelayTestPhase.running,
+      );
+      expect(
+        container.read(
+          delayTestPhaseProvider(
+            proxyName: 'HK-01',
+            testUrl: _testUrl,
+            groupName: 'B',
+          ),
+        ),
+        isNull,
+      );
+    });
+
+    test('a single node check lights the node in every group', () {
+      final container = _delayContainer(buildContainer);
+      final key = delayTestKey(_testUrl, 'HK-01');
+      container
+          .read(pendingDelayTestsProvider.notifier)
+          .apply(acquired: [key], started: [key]);
+
+      expect(
+        container.read(
+          delayTestPhaseProvider(
+            proxyName: 'HK-01',
+            testUrl: _testUrl,
+            groupName: 'A',
+          ),
+        ),
+        DelayTestPhase.running,
+      );
+    });
+  });
+
   group('updateProvider', () {
     test(
       'stores the refreshed provider and clears the updating flag',

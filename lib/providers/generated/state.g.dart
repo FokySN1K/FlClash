@@ -2365,7 +2365,8 @@ final class DelayTestPhaseProvider
     with $Provider<DelayTestPhase?> {
   DelayTestPhaseProvider._({
     required DelayTestPhaseFamily super.from,
-    required ({String proxyName, String? testUrl}) super.argument,
+    required ({String proxyName, String? testUrl, String? groupName})
+    super.argument,
   }) : super(
          retry: null,
          name: r'delayTestPhaseProvider',
@@ -2391,11 +2392,14 @@ final class DelayTestPhaseProvider
 
   @override
   DelayTestPhase? create(Ref ref) {
-    final argument = this.argument as ({String proxyName, String? testUrl});
+    final argument =
+        this.argument
+            as ({String proxyName, String? testUrl, String? groupName});
     return delayTestPhase(
       ref,
       proxyName: argument.proxyName,
       testUrl: argument.testUrl,
+      groupName: argument.groupName,
     );
   }
 
@@ -2424,7 +2428,7 @@ final class DelayTestPhaseFamily extends $Family
     with
         $FunctionalFamilyOverride<
           DelayTestPhase?,
-          ({String proxyName, String? testUrl})
+          ({String proxyName, String? testUrl, String? groupName})
         > {
   DelayTestPhaseFamily._()
     : super(
@@ -2435,11 +2439,14 @@ final class DelayTestPhaseFamily extends $Family
         isAutoDispose: true,
       );
 
-  DelayTestPhaseProvider call({required String proxyName, String? testUrl}) =>
-      DelayTestPhaseProvider._(
-        argument: (proxyName: proxyName, testUrl: testUrl),
-        from: this,
-      );
+  DelayTestPhaseProvider call({
+    required String proxyName,
+    String? testUrl,
+    String? groupName,
+  }) => DelayTestPhaseProvider._(
+    argument: (proxyName: proxyName, testUrl: testUrl, groupName: groupName),
+    from: this,
+  );
 
   @override
   String toString() => r'delayTestPhaseProvider';

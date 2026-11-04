@@ -203,12 +203,36 @@ DelayTestPhase? delayTestPhase(
   Ref ref, {
   required String proxyName,
   String? testUrl,
+  String? groupName,
 }) {
   final currentTestUrl = ref.watch(realTestUrlProvider(testUrl));
   final proxyState = ref.watch(realSelectedProxyStateProvider(proxyName));
   final effectiveTestUrl = proxyState.testUrl.takeFirstValid([currentTestUrl]);
-  final key = delayTestKey(effectiveTestUrl, proxyState.proxyName);
-  return ref.watch(pendingDelayTestsProvider.select((state) => state[key]));
+  final effectiveProxyName = proxyState.proxyName;
+  return ref.watch(
+    pendingDelayTestsProvider.select((state) {
+      // A group's own check holds its members under the group's name, and the
+      // card that started the check finds it from that name alone.
+      final own = state[groupDelayTestKey(proxyName)];
+      if (own != null) {
+        return own;
+      }
+      if (groupName != null) {
+        final scoped =
+            state[delayTestKey(
+              effectiveTestUrl,
+              effectiveProxyName,
+              groupName: groupName,
+            )];
+        if (scoped != null) {
+          return scoped;
+        }
+      }
+      // A single node check keeps the shared key and lights the node in every
+      // group that shows it.
+      return state[delayTestKey(effectiveTestUrl, effectiveProxyName)];
+    }),
+  );
 }
 
 @riverpod

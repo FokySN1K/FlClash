@@ -136,6 +136,7 @@ class ProxyCard extends ConsumerWidget {
     final isLoose = type == ProxyCardType.loose;
     final delayText = _DelayText(
       proxy: proxy,
+      groupName: groupName,
       testUrl: testUrl,
       alignment: isLoose ? Alignment.centerLeft : Alignment.centerRight,
     );
@@ -192,7 +193,11 @@ class ProxyCard extends ConsumerWidget {
           ),
         );
         final phase = ref.watch(
-          delayTestPhaseProvider(proxyName: proxy.name, testUrl: testUrl),
+          delayTestPhaseProvider(
+            proxyName: proxy.name,
+            testUrl: testUrl,
+            groupName: groupName,
+          ),
         );
         final tint = context.colorScheme.delayCardTint(
           ref.watch(delayProvider(proxyName: proxy.name, testUrl: testUrl)),
@@ -283,11 +288,13 @@ class _ProxyDesc extends ConsumerWidget {
 class _DelayText extends ConsumerStatefulWidget {
   const _DelayText({
     required this.proxy,
+    required this.groupName,
     required this.testUrl,
     required this.alignment,
   });
 
   final Proxy proxy;
+  final String groupName;
   final String? testUrl;
   final Alignment alignment;
 
@@ -365,6 +372,7 @@ class _DelayTextState extends ConsumerState<_DelayText> {
       delayTestPhaseProvider(
         proxyName: widget.proxy.name,
         testUrl: widget.testUrl,
+        groupName: widget.groupName,
       ),
     );
     return Actions(

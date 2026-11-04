@@ -123,7 +123,7 @@ class _ProxyInfoSheet extends ConsumerWidget {
           generateSection(
             title: appLocalizations.network,
             items: [
-              _DelayRow(proxy: proxy, testUrl: testUrl),
+              _DelayRow(proxy: proxy, groupName: groupName, testUrl: testUrl),
               OutboundIpRow(target: proxy.name),
             ],
           ),
@@ -171,9 +171,14 @@ class _ProxyInfoSheet extends ConsumerWidget {
 
 /// A node's delay, with a test that reads as one on a card.
 class _DelayRow extends ConsumerWidget {
-  const _DelayRow({required this.proxy, required this.testUrl});
+  const _DelayRow({
+    required this.proxy,
+    required this.groupName,
+    required this.testUrl,
+  });
 
   final Proxy proxy;
+  final String groupName;
   final String? testUrl;
 
   void _test(WidgetRef ref) {
@@ -188,7 +193,11 @@ class _DelayRow extends ConsumerWidget {
     );
     final testing =
         ref.watch(
-          delayTestPhaseProvider(proxyName: proxy.name, testUrl: testUrl),
+          delayTestPhaseProvider(
+            proxyName: proxy.name,
+            testUrl: testUrl,
+            groupName: groupName,
+          ),
         ) !=
         null;
     return DetailRow(

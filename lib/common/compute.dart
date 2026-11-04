@@ -140,8 +140,25 @@ SelectedProxyState computeRealSelectedProxyState(
   );
 }
 
-String delayTestKey(String testUrl, String proxyName) {
-  return '$testUrl\u0000$proxyName';
+/// Marks a key filed under a group rather than under the page that shows the
+/// card; no test URL or proxy name starts with it.
+const _groupScopeMarker = '\u0001';
+
+/// A delay test files what it measures under the URL it runs against. A group
+/// check adds its own name to the key, so the same node in a group that did
+/// not run the check can tell the two apart.
+String delayTestKey(String testUrl, String proxyName, {String? groupName}) {
+  final node = '$testUrl\u0000$proxyName';
+  if (groupName == null) {
+    return node;
+  }
+  return '$_groupScopeMarker$groupName\u0000$node';
+}
+
+/// The key a group's own check is filed under, whatever target it runs, so the
+/// card that started the check finds it from the name alone.
+String groupDelayTestKey(String groupName) {
+  return '$_groupScopeMarker$groupName';
 }
 
 DelayState computeProxyDelayState({
