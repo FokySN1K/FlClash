@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/plugins/app.dart';
 import 'package:path/path.dart' as p;
 
 /// One archive of a release, named and addressed the way GitHub serves it.
@@ -13,7 +14,8 @@ typedef ReleaseAsset = ({String name, String url});
 String? releaseAssetSuffix() {
   // dart:ffi names the running ABI after its platform and architecture, so the
   // tail of that name tells which build of an archive fits this process.
-  final isArm64 = Abi.current().toString().endsWith('_arm64');
+  final abi = Abi.current().toString();
+  final isArm64 = abi.endsWith('_arm64');
   if (system.isWindows) {
     return isArm64 ? '-windows-arm64-setup.exe' : '-windows-amd64-setup.exe';
   }
@@ -23,8 +25,12 @@ String? releaseAssetSuffix() {
   if (system.isLinux) {
     return isArm64 ? '-linux-arm64.AppImage' : '-linux-amd64.AppImage';
   }
-  // Android installs through a platform channel this build does not carry, so
-  // the release page stays the way to update a phone install.
+  if (system.isAndroid) {
+    // The pipeline ships one APK per ABI, and only the two the phones use.
+    if (isArm64) return '-android-arm64-v8a.apk';
+    if (abi.endsWith('_arm')) return '-android-armeabi-v7a.apk';
+    if (abi.endsWith('_x64')) return '-android-x86_64.apk';
+  }
   return null;
 }
 
@@ -83,6 +89,14 @@ Future<bool> launchReleaseAsset(File file) async {
       await Process.run('chmod', ['+x', file.path]);
     }
     await Process.run('xdg-open', [file.path]);
+    return false;
+  }
+  if (system.isAndroid) {
+    // The installer runs in its own task and the package replaces this one when
+    // the user confirms, so nothing asks this process to step aside.
+    if (!await (app?.installApk(file.path) ?? Future.value(false))) {
+      throw StateError('Android declined to install ${file.path}');
+    }
     return false;
   }
   return false;

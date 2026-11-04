@@ -16,6 +16,7 @@ import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.FileProvider
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -42,6 +43,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -207,6 +209,16 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 GlobalState.lastExitInfo()
             }
 
+            "installApk" -> {
+                val path = call.argument<String>("path")
+                val file = path?.let(::File)
+                if (file == null || !file.isFile) {
+                    result.error("INVALID_ARGUMENT", "No update archive at $path", null)
+                } else {
+                    installApk(file, result)
+                }
+            }
+
             else -> {
                 result.notImplemented()
             }
@@ -217,6 +229,52 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         val packageName = call.argument<String>("packageName") ?: ""
         GlobalState.application.packageManager.getPackageIconPath(packageName)
     }
+
+    // The updater downloads into the app's own files directory, which the installer
+    // cannot open directly: the archive goes out as a content:// URI from this app's
+    // provider, and only after the user has allowed this app to install packages —
+    // the settings screen that grants it takes the place of the install dialog the
+    // first time round.
+    private fun installApk(file: File, result: Result) = onMainThread {
+        val activity = activity
+        if (activity == null) {
+            result.success(false)
+            return@onMainThread
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            !activity.packageManager.canRequestPackageInstalls()
+        ) {
+            result.success(openInstallPermissionSettings(activity))
+            return@onMainThread
+        }
+        result.success(openInstaller(activity, file))
+    }
+
+    private fun openInstallPermissionSettings(activity: Activity): Boolean = runCatching {
+        activity.startActivity(
+            Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                data = "package:${GlobalState.application.packageName}".toUri()
+            },
+        )
+    }.isSuccess
+
+    private fun openInstaller(activity: Activity, file: File): Boolean = runCatching {
+        activity.startActivity(
+            Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(
+                    FileProvider.getUriForFile(
+                        GlobalState.application,
+                        "${GlobalState.application.packageName}.fileprovider",
+                        file,
+                    ),
+                    "application/vnd.android.package-archive",
+                )
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            },
+        )
+    }.onFailure { error ->
+        GlobalState.log("Unable to hand the update to the installer: $error")
+    }.isSuccess
 
     // A throw inside the plugin scope has no handler and ends the process;
     // the Dart caller gets a PlatformException to handle instead.

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The updater stores the archive in the app's own directories, which the
+     package installer can reach only through a content:// URI from this provider. -->
+<paths>
+    <files-path
+        name="files"
+        path="." />
+    <cache-path
+        name="cache"
+        path="." />
+</paths>

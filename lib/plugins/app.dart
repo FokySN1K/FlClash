@@ -156,6 +156,17 @@ class App {
     return methodChannel.invokeMethod<bool>('openAppSettings');
   }
 
+  /// Hands a downloaded APK to the package installer; answers whether it took
+  /// the hand-off, including the trip to the settings screen that allows this
+  /// app to install packages in the first place.
+  Future<bool> installApk(String path) async {
+    if (!Platform.isAndroid) return false;
+    return await methodChannel.invokeMethod<bool>('installApk', {
+          'path': path,
+        }) ??
+        false;
+  }
+
   Future<AppExitInfo?> getLastExitInfo() async {
     try {
       final raw = await methodChannel
