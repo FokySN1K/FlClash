@@ -11,6 +11,7 @@ import 'package:fl_clash/views/proxies/card.dart';
 import 'package:fl_clash/views/proxies/group_tabs.dart';
 import 'package:fl_clash/views/proxies/proxies.dart';
 import 'package:fl_clash/views/proxies/tab.dart';
+import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -77,9 +78,14 @@ void main() {
     return key;
   }
 
-  /// Closes the sheet a held press opened, whichever route carries it.
-  Future<void> closeSheet(WidgetTester tester) async {
-    Navigator.of(tester.element(find.text('Select').first)).pop();
+  /// A right click is how the desktop reaches the card menu; a held press
+  /// opens the info sheet instead.
+  Future<void> rightClick(WidgetTester tester, String text) async {
+    await tester.tap(
+      find.text(text, findRichText: true),
+      buttons: kSecondaryButton,
+      kind: PointerDeviceKind.mouse,
+    );
     await tester.pumpAndSettle();
   }
 
@@ -294,7 +300,7 @@ void main() {
     expect(tester.getRect(find.byType(ProxyCard).first).top, grid.top);
   });
 
-  testWidgets('a long press on a card offers to select it and to add it to '
+  testWidgets('a right click on a card offers to select it and to add it to '
       'the local proxies, one from a provider too', (tester) async {
     const group = Group(
       type: GroupType.Selector,
@@ -314,19 +320,35 @@ void main() {
         .set(_tabState([_group('A'), group]));
     await pumpTabView(tester);
     await tester.pumpAndSettle();
+    final menu = find.byType(CommonPopupMenu);
 
-    await tester.longPress(find.text('B-0', findRichText: true));
+    await rightClick(tester, 'B-0');
+
+    expect(
+      find.descendant(of: menu, matching: find.text('Select')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: menu, matching: find.byGlyph(AppGlyphs.check)),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: menu, matching: find.text('Add to local proxies')),
+      findsOneWidget,
+    );
+
+    await tester.tapAt(Offset.zero);
     await tester.pumpAndSettle();
+    await rightClick(tester, 'B-1');
 
-    expect(find.text('Select'), findsOneWidget);
-    expect(find.text('Add to local proxies'), findsOneWidget);
-
-    await closeSheet(tester);
-    await tester.longPress(find.text('B-1', findRichText: true));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Select'), findsOneWidget);
-    expect(find.text('Add to local proxies'), findsOneWidget);
+    expect(
+      find.descendant(of: menu, matching: find.text('Select')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: menu, matching: find.text('Add to local proxies')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('a custom profile offers to add only the proxies of a provider, '
@@ -349,18 +371,24 @@ void main() {
         .set(_tabState([_group('A'), group]));
     await pumpTabView(tester);
     await tester.pumpAndSettle();
+    final menu = find.byType(CommonPopupMenu);
 
-    await tester.longPress(find.text('B-0', findRichText: true));
-    await tester.pumpAndSettle();
+    await rightClick(tester, 'B-0');
 
-    expect(find.text('Select'), findsOneWidget);
+    expect(
+      find.descendant(of: menu, matching: find.text('Select')),
+      findsOneWidget,
+    );
     expect(find.text('Add to local proxies'), findsNothing);
 
-    await closeSheet(tester);
-    await tester.longPress(find.text('B-1', findRichText: true));
+    await tester.tapAt(Offset.zero);
     await tester.pumpAndSettle();
+    await rightClick(tester, 'B-1');
 
-    expect(find.text('Add to local proxies'), findsOneWidget);
+    expect(
+      find.descendant(of: menu, matching: find.text('Add to local proxies')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('a new current group leaves the visible cards as they were', (
