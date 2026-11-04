@@ -120,6 +120,7 @@ class _ProxyInfoSheet extends ConsumerWidget {
               ),
             ],
           ),
+          ProxyConnectionSection(name: proxy.name),
           generateSection(
             title: appLocalizations.network,
             items: [

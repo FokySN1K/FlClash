@@ -68,6 +68,7 @@ class _VpnInfoSheet extends ConsumerWidget {
                 ),
             ],
           ),
+          const RoutedConnectionSection(),
           generateSection(
             title: appLocalizations.network,
             items: [

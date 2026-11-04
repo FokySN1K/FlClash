@@ -182,6 +182,56 @@ abstract class RouteHit with _$RouteHit {
       _$RouteHitFromJson(json);
 }
 
+/// Where the Core sent a connection, as [RouteHit.exit] spells it out:
+/// `"name" type address`, the name Go-quoted because it may hold spaces.
+@immutable
+class RouteExit {
+  const RouteExit({
+    required this.name,
+    required this.type,
+    required this.address,
+  });
+
+  final String name;
+  final String type;
+  final String address;
+
+  static RouteExit? parse(String exit) {
+    final match = _exitPattern.firstMatch(exit);
+    if (match == null) {
+      return null;
+    }
+    return RouteExit(
+      name: match
+          .group(1)!
+          .replaceAllMapped(_exitEscape, (escape) => escape[1]!),
+      type: match.group(2)!,
+      address: match.group(3) ?? '',
+    );
+  }
+}
+
+/// Go's `%q` leaves a profile's names as they are but for these two escapes.
+final _exitPattern = RegExp(r'^"((?:[^"\\]|\\.)*)" (\S+)(?: (.*))?$');
+final _exitEscape = RegExp(r'\\(["\\])');
+
+extension RouteHitExt on RouteHit {
+  RouteExit? get exitInfo => RouteExit.parse(exit);
+}
+
+extension RouteHitsExt on Iterable<RouteHit> {
+  /// The first hit whose exit the Core spelled out in full.
+  RouteExit? get exitInfo {
+    for (final hit in this) {
+      final exit = hit.exitInfo;
+      if (exit != null && exit.name.isNotEmpty) {
+        return exit;
+      }
+    }
+    return null;
+  }
+}
+
 @freezed
 abstract class CheckRoutesParams with _$CheckRoutesParams {
   const factory CheckRoutesParams({@Default([]) List<List<RouteHit>> routes}) =
