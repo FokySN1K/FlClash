@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.11 (2026-11-04)
+
+**Features**
+
+- **vpn** Show the endpoint a node dials and the key it uses (b7cbcd6)
+
 ## v1.0.10 (2026-11-04)
 
 **Bug Fixes**

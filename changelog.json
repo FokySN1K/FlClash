@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.11",
+      "tag": "v1.0.11",
+      "date": "2026-11-04",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "b7cbcd6",
+              "scope": "vpn",
+              "text": "Show the endpoint a node dials and the key it uses"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.10",
       "tag": "v1.0.10",
       "date": "2026-11-04",
