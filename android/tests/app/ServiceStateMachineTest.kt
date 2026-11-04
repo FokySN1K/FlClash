@@ -18,15 +18,19 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-private fun vpnOptions(enable: Boolean = true, stack: String = "gvisor") = VpnOptions(
+private fun vpnOptions(
+    enable: Boolean = true,
+    stack: String = "gvisor",
+    acceptedApps: List<String> = emptyList(),
+) = VpnOptions(
     enable = enable,
     port = 7890,
     ipv6 = false,
     dnsHijacking = false,
     accessControlProps = AccessControlProps(
-        enable = false,
+        enable = acceptedApps.isNotEmpty(),
         mode = AccessControlMode.ACCEPT_SELECTED,
-        acceptList = emptyList(),
+        acceptList = acceptedApps,
         rejectList = emptyList(),
     ),
     allowBypass = false,
@@ -36,8 +40,12 @@ private fun vpnOptions(enable: Boolean = true, stack: String = "gvisor") = VpnOp
     routeAddress = emptyList(),
 )
 
-private fun configuredState(enable: Boolean = true, stack: String = "gvisor") = SharedState(
-    vpnOptions = vpnOptions(enable, stack),
+private fun configuredState(
+    enable: Boolean = true,
+    stack: String = "gvisor",
+    acceptedApps: List<String> = emptyList(),
+) = SharedState(
+    vpnOptions = vpnOptions(enable, stack, acceptedApps),
     setupParams = SetupParams(testUrl = "https://example.com", selectedMap = emptyMap()),
 )
 
@@ -156,7 +164,10 @@ private class FakeHost(override val scope: CoroutineScope) : ServiceStateHost {
         if (!startSucceeds) {
             return false
         }
-        runtime = ServiceRuntime(vpn = runsAsVpn ?: options.enable, startedAtMillis = STARTED_AT)
+        runtime = ServiceRuntime(
+            options = options.copy(enable = runsAsVpn ?: options.enable),
+            startedAtMillis = STARTED_AT,
+        )
         return true
     }
 
@@ -864,6 +875,72 @@ class ServiceStateMachineTest {
         assertEquals(0, host.startCalls)
         assertEquals(1, app.cancelledPreparations)
         assertEquals(RunState.STOPPED, machine.runState.value)
+    }
+
+    /** VpnService reads the app list in establish(), so a changed list needs a new tunnel. */
+    @Test
+    fun `a start on a run that kept another app list establishes the service again`() = runTest {
+        val host = FakeHost(backgroundScope)
+        val machine = ServiceStateMachine(host)
+        machine.syncSharedState(configuredState(acceptedApps = listOf("com.example.mail")))
+        machine.requestStart().await()
+
+        machine.syncSharedState(configuredState(acceptedApps = listOf("com.example.map")))
+        assertTrue(machine.requestStart().await())
+
+        assertEquals(1, host.stopCalls)
+        assertEquals(2, host.startCalls)
+        assertEquals(
+            listOf("com.example.map"),
+            host.lastStartOptions?.accessControlProps?.acceptList,
+        )
+        assertEquals(RunState.STARTED, machine.runState.value)
+    }
+
+    @Test
+    fun `a start that repeats the running app list keeps the tunnel`() = runTest {
+        val host = FakeHost(backgroundScope)
+        val machine = ServiceStateMachine(host)
+        machine.syncSharedState(configuredState(acceptedApps = listOf("com.example.mail")))
+        machine.requestStart().await()
+
+        machine.syncSharedState(configuredState(acceptedApps = listOf("com.example.mail")))
+        assertTrue(machine.requestStart().await())
+
+        assertEquals(0, host.stopCalls)
+        assertEquals(1, host.startCalls)
+    }
+
+    /** The stack a start settled on is the stack the run has, not one to restart away. */
+    @Test
+    fun `a stack that fell back to gvisor is not torn down by the next start`() = runTest {
+        val host = FakeHost(backgroundScope)
+        host.localNetworkPermissionGranted = false
+        val machine = ServiceStateMachine(host)
+        machine.syncSharedState(configuredState(stack = "system"))
+
+        assertTrue(machine.requestStart().await())
+        assertEquals("gvisor", host.lastStartOptions?.stack)
+
+        assertTrue(machine.requestStart().await())
+        assertEquals(0, host.stopCalls)
+        assertEquals(1, host.startCalls)
+    }
+
+    @Test
+    fun `a restart brings the tunnel down before the next start brings it up`() = runTest {
+        val host = FakeHost(backgroundScope)
+        val machine = ServiceStateMachine(host)
+        machine.syncSharedState(configuredState())
+        machine.requestStart().await()
+
+        assertTrue(machine.requestStop().await())
+        assertEquals(null, host.runtime)
+
+        assertTrue(machine.requestStart().await())
+        assertEquals(1, host.stopCalls)
+        assertEquals(2, host.startCalls)
+        assertEquals(RunState.STARTED, machine.runState.value)
     }
 
     @Test

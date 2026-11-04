@@ -12,6 +12,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.StandardMethodCodec
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -114,14 +115,27 @@ class ServicePlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
 
     private fun start(call: MethodCall, result: MethodChannel.Result) {
         commandRevision = call.arguments as? Int ?: commandRevision
-        ServiceState.requestStart()
-        result.success(true)
+        replyWhenSettled(result, ServiceState.requestStart())
     }
 
     private fun stop(call: MethodCall, result: MethodChannel.Result) {
         commandRevision = call.arguments as? Int ?: commandRevision
-        ServiceState.requestStop()
-        result.success(true)
+        replyWhenSettled(result, ServiceState.requestStop())
+    }
+
+    // Flutter's setRunning waits for this answer before it moves on, so the answer has to
+    // describe a settled run: replying at once let the start that follows overtake the stop
+    // that was about to take the tunnel down, and the app then reported a restart that never
+    // happened, leaving VpnService on the app list it was first established with.
+    private fun replyWhenSettled(result: MethodChannel.Result, transition: Deferred<Boolean>) {
+        scope.launch {
+            val settled = try {
+                transition.await()
+            } catch (_: Exception) {
+                false
+            }
+            result.success(settled)
+        }
     }
 
     // Read on the platform thread, where start and stop arrive: revision and intent are one instant.

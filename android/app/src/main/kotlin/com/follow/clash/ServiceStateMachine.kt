@@ -139,8 +139,12 @@ internal class ServiceStateMachine(private val host: ServiceStateHost) {
     }
 
     // No new request for a settled run: one refused at a prompt would take the service down.
+    // The options are compared whole: the app list reaches VpnService only through establish(),
+    // so a run that kept an older list does not answer for the options in force now.
     private fun isStartedAs(options: VpnOptions?): Boolean =
-        runState.value == RunState.STARTED && host.runtime?.vpn == options?.enable
+        runState.value == RunState.STARTED &&
+            options != null &&
+            host.runtime?.options == effectiveOptions(options)
 
     // The intent is claimed before the Core is set up, so a second action that lands meanwhile
     // toggles this start off instead of racing a second setup against it.
@@ -249,19 +253,39 @@ internal class ServiceStateMachine(private val host: ServiceStateHost) {
         return transitionLock.withLock {
             when {
                 !isCurrent(request) -> false
-                host.runtime?.vpn == options.enable -> true
-                else -> transitioning(RunState.STARTING) {
-                    host.startService(withLocalNetworkFallback(options)) && isCurrent(request)
-                }
+                host.runtime?.options == effectiveOptions(options) -> true
+                else -> establish(withLocalNetworkFallback(options), request)
             }
         }
     }
 
+    // A running service holds the tunnel it was established with, so changed options — the
+    // allowed app list above all — are honoured only by a new establish(): the old service is
+    // taken down inside this request instead of being left up as if nothing had changed.
+    private suspend fun establish(options: VpnOptions, request: RunRequest): Boolean {
+        if (host.runtime != null) {
+            stopLocked()
+            if (!isCurrent(request)) {
+                return false
+            }
+        }
+        return transitioning(RunState.STARTING) {
+            host.startService(options) && isCurrent(request)
+        }
+    }
+
     // system/mixed hand TCP to the kernel via the tun subnet, which Android 17 gates as local network.
+    private fun needsFallback(options: VpnOptions): Boolean =
+        options.enable && options.stack in KERNEL_TCP_STACKS &&
+            !host.isLocalNetworkPermissionGranted()
+
+    // What a start of these options would really establish, so a run that already fell back
+    // is not torn down again by the very next start.
+    private fun effectiveOptions(options: VpnOptions): VpnOptions =
+        if (needsFallback(options)) options.copy(stack = FALLBACK_STACK) else options
+
     private fun withLocalNetworkFallback(options: VpnOptions): VpnOptions {
-        if (!options.enable || options.stack !in KERNEL_TCP_STACKS ||
-            host.isLocalNetworkPermissionGranted()
-        ) {
+        if (!needsFallback(options)) {
             return options
         }
         host.showToast(sharedState.localNetworkTip)
@@ -283,13 +307,13 @@ internal class ServiceStateMachine(private val host: ServiceStateHost) {
 
     private suspend fun stop(request: RunRequest): Boolean = transitionLock.withLock {
         if (!isCurrent(request)) {
-            return@withLock false
+            return@withLock host.runtime == null
         }
         abandonVpnPreparation()
         if (host.runtime != null) {
             stopLocked()
         }
-        isCurrent(request)
+        host.runtime == null
     }
 
     private suspend fun stopLocked() = transitioning(RunState.STOPPING) { stopService() }
