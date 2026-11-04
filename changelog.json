@@ -2,6 +2,34 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.8",
+      "tag": "v1.0.8",
+      "date": "2026-11-04",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "2f314b3",
+              "scope": "android",
+              "text": "Install the update without leaving the app"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "08d1286",
+              "scope": "android",
+              "text": "Apply a changed app list to a fresh tunnel"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.7",
       "tag": "v1.0.7",
       "date": "2026-11-04",

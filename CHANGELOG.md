@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.0.8 (2026-11-04)
+
+**Features**
+
+- **android** Install the update without leaving the app (2f314b3)
+
+**Bug Fixes**
+
+- **android** Apply a changed app list to a fresh tunnel (08d1286)
+
 ## v1.0.7 (2026-11-04)
 
 **Bug Fixes**
