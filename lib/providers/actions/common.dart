@@ -160,6 +160,13 @@ class CommonAction extends _$CommonAction {
   Future<void> installRelease(Map<String, dynamic> release) async {
     final asset = releaseAsset(release);
     if (asset == null) {
+      // The dialog names the release, not the archive; the log says which one
+      // this build looked for, so a jump to the page can be explained later.
+      final tagName = release['tag_name'];
+      commonPrint.log(
+        'no ${releaseAssetSuffix()} archive in release $tagName',
+        logLevel: LogLevel.warning,
+      );
       unawaited(
         launchUrl(Uri.parse('https://github.com/$repository/releases/latest')),
       );

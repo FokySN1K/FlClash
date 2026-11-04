@@ -58,6 +58,47 @@ ReleaseAsset? releaseAsset(Map<String, dynamic> release, {String? suffix}) {
   return null;
 }
 
+/// The archives a release page links to, shaped like the `assets` of the API
+/// answer so both sources feed [releaseAsset] the same way. The page is the
+/// only place that still names them once the hourly API quota is spent.
+List<Map<String, dynamic>> releaseAssetsFromPage(
+  String html, {
+  required String tag,
+}) {
+  final assets = <Map<String, dynamic>>[];
+  final seen = <String>{};
+  for (final match in _hrefPattern.allMatches(html)) {
+    final uri = Uri.tryParse(match.group(1)!);
+    if (uri == null) {
+      continue;
+    }
+    final segments = uri.pathSegments;
+    final download = segments.lastIndexOf('download');
+    // An archive is linked as <owner>/<repo>/releases/download/<tag>/<name>;
+    // the tag has to match, or a link to a neighbouring release on the page
+    // would answer for this one.
+    if (download < 2 || segments.length != download + 3) {
+      continue;
+    }
+    if (segments[download - 1] != 'releases' || segments[download + 1] != tag) {
+      continue;
+    }
+    final name = segments.last;
+    if (!seen.add(name)) {
+      continue;
+    }
+    assets.add({'name': name, 'browser_download_url': _assetUrl(uri)});
+  }
+  return assets;
+}
+
+final _hrefPattern = RegExp(r'href="([^"]+)"');
+
+String _assetUrl(Uri uri) {
+  final link = uri.replace(query: null, fragment: null);
+  return link.hasScheme ? link.toString() : 'https://github.com$link';
+}
+
 /// Streams [asset] into the folder the system can still read once this process
 /// has stepped aside for the installer.
 Future<File> downloadReleaseAsset(ReleaseAsset asset) async {

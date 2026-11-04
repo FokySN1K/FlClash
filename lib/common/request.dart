@@ -109,7 +109,9 @@ class Request {
     return hasUpdate ? release : null;
   }
 
-  /// The release page redirect still answers once the hourly API quota is spent.
+  /// The release page redirect still answers once the hourly API quota is
+  /// spent, and the page itself still names the archives, so a spent quota
+  /// costs the changelog of the dialog but not the download.
   @visibleForTesting
   Future<Map<String, dynamic>> latestRelease() async {
     try {
@@ -137,7 +139,28 @@ class Request {
     if (tagIndex == 0 || tagIndex >= segments.length) {
       throw FormatException('No release tag in the redirect', location);
     }
-    return {'tag_name': segments[tagIndex]};
+    final tag = segments[tagIndex];
+    final assets = await _releasePageAssets(tag);
+    return {'tag_name': tag, 'assets': ?assets};
+  }
+
+  /// The release page lists every archive the release published, so the update
+  /// still finds its download while the API cannot be asked.
+  Future<List<Map<String, dynamic>>?> _releasePageAssets(String tag) async {
+    try {
+      final response = await dio.get<String>(
+        'https://github.com/$repository/releases/expanded_assets/${Uri.encodeComponent(tag)}',
+        options: Options(responseType: ResponseType.plain),
+      );
+      final assets = releaseAssetsFromPage(response.data ?? '', tag: tag);
+      return assets.isEmpty ? null : assets;
+    } catch (error) {
+      commonPrint.log(
+        'release page assets failed: ${compactError(error)}',
+        logLevel: LogLevel.warning,
+      );
+      return null;
+    }
   }
 }
 
