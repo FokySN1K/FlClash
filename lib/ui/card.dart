@@ -113,6 +113,8 @@ class CommonCard extends StatelessWidget {
     this.statesController,
     this.inert = false,
     this.fillsSelection = false,
+    this.tint,
+    this.tintPulse = false,
     required this.child,
   }) : isSelected = isSelected ?? false;
 
@@ -132,6 +134,15 @@ class CommonCard extends StatelessWidget {
   final OutlinedBorder? shape;
   final WidgetStatesController? statesController;
 
+  /// A wash behind the card's surface that marks a transient state.
+  final Color? tint;
+
+  /// Breathes [tint], so a card that is working reads as busy.
+  final bool tintPulse;
+
+  /// How much of [tint] a settled card shows.
+  static const double tintOpacity = 0.15;
+
   BorderSide _buildBorderSide(
     BuildContext context,
     Set<WidgetState> states, {
@@ -147,7 +158,11 @@ class CommonCard extends StatelessWidget {
 
   bool get _filled => isSelected && fillsSelection;
 
-  Color _buildBackgroundColor(BuildContext context, SurfaceLevel level) {
+  Color _buildBackgroundColor(
+    BuildContext context,
+    SurfaceLevel level, {
+    Color? tint,
+  }) {
     final colorScheme = context.colorScheme;
     if (isError) {
       return colorScheme.errorContainer;
@@ -155,7 +170,8 @@ class CommonCard extends StatelessWidget {
     if (_filled) {
       return colorScheme.primary;
     }
-    return level.colorOf(colorScheme);
+    final surface = level.colorOf(colorScheme);
+    return tint == null ? surface : Color.alphaBlend(tint, surface);
   }
 
   Color _buildForegroundColor(BuildContext context) {
@@ -180,7 +196,7 @@ class CommonCard extends StatelessWidget {
     return colorScheme.primary;
   }
 
-  Widget _buildButton(BuildContext context, SurfaceLevel level) {
+  Widget _buildButton(BuildContext context, SurfaceLevel level, {Color? tint}) {
     final iconColor = _buildIconColor(context);
     final foregroundColor = _buildForegroundColor(context);
     final remote = RemoteFocusAdapter.isEnabledOf(context);
@@ -201,7 +217,7 @@ class CommonCard extends StatelessWidget {
               elevation: 0,
             ).copyWith(
               backgroundColor: WidgetStatePropertyAll(
-                _buildBackgroundColor(context, level),
+                _buildBackgroundColor(context, level, tint: tint),
               ),
               side: WidgetStateProperty.resolveWith(
                 (states) => _buildBorderSide(
@@ -223,7 +239,16 @@ class CommonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final button = _buildButton(context, context.raisedSurfaceLevel);
+    final level = context.raisedSurfaceLevel;
+    final button = switch (tint) {
+      null => _buildButton(context, level),
+      final tint => _PulsingTint(
+        color: tint,
+        opacity: tintOpacity,
+        pulse: tintPulse,
+        builder: (tint) => _buildButton(context, level, tint: tint),
+      ),
+    };
     final card = !enterActionsOnRight
         ? button
         : Focus(
@@ -268,4 +293,76 @@ class CommonCard extends StatelessWidget {
 class SkipTraversalFocusNode extends FocusNode {
   @override
   bool get skipTraversal => true;
+}
+
+/// Rebuilds a card's surface with a tint that breathes while [pulse] is set.
+/// A pulse is a transient state, so a settled card runs no ticker at all.
+class _PulsingTint extends StatefulWidget {
+  const _PulsingTint({
+    required this.color,
+    required this.opacity,
+    required this.pulse,
+    required this.builder,
+  });
+
+  /// The tint at full strength; [opacity] is what a settled card shows.
+  final Color color;
+  final double opacity;
+  final bool pulse;
+  final Widget Function(Color tint) builder;
+
+  @override
+  State<_PulsingTint> createState() => _PulsingTintState();
+}
+
+class _PulsingTintState extends State<_PulsingTint>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _syncPulse();
+  }
+
+  @override
+  void didUpdateWidget(covariant _PulsingTint oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.pulse != oldWidget.pulse) {
+      _syncPulse();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _syncPulse() {
+    if (widget.pulse) {
+      _controller.repeat(reverse: true);
+      return;
+    }
+    _controller.stop();
+    _controller.value = 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.pulse) {
+      return widget.builder(widget.color.withValues(alpha: widget.opacity));
+    }
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) => widget.builder(
+        widget.color.withValues(
+          alpha: widget.opacity * (0.45 + 1.1 * _controller.value),
+        ),
+      ),
+    );
+  }
 }

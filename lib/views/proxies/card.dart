@@ -191,6 +191,13 @@ class ProxyCard extends ConsumerWidget {
             (profile) => profile?.type == ProfileType.custom,
           ),
         );
+        final phase = ref.watch(
+          delayTestPhaseProvider(proxyName: proxy.name, testUrl: testUrl),
+        );
+        final tint = context.colorScheme.delayCardTint(
+          ref.watch(delayProvider(proxyName: proxy.name, testUrl: testUrl)),
+          testing: phase != null,
+        );
         return ContextMenuRegion(
           menuItems: _menuItems(
             context,
@@ -216,6 +223,8 @@ class ProxyCard extends ConsumerWidget {
             key: key,
             onPressed: () => _handleSelect(ref),
             isSelected: inUse,
+            tint: tint,
+            tintPulse: phase != null,
             child: Container(
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 12),

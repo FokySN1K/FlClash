@@ -353,4 +353,11 @@ extension ColorSchemeExtension on ColorScheme {
     if (delay < 600) return success;
     return warning;
   }
+
+  /// The pale wash a proxy card wears: blue while a test runs, red for an
+  /// unreachable node, yellow for a slow one and green for a fast one.
+  Color? delayCardTint(int? delay, {required bool testing}) {
+    if (testing) return const Color(0xFF4FC3F7);
+    return delayColor(delay);
+  }
 }
