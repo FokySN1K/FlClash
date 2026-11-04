@@ -537,7 +537,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "이 문구를 읽고 이해했습니다",
     ),
     "disclaimerAcknowledgeTip": MessageLookupByLibrary.simpleMessage(
-      "내용을 이해했는지 확인하기 위해 다음 문구를 읽고 아래 항목에 체크하세요.",
+      "본 면책 조항을 읽고 이에 동의했음을 확인하려면 아래 항목에 체크하세요.",
     ),
     "disclaimerAcknowledgeTitle": MessageLookupByLibrary.simpleMessage("문구 확인"),
     "disclaimerChangesContent": MessageLookupByLibrary.simpleMessage(

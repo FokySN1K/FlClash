@@ -644,7 +644,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "I have read and understand this statement",
     ),
     "disclaimerAcknowledgeTip": MessageLookupByLibrary.simpleMessage(
-      "To confirm you understand, read the following statement and check the box below:",
+      "Check the box below to confirm that you have read and accept the terms of this disclaimer.",
     ),
     "disclaimerAcknowledgeTitle": MessageLookupByLibrary.simpleMessage(
       "Confirm the statement",

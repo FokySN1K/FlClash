@@ -340,7 +340,7 @@
   "disclaimerRestateHint": "在此输入上述声明",
   "disclaimerRestateMismatch": "与声明内容不一致",
   "disclaimerAcknowledgeTitle": "确认声明",
-  "disclaimerAcknowledgeTip": "为确认你已知悉，请阅读以下声明并勾选下方选项：",
+  "disclaimerAcknowledgeTip": "勾选下方选项，即表示你已阅读并同意本免责声明的条款。",
   "disclaimerAcknowledgeLabel": "我已阅读并理解此声明",
   "agree": "同意",
   "hotkeyManagement": "快捷键管理",

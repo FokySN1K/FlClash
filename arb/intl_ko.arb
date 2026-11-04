@@ -340,7 +340,7 @@
   "disclaimerRestateHint": "위 문구를 입력하세요",
   "disclaimerRestateMismatch": "문구와 일치하지 않습니다",
   "disclaimerAcknowledgeTitle": "문구 확인",
-  "disclaimerAcknowledgeTip": "내용을 이해했는지 확인하기 위해 다음 문구를 읽고 아래 항목에 체크하세요.",
+  "disclaimerAcknowledgeTip": "본 면책 조항을 읽고 이에 동의했음을 확인하려면 아래 항목에 체크하세요.",
   "disclaimerAcknowledgeLabel": "이 문구를 읽고 이해했습니다",
   "agree": "동의",
   "hotkeyManagement": "단축키 관리",

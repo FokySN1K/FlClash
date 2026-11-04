@@ -2759,7 +2759,7 @@ class AppLocalizations {
   /// `To confirm you understand, read the following statement and check the box below:`
   String get disclaimerAcknowledgeTip {
     return Intl.message(
-      'To confirm you understand, read the following statement and check the box below:',
+      'Check the box below to confirm that you have read and accept the terms of this disclaimer.',
       name: 'disclaimerAcknowledgeTip',
       desc: '',
       args: [],

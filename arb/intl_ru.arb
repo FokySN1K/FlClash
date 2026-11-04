@@ -340,7 +340,7 @@
   "disclaimerRestateHint": "Введите заявление выше",
   "disclaimerRestateMismatch": "Не совпадает с текстом заявления",
   "disclaimerAcknowledgeTitle": "Подтвердите заявление",
-  "disclaimerAcknowledgeTip": "Чтобы подтвердить, что вы ознакомились с ним, прочитайте следующее заявление и отметьте пункт ниже:",
+  "disclaimerAcknowledgeTip": "Отметьте пункт ниже, чтобы подтвердить, что вы прочитали и принимаете условия этого заявления.",
   "disclaimerAcknowledgeLabel": "Я прочитал(а) и понимаю это заявление",
   "agree": "Согласен",
   "hotkeyManagement": "Горячие клавиши",

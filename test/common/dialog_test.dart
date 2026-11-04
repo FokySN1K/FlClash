@@ -62,14 +62,14 @@ String _noServiceStatement(WidgetTester tester) {
       .disclaimerNoServiceStatement;
 }
 
-TextButton _restateConfirmButton(WidgetTester tester) {
+TextButton _acknowledgeConfirmButton(WidgetTester tester) {
   return tester.widget<TextButton>(find.widgetWithText(TextButton, 'Confirm'));
 }
 
-Future<void> _agreeAndRestate(WidgetTester tester) async {
+Future<void> _agreeAndAcknowledge(WidgetTester tester) async {
   await tester.tap(find.text('Agree'));
   await tester.pumpAndSettle();
-  await tester.enterText(find.byType(TextField), _noServiceStatement(tester));
+  await tester.tap(find.text('I have read and understand this statement'));
   await tester.pump();
   await tester.tap(find.text('Confirm'));
   await tester.pumpAndSettle();
@@ -310,7 +310,7 @@ void main() {
       final agreed = requestDisclaimerConsent();
       await tester.pumpAndSettle();
       expect(find.text('Data collection and privacy'), findsOneWidget);
-      await _agreeAndRestate(tester);
+      await _agreeAndAcknowledge(tester);
       expect(await agreed, isTrue);
 
       final declined = requestDisclaimerConsent();
@@ -343,7 +343,7 @@ void main() {
     );
     expect(_disclaimerAgreeButton(tester).onPressed, isNotNull);
 
-    await _agreeAndRestate(tester);
+    await _agreeAndAcknowledge(tester);
     expect(await agreed, isTrue);
   });
 
@@ -394,11 +394,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(_disclaimerAgreeButton(tester).onPressed, isNotNull);
 
-    await _agreeAndRestate(tester);
+    await _agreeAndAcknowledge(tester);
     expect(await agreed, isTrue);
   });
 
-  testWidgets('disclaimer agree waits for the statement to be restated', (
+  testWidgets('disclaimer agree waits for the statement to be acknowledged', (
     tester,
   ) async {
     await _pumpHost(tester);
@@ -407,38 +407,27 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Agree'));
     await tester.pumpAndSettle();
-    expect(find.text('Restate the statement'), findsOneWidget);
-    expect(_restateConfirmButton(tester).onPressed, isNull);
-
-    final field = find.byType(TextField);
-    await tester.enterText(field, 'The Software itself');
-    await tester.pump();
-    expect(find.text('Does not match the statement'), findsNothing);
-    expect(_restateConfirmButton(tester).onPressed, isNull);
-
-    await tester.enterText(field, 'The Software itself provides');
-    await tester.pump();
-    expect(find.text('Does not match the statement'), findsOneWidget);
+    expect(find.text('Confirm the statement'), findsOneWidget);
+    expect(find.byType(TextField), findsNothing);
+    expect(_acknowledgeConfirmButton(tester).onPressed, isNull);
 
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();
-    expect(find.text('Restate the statement'), findsNothing);
+    expect(find.text('Confirm the statement'), findsNothing);
     expect(find.byType(DisclaimerView), findsOneWidget);
 
     await tester.tap(find.text('Agree'));
     await tester.pumpAndSettle();
-    expect(tester.widget<TextField>(field).controller!.text, isEmpty);
-    await tester.enterText(field, '${_noServiceStatement(tester)}\n');
+    expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isFalse);
+    await tester.tap(find.text('I have read and understand this statement'));
     await tester.pump();
-    expect(_restateConfirmButton(tester).onPressed, isNotNull);
+    expect(_acknowledgeConfirmButton(tester).onPressed, isNotNull);
     await tester.tap(find.text('Confirm'));
     await tester.pumpAndSettle();
     expect(await agreed, isTrue);
   });
 
-  testWidgets('on a remote, agree waits for the statement to be checked', (
-    tester,
-  ) async {
+  testWidgets('on a remote, agree asks for the same check box', (tester) async {
     await _pumpHost(tester, remote: true);
 
     final agreed = requestDisclaimerConsent();
@@ -447,17 +436,17 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Confirm the statement'), findsOneWidget);
     expect(find.byType(TextField), findsNothing);
-    expect(_restateConfirmButton(tester).onPressed, isNull);
+    expect(_acknowledgeConfirmButton(tester).onPressed, isNull);
 
     await tester.tap(find.text('I have read and understand this statement'));
     await tester.pump();
-    expect(_restateConfirmButton(tester).onPressed, isNotNull);
+    expect(_acknowledgeConfirmButton(tester).onPressed, isNotNull);
     await tester.tap(find.text('Confirm'));
     await tester.pumpAndSettle();
     expect(await agreed, isTrue);
   });
 
-  testWidgets('restating keeps the statement selectable without a shortcut', (
+  testWidgets('acknowledging never asks to retype the statement', (
     tester,
   ) async {
     await _pumpHost(tester);
@@ -468,37 +457,25 @@ void main() {
     await tester.pumpAndSettle();
 
     final statement = _noServiceStatement(tester);
-    expect(
-      find.byWidgetPredicate(
-        (widget) => widget is SelectableText && widget.data == statement,
-      ),
-      findsOneWidget,
-    );
+    expect(find.byType(TextField), findsNothing);
     expect(
       find.descendant(
         of: find.byType(AlertDialog),
-        matching: find.byType(IconButton),
+        matching: find.text(statement),
       ),
       findsNothing,
+      reason:
+          'the statement is term 1 on the page, and repeating it is what '
+          'pushed the box out of reach on a phone',
     );
-    final field = find.byType(TextField);
-    expect(tester.widget<TextField>(field).controller!.text, isEmpty);
-
-    await tester.showKeyboard(field);
-    tester.testTextInput.updateEditingValue(
-      const TextEditingValue(
-        text: 'The Softwarexy',
-        composing: TextRange(start: 12, end: 14),
+    expect(
+      find.descendant(
+        of: find.byType(DisclaimerView),
+        matching: find.text(statement),
       ),
+      findsOneWidget,
     );
-    await tester.pump();
-    expect(find.text('Does not match the statement'), findsNothing);
-
-    tester.testTextInput.updateEditingValue(
-      const TextEditingValue(text: 'The Softwarexy'),
-    );
-    await tester.pump();
-    expect(find.text('Does not match the statement'), findsOneWidget);
+    expect(_acknowledgeConfirmButton(tester).onPressed, isNull);
 
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();

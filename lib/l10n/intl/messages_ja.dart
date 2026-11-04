@@ -548,7 +548,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "この声明を読み、理解しました",
     ),
     "disclaimerAcknowledgeTip": MessageLookupByLibrary.simpleMessage(
-      "内容を理解したことを確認するため、以下の声明を読み、下のチェックボックスをオンにしてください：",
+      "この免責事項を読み、その内容に同意したことを確認するには、下のチェックボックスをオンにしてください。",
     ),
     "disclaimerAcknowledgeTitle": MessageLookupByLibrary.simpleMessage("声明の確認"),
     "disclaimerChangesContent": MessageLookupByLibrary.simpleMessage(

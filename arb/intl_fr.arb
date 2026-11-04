@@ -340,7 +340,7 @@
   "disclaimerRestateHint": "Saisissez la déclaration ci-dessus",
   "disclaimerRestateMismatch": "Ne correspond pas à la déclaration",
   "disclaimerAcknowledgeTitle": "Confirmer la déclaration",
-  "disclaimerAcknowledgeTip": "Pour confirmer que vous avez compris, lisez la déclaration suivante et cochez la case ci-dessous :",
+  "disclaimerAcknowledgeTip": "Cochez la case ci-dessous pour confirmer que vous avez lu et acceptez les conditions de cet avertissement.",
   "disclaimerAcknowledgeLabel": "J'ai lu et compris cette déclaration",
   "agree": "Accepter",
   "hotkeyManagement": "Gestion des raccourcis",

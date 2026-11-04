@@ -340,7 +340,7 @@
   "disclaimerRestateHint": "Enter the statement above",
   "disclaimerRestateMismatch": "Does not match the statement",
   "disclaimerAcknowledgeTitle": "Confirm the statement",
-  "disclaimerAcknowledgeTip": "To confirm you understand, read the following statement and check the box below:",
+  "disclaimerAcknowledgeTip": "Check the box below to confirm that you have read and accept the terms of this disclaimer.",
   "disclaimerAcknowledgeLabel": "I have read and understand this statement",
   "agree": "Agree",
   "hotkeyManagement": "Hotkey management",

@@ -668,7 +668,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Я прочитал(а) и понимаю это заявление",
     ),
     "disclaimerAcknowledgeTip": MessageLookupByLibrary.simpleMessage(
-      "Чтобы подтвердить, что вы ознакомились с ним, прочитайте следующее заявление и отметьте пункт ниже:",
+      "Отметьте пункт ниже, чтобы подтвердить, что вы прочитали и принимаете условия этого заявления.",
     ),
     "disclaimerAcknowledgeTitle": MessageLookupByLibrary.simpleMessage(
       "Подтвердите заявление",

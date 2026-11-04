@@ -6,7 +6,7 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// True only after "Agree" and the restatement; any other way out declines.
+/// True only after "Agree" and the acknowledgment; any other way out declines.
 Future<bool> requestDisclaimerConsent() async {
   return await BaseNavigator.push<bool>(
         rootNavigatorKey.currentContext!,
@@ -301,12 +301,12 @@ class _ConsentBar extends StatelessWidget {
   }
 
   Future<void> _handleAgree(BuildContext context) async {
-    final restated = await dialogs.showCommonDialog<bool>(
+    final acknowledged = await dialogs.showCommonDialog<bool>(
       context: context,
       dismissible: false,
-      child: const _RestateDialog(),
+      child: const _AcknowledgeDialog(),
     );
-    if (restated == true && context.mounted) {
+    if (acknowledged == true && context.mounted) {
       Navigator.of(context).pop(true);
     }
   }
@@ -365,67 +365,25 @@ class _ConsentBar extends StatelessWidget {
   }
 }
 
-enum _Restatement {
-  partial,
-  diverged,
-  complete;
-
-  static _Restatement of(TextEditingValue value, String statement) {
-    if (value.text.trim() == statement) {
-      return complete;
-    }
-    // Pinyin or kana still being composed is not part of the restatement yet.
-    final composing = value.composing;
-    final committed = value.isComposingRangeValid
-        ? composing.textBefore(value.text) + composing.textAfter(value.text)
-        : value.text;
-    return statement.startsWith(committed.trimLeft()) ? partial : diverged;
-  }
-}
-
-class _RestateDialog extends StatefulWidget {
-  const _RestateDialog();
+// One check box instead of retyping the statement: what matters is that the
+// person read it, and a box is the way that works on a phone and on a remote
+// alike. The statement itself stays term 1 on the page behind, so repeating it
+// here only pushed the box out of reach on a small screen.
+class _AcknowledgeDialog extends StatefulWidget {
+  const _AcknowledgeDialog();
 
   @override
-  State<_RestateDialog> createState() => _RestateDialogState();
+  State<_AcknowledgeDialog> createState() => _AcknowledgeDialogState();
 }
 
-class _RestateDialogState extends State<_RestateDialog> {
-  final _controller = TextEditingController();
+class _AcknowledgeDialogState extends State<_AcknowledgeDialog> {
   bool _acknowledged = false;
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  Widget _buildStatement(String statement) {
-    return DecoratedBox(
-      decoration: ShapeDecoration(
-        color: context.raisedSurfaceLevel.colorOf(context.colorScheme),
-        shape: AppShape.lg,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: SelectableText(
-          statement,
-          style: AppTextStyle.subheadline.of(context).copyWith(height: 1.6),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDialog({
-    required String title,
-    required String tip,
-    required String statement,
-    required bool canConfirm,
-    required Widget confirmation,
-  }) {
+  Widget build(BuildContext context) {
     final appLocalizations = context.appLocalizations;
     return CommonDialog(
-      title: title,
+      title: appLocalizations.disclaimerAcknowledgeTitle,
       actions: [
         TextButton(
           onPressed: () {
@@ -434,7 +392,7 @@ class _RestateDialogState extends State<_RestateDialog> {
           child: Text(appLocalizations.cancel),
         ),
         TextButton(
-          onPressed: canConfirm
+          onPressed: _acknowledged
               ? () {
                   Navigator.of(context).pop(true);
                 }
@@ -446,71 +404,23 @@ class _RestateDialogState extends State<_RestateDialog> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            tip,
+            appLocalizations.disclaimerAcknowledgeTip,
             style: AppTextStyle.subheadline
                 .of(context)
                 .copyWith(color: context.colorScheme.onSurfaceVariant),
           ),
-          const SizedBox(height: 12),
-          _buildStatement(statement),
           const SizedBox(height: 16),
-          confirmation,
+          generateGroup([
+            ListItem.checkbox(
+              title: Text(appLocalizations.disclaimerAcknowledgeLabel),
+              value: _acknowledged,
+              onChanged: (value) {
+                setState(() => _acknowledged = value ?? false);
+              },
+            ),
+          ]),
         ],
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final appLocalizations = context.appLocalizations;
-    final statement = appLocalizations.disclaimerNoServiceStatement;
-    // Typing the statement out takes hundreds of presses on a remote.
-    if (RemoteFocusAdapter.isEnabledOf(context)) {
-      return _buildDialog(
-        title: appLocalizations.disclaimerAcknowledgeTitle,
-        tip: appLocalizations.disclaimerAcknowledgeTip,
-        statement: statement,
-        canConfirm: _acknowledged,
-        confirmation: generateGroup([
-          ListItem.checkbox(
-            title: Text(appLocalizations.disclaimerAcknowledgeLabel),
-            value: _acknowledged,
-            onChanged: (value) {
-              setState(() => _acknowledged = value ?? false);
-            },
-          ),
-        ]),
-      );
-    }
-    return ValueListenableBuilder<TextEditingValue>(
-      valueListenable: _controller,
-      builder: (context, value, _) {
-        final restatement = _Restatement.of(value, statement);
-        return _buildDialog(
-          title: appLocalizations.disclaimerRestateTitle,
-          tip: appLocalizations.disclaimerRestateTip,
-          statement: statement,
-          canConfirm: restatement == _Restatement.complete,
-          confirmation: FilledInputTheme(
-            borderRadius: AppRadius.lg,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
-            ),
-            child: TextField(
-              controller: _controller,
-              minLines: 3,
-              maxLines: null,
-              decoration: InputDecoration(
-                hintText: appLocalizations.disclaimerRestateHint,
-                errorText: restatement == _Restatement.diverged
-                    ? appLocalizations.disclaimerRestateMismatch
-                    : null,
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }

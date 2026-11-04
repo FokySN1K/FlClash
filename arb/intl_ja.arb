@@ -340,7 +340,7 @@
   "disclaimerRestateHint": "上記の声明を入力",
   "disclaimerRestateMismatch": "声明の内容と一致しません",
   "disclaimerAcknowledgeTitle": "声明の確認",
-  "disclaimerAcknowledgeTip": "内容を理解したことを確認するため、以下の声明を読み、下のチェックボックスをオンにしてください：",
+  "disclaimerAcknowledgeTip": "この免責事項を読み、その内容に同意したことを確認するには、下のチェックボックスをオンにしてください。",
   "disclaimerAcknowledgeLabel": "この声明を読み、理解しました",
   "agree": "同意する",
   "hotkeyManagement": "ホットキー管理",

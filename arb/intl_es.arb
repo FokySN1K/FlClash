@@ -340,7 +340,7 @@
   "disclaimerRestateHint": "Escribe la declaración anterior",
   "disclaimerRestateMismatch": "No coincide con la declaración",
   "disclaimerAcknowledgeTitle": "Confirma la declaración",
-  "disclaimerAcknowledgeTip": "Para confirmar que lo entiendes, lee la siguiente declaración y marca la casilla de abajo:",
+  "disclaimerAcknowledgeTip": "Marca la casilla de abajo para confirmar que has leído y aceptas los términos de este aviso.",
   "disclaimerAcknowledgeLabel": "He leído y entiendo esta declaración",
   "agree": "Aceptar",
   "hotkeyManagement": "Gestión de atajos",

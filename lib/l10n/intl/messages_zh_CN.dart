@@ -501,7 +501,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "我已阅读并理解此声明",
     ),
     "disclaimerAcknowledgeTip": MessageLookupByLibrary.simpleMessage(
-      "为确认你已知悉，请阅读以下声明并勾选下方选项：",
+      "勾选下方选项，即表示你已阅读并同意本免责声明的条款。",
     ),
     "disclaimerAcknowledgeTitle": MessageLookupByLibrary.simpleMessage("确认声明"),
     "disclaimerChangesContent": MessageLookupByLibrary.simpleMessage(
