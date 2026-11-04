@@ -14,6 +14,9 @@ import (
 )
 
 func init() {
+	// The app drives every inbound from its own lifecycle, so ApplyConfig must
+	// leave the ports alone: they stay down until the service starts.
+	executor.DisableDefaultListeners()
 	mihomoHttp.TLSConfigHook = relaxCertVerify
 	adapter.UrlTestHook = func(url string, name string, delay uint16, timedOut bool) {
 		sendMessage(DelayMessage, &Delay{Url: url, Name: name, Value: delayValue(delay, timedOut)})
