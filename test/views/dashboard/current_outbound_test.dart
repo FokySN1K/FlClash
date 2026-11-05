@@ -10,6 +10,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/ip_quality.dart';
 import 'package:fl_clash/providers/outbound_ip.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/providers/proxy_definition.dart';
 import 'package:fl_clash/providers/routed_probe.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/dashboard/layout.dart';
@@ -95,21 +96,33 @@ Widget _card({DashboardDensity density = DashboardDensity.standard}) =>
 Widget _app(
   Future<IpQuality> Function(Ref ref, String ip) quality, {
   DashboardDensity density = DashboardDensity.standard,
+  List<RouteHit> hits = const [],
 }) {
+  final stamp = hits.isEmpty
+      ? null
+      : RouteStamp(
+          coreEpoch: 1,
+          routeVersion: 1,
+          hostEpoch: 1,
+          proxied: true,
+          hits: hits,
+        );
   return TestApp(
     locale: const Locale('en'),
     overrides: [
       profilesProvider.overrideWithValue(const [_profile]),
       suspendProvider.overrideWithValue(false),
       outboundIpProbeProvider.overrideWithBuild(
-        (_, _) => const RoutedProbeState({
+        (_, _) => RoutedProbeState({
           routedOutbound: ProbeEntry(
             phase: ProbePhase.fresh,
-            value: IpInfo(ip: _ip, countryCode: 'GB'),
+            value: const IpInfo(ip: _ip, countryCode: 'GB'),
+            stamp: stamp,
           ),
         }),
       ),
       ipQualityProvider.overrideWith(quality),
+      proxyDefinitionProvider.overrideWith((_, _) async => null),
     ],
     child: _card(density: density),
   );
@@ -470,6 +483,61 @@ void main() {
       await tester.pump(const Duration(milliseconds: 700));
       expect(find.text('Check failed'), findsOneWidget);
       expect(find.byType(SkeletonText), findsNothing);
+    });
+  });
+
+  group('the exit node', () {
+    const hit = RouteHit(
+      host: 'www.google.com',
+      exit: '"HK 01" Vless 1.2.3.4:443',
+    );
+    const label = 'HK 01 · Vless · 1.2.3.4:443';
+
+    testWidgets('names the node, its protocol and its endpoint', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _app((_, _) async => _residential, hits: const [hit]),
+      );
+      await tester.pump();
+
+      expect(find.text(label), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('opens the VPN sheet from the line', (tester) async {
+      _useTallView(tester);
+      await tester.pumpWidget(
+        _app((_, _) async => _residential, hits: const [hit]),
+      );
+      await tester.pump();
+
+      await tester.tap(find.text(label));
+      await tester.pumpAndSettle();
+
+      expect(find.text('VPN'), findsOneWidget);
+      expect(find.text('Connection'), findsOneWidget);
+    });
+
+    testWidgets('stays away while the route names no node', (tester) async {
+      await tester.pumpWidget(_app((_, _) async => _residential));
+      await tester.pump();
+
+      expect(find.textContaining('HK 01'), findsNothing);
+    });
+
+    testWidgets('fits a phone and keeps its node', (tester) async {
+      await tester.pumpWidget(
+        _app(
+          (_, _) async => _residential,
+          density: DashboardDensity.mobile,
+          hits: const [hit],
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text(label), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
   });
 

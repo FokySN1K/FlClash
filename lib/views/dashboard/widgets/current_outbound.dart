@@ -20,6 +20,7 @@ import 'package:material_new_shapes/material_new_shapes.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'card.dart';
+import 'vpn_info_sheet.dart';
 
 const _builtinOutbounds = {'DIRECT', 'REJECT', 'REJECT-DROP', 'PASS'};
 
@@ -75,6 +76,7 @@ class _CurrentOutboundCardState extends ConsumerState<CurrentOutboundCard>
       outboundIpProbeProvider.select((state) => state.entryOf(routedOutbound)),
     );
     final ipInfo = entry.value;
+    final exit = entry.stamp?.hits.exitInfo;
     final phase = shownPhase(entry);
     final failed = phase == ProbePhase.failed && ipInfo == null;
     final qualityState = ipInfo == null
@@ -171,9 +173,19 @@ class _CurrentOutboundCardState extends ConsumerState<CurrentOutboundCard>
                         large: !density.isDesktop,
                       ),
                       if (density.isDesktop)
-                        const Spacer()
-                      else
+                        Expanded(
+                          child: Align(
+                            alignment: AlignmentDirectional.bottomStart,
+                            child: _ExitNodeRow(exit: exit),
+                          ),
+                        )
+                      else ...[
+                        if (exit != null) ...[
+                          const SizedBox(height: 6),
+                          _ExitNodeRow(exit: exit),
+                        ],
                         const SizedBox(height: 16),
+                      ],
                       _Cells(
                         quality: quality,
                         loading: loading,
@@ -372,6 +384,66 @@ class _ExitRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// The node the traffic leaves through, named as the proxy list names it.
+class _ExitNodeRow extends StatelessWidget {
+  const _ExitNodeRow({required this.exit});
+
+  final RouteExit? exit;
+
+  @override
+  Widget build(BuildContext context) {
+    final exit = this.exit;
+    if (exit == null) {
+      return const SizedBox.shrink();
+    }
+    final density = DashboardDensityScope.of(context);
+    final text = [
+      exit.name,
+      exit.type,
+      if (exit.address.isNotEmpty) exit.address,
+    ].join(' · ');
+    final colorScheme = context.colorScheme;
+    return Tooltip(
+      message: text,
+      child: FocusRing(
+        shape: AppShape.xs,
+        standsOff: true,
+        child: InkWell(
+          onTap: () => showVpnInfoSheet(context),
+          customBorder: AppShape.xs,
+          hoverColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: density.isDesktop ? 0 : 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GlyphIcon(
+                  AppGlyphs.vpn,
+                  size: 14,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: EmojiText(
+                    text,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyle.caption1
+                        .of(context)
+                        .copyWith(color: colorScheme.onSurfaceVariant),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
