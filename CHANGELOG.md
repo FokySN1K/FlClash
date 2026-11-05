@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.16 (2026-11-05)
+
+**Features**
+
+- **proxies** Mark the nodes a pool takes out of rotation (1a156f2)
+
 ## v1.0.15 (2026-11-05)
 
 Internal improvements only.

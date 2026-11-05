@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.16",
+      "tag": "v1.0.16",
+      "date": "2026-11-05",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "1a156f2",
+              "scope": "proxies",
+              "text": "Mark the nodes a pool takes out of rotation"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.15",
       "tag": "v1.0.15",
       "date": "2026-11-05",
