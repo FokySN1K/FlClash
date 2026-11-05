@@ -3742,7 +3742,11 @@ as String,
 /// @nodoc
 mixin _$Group {
 
-@JsonKey(fromJson: GroupType.parse) GroupType get type; List<Proxy> get all; String? get now; bool? get hidden; String? get testUrl; String get icon; String get name;
+@JsonKey(fromJson: GroupType.parse) GroupType get type; List<Proxy> get all; String? get now; bool? get hidden; String? get testUrl; String get icon; String get name;/// The member a url-test-pool carried its last successful dial on.
+ String? get lastGood;/// Whether a pool is re-measuring its members after the route failed.
+ bool get recovering;/// The members a failed dial took out of a pool's rotation, until its own
+/// check or the mark's lifetime clears them.
+ List<String> get suspicious;
 /// Create a copy of Group
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -3756,20 +3760,20 @@ $GroupCopyWith<Group> get copyWith => _$GroupCopyWithImpl<Group>(this as Group, 
 @override
 bool operator ==(Object other) {
   final _this = this as Group;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Group&&(identical(other.type, _this.type) || other.type == _this.type)&&const DeepCollectionEquality().equals(other.all, _this.all)&&(identical(other.now, _this.now) || other.now == _this.now)&&(identical(other.hidden, _this.hidden) || other.hidden == _this.hidden)&&(identical(other.testUrl, _this.testUrl) || other.testUrl == _this.testUrl)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.name, _this.name) || other.name == _this.name));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Group&&(identical(other.type, _this.type) || other.type == _this.type)&&const DeepCollectionEquality().equals(other.all, _this.all)&&(identical(other.now, _this.now) || other.now == _this.now)&&(identical(other.hidden, _this.hidden) || other.hidden == _this.hidden)&&(identical(other.testUrl, _this.testUrl) || other.testUrl == _this.testUrl)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.lastGood, _this.lastGood) || other.lastGood == _this.lastGood)&&(identical(other.recovering, _this.recovering) || other.recovering == _this.recovering)&&const DeepCollectionEquality().equals(other.suspicious, _this.suspicious));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as Group;
-  return Object.hash(runtimeType,_this.type,const DeepCollectionEquality().hash(_this.all),_this.now,_this.hidden,_this.testUrl,_this.icon,_this.name);
+  return Object.hash(runtimeType,_this.type,const DeepCollectionEquality().hash(_this.all),_this.now,_this.hidden,_this.testUrl,_this.icon,_this.name,_this.lastGood,_this.recovering,const DeepCollectionEquality().hash(_this.suspicious));
 }
 
 @override
 String toString() {
   final _this = this as Group;
-  return 'Group(type: ${_this.type}, all: ${_this.all}, now: ${_this.now}, hidden: ${_this.hidden}, testUrl: ${_this.testUrl}, icon: ${_this.icon}, name: ${_this.name})';
+  return 'Group(type: ${_this.type}, all: ${_this.all}, now: ${_this.now}, hidden: ${_this.hidden}, testUrl: ${_this.testUrl}, icon: ${_this.icon}, name: ${_this.name}, lastGood: ${_this.lastGood}, recovering: ${_this.recovering}, suspicious: ${_this.suspicious})';
 }
 
 
@@ -3780,7 +3784,7 @@ abstract mixin class $GroupCopyWith<$Res>  {
   factory $GroupCopyWith(Group value, $Res Function(Group) _then) = _$GroupCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(fromJson: GroupType.parse) GroupType type, List<Proxy> all, String? now, bool? hidden, String? testUrl, String icon, String name
+@JsonKey(fromJson: GroupType.parse) GroupType type, List<Proxy> all, String? now, bool? hidden, String? testUrl, String icon, String name, String? lastGood, bool recovering, List<String> suspicious
 });
 
 
@@ -3797,7 +3801,7 @@ class _$GroupCopyWithImpl<$Res>
 
 /// Create a copy of Group
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? type = null,Object? all = null,Object? now = freezed,Object? hidden = freezed,Object? testUrl = freezed,Object? icon = null,Object? name = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? type = null,Object? all = null,Object? now = freezed,Object? hidden = freezed,Object? testUrl = freezed,Object? icon = null,Object? name = null,Object? lastGood = freezed,Object? recovering = null,Object? suspicious = null,}) {
   return _then(Group(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as GroupType,all: null == all ? _self.all : all // ignore: cast_nullable_to_non_nullable
@@ -3806,7 +3810,10 @@ as String?,hidden: freezed == hidden ? _self.hidden : hidden // ignore: cast_nul
 as bool?,testUrl: freezed == testUrl ? _self.testUrl : testUrl // ignore: cast_nullable_to_non_nullable
 as String?,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,
+as String,lastGood: freezed == lastGood ? _self.lastGood : lastGood // ignore: cast_nullable_to_non_nullable
+as String?,recovering: null == recovering ? _self.recovering : recovering // ignore: cast_nullable_to_non_nullable
+as bool,suspicious: null == suspicious ? _self.suspicious : suspicious // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 
@@ -3891,10 +3898,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: GroupType.parse)  GroupType type,  List<Proxy> all,  String? now,  bool? hidden,  String? testUrl,  String icon,  String name)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: GroupType.parse)  GroupType type,  List<Proxy> all,  String? now,  bool? hidden,  String? testUrl,  String icon,  String name,  String? lastGood,  bool recovering,  List<String> suspicious)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Group() when $default != null:
-return $default(_that.type,_that.all,_that.now,_that.hidden,_that.testUrl,_that.icon,_that.name);case _:
+return $default(_that.type,_that.all,_that.now,_that.hidden,_that.testUrl,_that.icon,_that.name,_that.lastGood,_that.recovering,_that.suspicious);case _:
   return orElse();
 
 }
@@ -3912,10 +3919,10 @@ return $default(_that.type,_that.all,_that.now,_that.hidden,_that.testUrl,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: GroupType.parse)  GroupType type,  List<Proxy> all,  String? now,  bool? hidden,  String? testUrl,  String icon,  String name)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: GroupType.parse)  GroupType type,  List<Proxy> all,  String? now,  bool? hidden,  String? testUrl,  String icon,  String name,  String? lastGood,  bool recovering,  List<String> suspicious)  $default,) {final _that = this;
 switch (_that) {
 case _Group():
-return $default(_that.type,_that.all,_that.now,_that.hidden,_that.testUrl,_that.icon,_that.name);case _:
+return $default(_that.type,_that.all,_that.now,_that.hidden,_that.testUrl,_that.icon,_that.name,_that.lastGood,_that.recovering,_that.suspicious);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -3932,10 +3939,10 @@ return $default(_that.type,_that.all,_that.now,_that.hidden,_that.testUrl,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: GroupType.parse)  GroupType type,  List<Proxy> all,  String? now,  bool? hidden,  String? testUrl,  String icon,  String name)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: GroupType.parse)  GroupType type,  List<Proxy> all,  String? now,  bool? hidden,  String? testUrl,  String icon,  String name,  String? lastGood,  bool recovering,  List<String> suspicious)?  $default,) {final _that = this;
 switch (_that) {
 case _Group() when $default != null:
-return $default(_that.type,_that.all,_that.now,_that.hidden,_that.testUrl,_that.icon,_that.name);case _:
+return $default(_that.type,_that.all,_that.now,_that.hidden,_that.testUrl,_that.icon,_that.name,_that.lastGood,_that.recovering,_that.suspicious);case _:
   return null;
 
 }
@@ -3947,7 +3954,7 @@ return $default(_that.type,_that.all,_that.now,_that.hidden,_that.testUrl,_that.
 @JsonSerializable()
 
 class _Group implements Group {
-  const _Group({@JsonKey(fromJson: GroupType.parse) required this.type,  List<Proxy> all = const [], this.now, this.hidden, this.testUrl, this.icon = '', required this.name}): _all = all;
+  const _Group({@JsonKey(fromJson: GroupType.parse) required this.type,  List<Proxy> all = const [], this.now, this.hidden, this.testUrl, this.icon = '', required this.name, this.lastGood, this.recovering = false,  List<String> suspicious = const []}): _all = all,_suspicious = suspicious;
   factory _Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
 
 @override@JsonKey(fromJson: GroupType.parse) final  GroupType type;
@@ -3963,6 +3970,21 @@ class _Group implements Group {
 @override final  String? testUrl;
 @override@JsonKey() final  String icon;
 @override final  String name;
+/// The member a url-test-pool carried its last successful dial on.
+@override final  String? lastGood;
+/// Whether a pool is re-measuring its members after the route failed.
+@override@JsonKey() final  bool recovering;
+/// The members a failed dial took out of a pool's rotation, until its own
+/// check or the mark's lifetime clears them.
+ final  List<String> _suspicious;
+/// The members a failed dial took out of a pool's rotation, until its own
+/// check or the mark's lifetime clears them.
+@override@JsonKey() List<String> get suspicious {
+  if (_suspicious is EqualUnmodifiableListView) return _suspicious;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_suspicious);
+}
+
 
 /// Create a copy of Group
 /// with the given fields replaced by the non-null parameter values.
@@ -3977,18 +3999,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Group&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.all, _all)&&(identical(other.now, now) || other.now == now)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.testUrl, testUrl) || other.testUrl == testUrl)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.name, name) || other.name == name));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Group&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.all, _all)&&(identical(other.now, now) || other.now == now)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.testUrl, testUrl) || other.testUrl == testUrl)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.name, name) || other.name == name)&&(identical(other.lastGood, lastGood) || other.lastGood == lastGood)&&(identical(other.recovering, recovering) || other.recovering == recovering)&&const DeepCollectionEquality().equals(other.suspicious, _suspicious));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,type,const DeepCollectionEquality().hash(_all),now,hidden,testUrl,icon,name);
+    return Object.hash(runtimeType,type,const DeepCollectionEquality().hash(_all),now,hidden,testUrl,icon,name,lastGood,recovering,const DeepCollectionEquality().hash(_suspicious));
 }
 
 @override
 String toString() {
-    return 'Group(type: $type, all: $all, now: $now, hidden: $hidden, testUrl: $testUrl, icon: $icon, name: $name)';
+    return 'Group(type: $type, all: $all, now: $now, hidden: $hidden, testUrl: $testUrl, icon: $icon, name: $name, lastGood: $lastGood, recovering: $recovering, suspicious: $suspicious)';
 }
 
 
@@ -3999,7 +4021,7 @@ abstract mixin class _$GroupCopyWith<$Res> implements $GroupCopyWith<$Res> {
   factory _$GroupCopyWith(_Group value, $Res Function(_Group) _then) = __$GroupCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(fromJson: GroupType.parse) GroupType type, List<Proxy> all, String? now, bool? hidden, String? testUrl, String icon, String name
+@JsonKey(fromJson: GroupType.parse) GroupType type, List<Proxy> all, String? now, bool? hidden, String? testUrl, String icon, String name, String? lastGood, bool recovering, List<String> suspicious
 });
 
 
@@ -4016,7 +4038,7 @@ class __$GroupCopyWithImpl<$Res>
 
 /// Create a copy of Group
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? all = null,Object? now = freezed,Object? hidden = freezed,Object? testUrl = freezed,Object? icon = null,Object? name = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? all = null,Object? now = freezed,Object? hidden = freezed,Object? testUrl = freezed,Object? icon = null,Object? name = null,Object? lastGood = freezed,Object? recovering = null,Object? suspicious = null,}) {
   return _then(_Group(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as GroupType,all: null == all ? _self._all : all // ignore: cast_nullable_to_non_nullable
@@ -4025,7 +4047,10 @@ as String?,hidden: freezed == hidden ? _self.hidden : hidden // ignore: cast_nul
 as bool?,testUrl: freezed == testUrl ? _self.testUrl : testUrl // ignore: cast_nullable_to_non_nullable
 as String?,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,
+as String,lastGood: freezed == lastGood ? _self.lastGood : lastGood // ignore: cast_nullable_to_non_nullable
+as String?,recovering: null == recovering ? _self.recovering : recovering // ignore: cast_nullable_to_non_nullable
+as bool,suspicious: null == suspicious ? _self._suspicious : suspicious // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 

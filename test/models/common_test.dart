@@ -166,6 +166,34 @@ void main() {
     });
   });
 
+  group('Group pool state', () {
+    test('reads the state a pool reports', () {
+      final group = Group.fromJson({
+        'type': 'url-test-pool',
+        'name': 'Pool',
+        'lastGood': 'Proxy A',
+        'recovering': true,
+        'suspicious': ['Proxy B'],
+      });
+
+      expect(group.type, GroupType.URLTestPool);
+      expect(group.lastGood, 'Proxy A');
+      expect(group.recovering, isTrue);
+      expect(group.isSuspicious('Proxy B'), isTrue);
+      expect(group.isSuspicious('Proxy A'), isFalse);
+    });
+
+    test('defaults the state for a group that carries none', () {
+      final group = Group.fromJson({'type': 'selector', 'name': 'Manual'});
+
+      expect(group.all, isEmpty);
+      expect(group.lastGood, isNull);
+      expect(group.recovering, isFalse);
+      expect(group.suspicious, isEmpty);
+      expect(group.isSuspicious('Proxy A'), isFalse);
+    });
+  });
+
   group('ScriptsExt naming', () {
     Script script(int id, String label) =>
         Script(id: id, label: label, lastUpdateTime: DateTime(2026));

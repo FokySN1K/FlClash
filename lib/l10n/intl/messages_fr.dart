@@ -937,6 +937,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "grid": MessageLookupByLibrary.simpleMessage("Grille"),
     "groupCount": m32,
     "groupCountUnit": MessageLookupByLibrary.simpleMessage("groupes"),
+    "groupRecovering": MessageLookupByLibrary.simpleMessage(
+      "Le groupe revérifie ses nœuds",
+    ),
     "groupTimeoutCount": m33,
     "hasCacheChange": MessageLookupByLibrary.simpleMessage(
       "Mettre les modifications en cache ?",
@@ -1942,6 +1945,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Saisissez votre mot de passe pour sudo",
     ),
     "suspended": MessageLookupByLibrary.simpleMessage("Suspendu…"),
+    "suspiciousNode": MessageLookupByLibrary.simpleMessage("Nœud suspect"),
     "switchProfile": MessageLookupByLibrary.simpleMessage("Changer de profil"),
     "sync": MessageLookupByLibrary.simpleMessage("Synchroniser"),
     "system": MessageLookupByLibrary.simpleMessage("Système"),

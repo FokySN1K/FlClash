@@ -734,6 +734,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "grid": MessageLookupByLibrary.simpleMessage("격자"),
     "groupCount": m32,
     "groupCountUnit": MessageLookupByLibrary.simpleMessage("개"),
+    "groupRecovering": MessageLookupByLibrary.simpleMessage(
+      "그룹이 노드를 다시 확인하는 중입니다",
+    ),
     "groupTimeoutCount": m33,
     "hasCacheChange": MessageLookupByLibrary.simpleMessage("변경 사항을 캐시하시겠습니까?"),
     "hashByInUser": MessageLookupByLibrary.simpleMessage("인바운드 사용자별 해시"),
@@ -1518,6 +1521,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "sudo 비밀번호를 입력하세요",
     ),
     "suspended": MessageLookupByLibrary.simpleMessage("일시 중지됨…"),
+    "suspiciousNode": MessageLookupByLibrary.simpleMessage("의심스러운 노드"),
     "switchProfile": MessageLookupByLibrary.simpleMessage("프로필 전환"),
     "sync": MessageLookupByLibrary.simpleMessage("동기화"),
     "system": MessageLookupByLibrary.simpleMessage("시스템"),

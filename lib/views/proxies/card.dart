@@ -49,6 +49,10 @@ class ProxyCard extends ConsumerWidget {
   final ProxyCardType type;
   final String? testUrl;
 
+  /// A pool marks a member whose dial failed; the badge says the pool routes
+  /// around this node until a check measures it again.
+  final bool suspicious;
+
   const ProxyCard({
     super.key,
     required this.groupName,
@@ -56,6 +60,7 @@ class ProxyCard extends ConsumerWidget {
     required this.proxy,
     required this.groupType,
     required this.type,
+    this.suspicious = false,
   });
 
   Measure get measure => globalState.measure;
@@ -242,6 +247,7 @@ class ProxyCard extends ConsumerWidget {
                     spacing: 4,
                     children: [
                       Expanded(child: proxyNameText),
+                      if (suspicious) const _SuspiciousBadge(),
                       if (pinned)
                         SelectionBadge.preferred(inUse: inUse)
                       else if (inUse)
@@ -434,6 +440,39 @@ class _DelayTextState extends ConsumerState<_DelayText> {
                       ),
                     ),
                   ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A node a pool dropped after its dial failed, marked until the pool's own
+/// check measures it again.
+class _SuspiciousBadge extends StatelessWidget {
+  const _SuspiciousBadge();
+
+  static const _size = 18.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    return Tooltip(
+      message: context.appLocalizations.suspiciousNode,
+      child: SizedBox.square(
+        dimension: _size,
+        child: DecoratedBox(
+          decoration: ShapeDecoration(
+            shape: AppShape.circle,
+            color: colorScheme.warningContainer,
+          ),
+          child: Center(
+            child: GlyphIcon(
+              AppGlyphs.warning,
+              size: _size - 5,
+              fill: 1,
+              color: colorScheme.onWarningContainer,
+            ),
           ),
         ),
       ),

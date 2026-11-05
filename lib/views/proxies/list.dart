@@ -5,6 +5,7 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/state.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
@@ -366,6 +367,7 @@ class _GroupSliverState extends ConsumerState<_GroupSliver>
                 key: ValueKey('$groupName.${proxy.name}'),
                 proxy: proxy,
                 groupName: groupName,
+                suspicious: group.isSuspicious(proxy.name),
               ),
             ),
           ),
@@ -631,7 +633,7 @@ class ListHeader extends ConsumerWidget {
                     child: GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onLongPress: () => _toGroupInfo(context, ref),
-                      child: _GroupSummary(groupName: groupName),
+                      child: _GroupSummary(group: group),
                     ),
                   ),
                 ],
@@ -790,9 +792,9 @@ class _GroupIcon extends ConsumerWidget {
 }
 
 class _GroupSummary extends StatelessWidget {
-  const _GroupSummary({required this.groupName});
+  const _GroupSummary({required this.group});
 
-  final String groupName;
+  final Group group;
 
   @override
   Widget build(BuildContext context) {
@@ -801,36 +803,53 @@ class _GroupSummary extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         EmojiText(
-          groupName,
+          group.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: AppTextStyle.callout.of(context, emphasized: true),
         ),
         const SizedBox(height: 2),
-        Flexible(flex: 1, child: _SelectedProxyName(groupName: groupName)),
+        Flexible(flex: 1, child: _SelectedProxyName(group: group)),
       ],
     );
   }
 }
 
 class _SelectedProxyName extends ConsumerWidget {
-  const _SelectedProxyName({required this.groupName});
+  const _SelectedProxyName({required this.group});
 
-  final String groupName;
+  final Group group;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final proxyName = ref
-        .watch(selectedProxyNameProvider(groupName))
+        .watch(selectedProxyNameProvider(group.name))
         .takeFirstValid([]);
     if (proxyName.isEmpty) {
       return const SizedBox.shrink();
     }
-    return EmojiText(
+    final name = EmojiText(
       proxyName,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: AppTextStyle.caption1.of(context, emphasized: true).toLight,
+    );
+    if (!group.recovering) {
+      return name;
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      spacing: 4,
+      children: [
+        Tooltip(
+          message: context.appLocalizations.groupRecovering,
+          child: GlyphIcon(
+            AppGlyphs.refresh,
+            size: globalState.measure.textHeight(AppTextStyle.caption1),
+          ),
+        ),
+        Flexible(child: name),
+      ],
     );
   }
 }

@@ -2756,7 +2756,7 @@ class AppLocalizations {
     );
   }
 
-  /// `To confirm you understand, read the following statement and check the box below:`
+  /// `Check the box below to confirm that you have read and accept the terms of this disclaimer.`
   String get disclaimerAcknowledgeTip {
     return Intl.message(
       'Check the box below to confirm that you have read and accept the terms of this disclaimer.',
@@ -8075,6 +8075,26 @@ class AppLocalizations {
       name: 'alreadyInLocalProxies',
       desc: '',
       args: [name],
+    );
+  }
+
+  /// `Suspicious node`
+  String get suspiciousNode {
+    return Intl.message(
+      'Suspicious node',
+      name: 'suspiciousNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The group is re-checking its nodes`
+  String get groupRecovering {
+    return Intl.message(
+      'The group is re-checking its nodes',
+      name: 'groupRecovering',
+      desc: '',
+      args: [],
     );
   }
 }

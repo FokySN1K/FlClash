@@ -966,5 +966,7 @@
   "preferred": "優先",
   "addToLocalProxies": "ローカルプロキシに追加",
   "addedToLocalProxies": "{name} をローカルプロキシに追加しました",
-  "alreadyInLocalProxies": "{name} はすでにローカルプロキシにあります"
+  "alreadyInLocalProxies": "{name} はすでにローカルプロキシにあります",
+  "suspiciousNode": "疑わしいノード",
+  "groupRecovering": "グループがノードを再確認しています"
 }

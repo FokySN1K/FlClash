@@ -913,6 +913,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "grid": MessageLookupByLibrary.simpleMessage("Сетка"),
     "groupCount": m32,
     "groupCountUnit": MessageLookupByLibrary.simpleMessage("групп"),
+    "groupRecovering": MessageLookupByLibrary.simpleMessage(
+      "Группа повторно проверяет узлы",
+    ),
     "groupTimeoutCount": m33,
     "hasCacheChange": MessageLookupByLibrary.simpleMessage(
       "Кэшировать изменения?",
@@ -1882,6 +1885,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Введите пароль для sudo",
     ),
     "suspended": MessageLookupByLibrary.simpleMessage("Приостановлено…"),
+    "suspiciousNode": MessageLookupByLibrary.simpleMessage(
+      "Подозрительный узел",
+    ),
     "switchProfile": MessageLookupByLibrary.simpleMessage("Сменить профиль"),
     "sync": MessageLookupByLibrary.simpleMessage("Синхронизация"),
     "system": MessageLookupByLibrary.simpleMessage("Система"),

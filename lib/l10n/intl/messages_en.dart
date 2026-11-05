@@ -881,6 +881,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "grid": MessageLookupByLibrary.simpleMessage("Grid"),
     "groupCount": m32,
     "groupCountUnit": MessageLookupByLibrary.simpleMessage("groups"),
+    "groupRecovering": MessageLookupByLibrary.simpleMessage(
+      "The group is re-checking its nodes",
+    ),
     "groupTimeoutCount": m33,
     "hasCacheChange": MessageLookupByLibrary.simpleMessage(
       "Cache the changes?",
@@ -1800,6 +1803,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter your password for sudo",
     ),
     "suspended": MessageLookupByLibrary.simpleMessage("Suspended…"),
+    "suspiciousNode": MessageLookupByLibrary.simpleMessage("Suspicious node"),
     "switchProfile": MessageLookupByLibrary.simpleMessage("Switch profile"),
     "sync": MessageLookupByLibrary.simpleMessage("Sync"),
     "system": MessageLookupByLibrary.simpleMessage("System"),

@@ -335,6 +335,47 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('a pool marks the node its dial failed on and says it is '
+      're-checking', (tester) async {
+    await pumpList(
+      tester,
+      groups: [
+        _group('G0', 3).copyWith(
+          type: GroupType.URLTestPool,
+          now: 'G0-1',
+          recovering: true,
+          suspicious: const ['G0-1'],
+        ),
+        _group('G1', 3).copyWith(now: 'G1-0'),
+      ],
+    );
+
+    final badge = find.byTooltip('Suspicious node');
+    expect(badge, findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('G0.G0-1')),
+        matching: badge,
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: headerOf('G0'),
+        matching: find.byTooltip('The group is re-checking its nodes'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: headerOf('G1'),
+        matching: find.byTooltip('The group is re-checking its nodes'),
+      ),
+      findsNothing,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('the delay test button tests its own group only', (tester) async {
     await pumpList(tester);
 

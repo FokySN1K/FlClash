@@ -966,5 +966,7 @@
   "preferred": "Предпочтительный",
   "addToLocalProxies": "Добавить в локальные прокси",
   "addedToLocalProxies": "«{name}» добавлен в локальные прокси",
-  "alreadyInLocalProxies": "«{name}» уже есть в локальных прокси"
+  "alreadyInLocalProxies": "«{name}» уже есть в локальных прокси",
+  "suspiciousNode": "Подозрительный узел",
+  "groupRecovering": "Группа повторно проверяет узлы"
 }

@@ -745,6 +745,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "grid": MessageLookupByLibrary.simpleMessage("グリッド"),
     "groupCount": m32,
     "groupCountUnit": MessageLookupByLibrary.simpleMessage("個"),
+    "groupRecovering": MessageLookupByLibrary.simpleMessage(
+      "グループがノードを再確認しています",
+    ),
     "groupTimeoutCount": m33,
     "hasCacheChange": MessageLookupByLibrary.simpleMessage("変更をキャッシュしますか？"),
     "hashByInUser": MessageLookupByLibrary.simpleMessage("インバウンドユーザーでハッシュ"),
@@ -1545,6 +1548,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptionInfo": MessageLookupByLibrary.simpleMessage("サブスクリプション情報"),
     "sudoPasswordTitle": MessageLookupByLibrary.simpleMessage("sudo のパスワードを入力"),
     "suspended": MessageLookupByLibrary.simpleMessage("一時停止中…"),
+    "suspiciousNode": MessageLookupByLibrary.simpleMessage("疑わしいノード"),
     "switchProfile": MessageLookupByLibrary.simpleMessage("プロファイルを切り替え"),
     "sync": MessageLookupByLibrary.simpleMessage("同期"),
     "system": MessageLookupByLibrary.simpleMessage("システム"),

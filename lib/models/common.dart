@@ -500,6 +500,16 @@ abstract class Group with _$Group {
     String? testUrl,
     @Default('') String icon,
     required String name,
+
+    /// The member a url-test-pool carried its last successful dial on.
+    String? lastGood,
+
+    /// Whether a pool is re-measuring its members after the route failed.
+    @Default(false) bool recovering,
+
+    /// The members a failed dial took out of a pool's rotation, until its own
+    /// check or the mark's lifetime clears them.
+    @Default([]) List<String> suspicious,
   }) = _Group;
 
   factory Group.fromJson(Map<String, Object?> json) => _$GroupFromJson(json);
@@ -527,6 +537,8 @@ extension GroupExt on Group {
   /// A saved pick outlives a subscription update that renames or drops it.
   bool _isMember(String proxyName) =>
       all.isEmpty || all.any((proxy) => proxy.name == proxyName);
+
+  bool isSuspicious(String proxyName) => suspicious.contains(proxyName);
 }
 
 @freezed
