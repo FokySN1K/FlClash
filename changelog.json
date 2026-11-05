@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.12",
+      "tag": "v1.0.12",
+      "date": "2026-11-05",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "7f9e5dc",
+              "scope": "dashboard",
+              "text": "Show the exit node on the status card"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.11",
       "tag": "v1.0.11",
       "date": "2026-11-04",

@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.12 (2026-11-05)
+
+**Features**
+
+- **dashboard** Show the exit node on the status card (7f9e5dc)
+
 ## v1.0.11 (2026-11-04)
 
 **Features**
