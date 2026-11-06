@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.19 (2026-11-06)
+
+**Features**
+
+- **proxies** Purple probe cards and a four-state group header (ffedc0b)
+
 ## v1.0.18 (2026-11-06)
 
 **Features**
