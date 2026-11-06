@@ -59,6 +59,7 @@ func TestClassOfMessageRoutesEachTier(t *testing.T) {
 		GeoUpdateMessage:      stateMessageClass,
 		RouteChangedMessage:   stateMessageClass,
 		DelayMessage:          priorityMessageClass,
+		DelayStartMessage:     priorityMessageClass,
 		LogMessage:            bulkMessageClass,
 		RequestMessage:        bulkMessageClass,
 		DnsMessage:            yieldingBulkMessageClass,

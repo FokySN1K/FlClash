@@ -21,6 +21,9 @@ func init() {
 	adapter.UrlTestHook = func(url string, name string, delay uint16, timedOut bool) {
 		sendMessage(DelayMessage, &Delay{Url: url, Name: name, Value: delayValue(delay, timedOut)})
 	}
+	adapter.UrlTestStartHook = func(url string, name string) {
+		sendMessage(DelayStartMessage, &DelayStart{Url: url, Name: name})
+	}
 	statistic.DefaultRequestNotify = func(c statistic.Tracker) {
 		notifyProbeRoute(c)
 		if hasEventListener() {

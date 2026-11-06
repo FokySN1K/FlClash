@@ -82,6 +82,7 @@ const (
 	RouteChangedMessage   MessageType = "routeChanged"
 	DialerLoopMessage     MessageType = "dialerLoop"
 	RequestTrafficMessage MessageType = "requestTraffic"
+	DelayStartMessage     MessageType = "delayStart"
 )
 
 type Message struct {
@@ -196,6 +197,14 @@ type Delay struct {
 	Url   string `json:"url"`
 	Name  string `json:"name"`
 	Value int32  `json:"value"`
+}
+
+// A probe that has just begun. A group check decides on its own which members
+// it measures, so this is what lets the app show a member as in flight instead
+// of idle until its result arrives.
+type DelayStart struct {
+	Url  string `json:"url"`
+	Name string `json:"name"`
 }
 
 type ProbeParams struct {
