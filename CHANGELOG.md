@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.17 (2026-11-06)
+
+**Features**
+
+- **proxies** Pulse only the node the Core is probing (67ffccb)
+- **core** Report the start of every probe (d12a775)
+
 ## v1.0.16 (2026-11-05)
 
 **Features**
