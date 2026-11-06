@@ -302,6 +302,13 @@ extension ColorExtension on Color {
   }
 }
 
+/// The purple a card wears while a test measures it: a number is on its
+/// way, so it must not read as one of the delay verdicts.
+const probeTint = Color(0xFFB388FF);
+
+/// The blue a group wears while its own test runs and it has no pick yet.
+const groupProbeTint = Color(0xFF4FC3F7);
+
 extension ColorSchemeExtension on ColorScheme {
   ColorScheme toPureBlack(bool isPureBlack) {
     if (!isPureBlack || brightness != Brightness.dark) {
@@ -354,10 +361,19 @@ extension ColorSchemeExtension on ColorScheme {
     return warning;
   }
 
-  /// The pale wash a proxy card wears: blue while a test runs, red for an
-  /// unreachable node, yellow for a slow one and green for a fast one.
+  /// The pale wash a proxy card wears: purple while a test measures it, red
+  /// for an unreachable node, yellow for a slow one and green for a fast one.
   Color? delayCardTint(int? delay, {required bool testing}) {
-    if (testing) return const Color(0xFF4FC3F7);
+    if (testing) return probeTint;
+    return delayColor(delay);
+  }
+
+  /// The wash a group header wears: the verdict of the node the group routes
+  /// to, and blue while its own test runs before it has such a node.
+  Color? delayGroupTint(int? delay, {required bool testing}) {
+    if (delay == null) {
+      return testing ? groupProbeTint : null;
+    }
     return delayColor(delay);
   }
 }

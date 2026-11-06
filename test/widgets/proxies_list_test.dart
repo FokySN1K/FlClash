@@ -107,6 +107,17 @@ void main() {
     matching: find.byTooltip(tooltip),
   );
 
+  Color? headerColor(WidgetTester tester, String groupName) => tester
+      .widget<FilledButton>(
+        find.descendant(
+          of: headerOf(groupName),
+          matching: find.byType(FilledButton),
+        ),
+      )
+      .style
+      ?.backgroundColor
+      ?.resolve(const {});
+
   Finder scrollable() => find
       .descendant(
         of: find.byType(CustomScrollView),
@@ -389,10 +400,12 @@ void main() {
     tester,
   ) async {
     await pumpList(tester);
+    final idle = headerColor(tester, 'G0');
 
     container.read(delayTestingGroupsProvider.notifier).start('G0');
     await tester.pump();
 
+    expect(headerColor(tester, 'G0'), isNot(idle));
     expect(
       find.descendant(
         of: headerOf('G0'),
@@ -408,5 +421,6 @@ void main() {
     await tester.pump();
 
     expect(find.byType(CommonCircleLoading), findsNothing);
+    expect(headerColor(tester, 'G0'), idle);
   });
 }

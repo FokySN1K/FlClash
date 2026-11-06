@@ -242,4 +242,29 @@ void main() {
     expect(rose.delayColor(800), rose.warning);
     expect(rose.delayColor(-1), rose.error);
   });
+
+  test('a probing card turns purple and a group reports its pick', () {
+    final schemes = [
+      seededColorScheme(
+        seedColor: const Color(0xFF03A9F4),
+        brightness: Brightness.light,
+      ),
+      seededColorScheme(
+        seedColor: const Color(0xFF03A9F4),
+        brightness: Brightness.dark,
+      ),
+    ];
+
+    for (final scheme in schemes) {
+      expect(scheme.delayCardTint(120, testing: true), probeTint);
+      expect(scheme.delayCardTint(120, testing: false), scheme.success);
+      expect(scheme.delayCardTint(800, testing: false), scheme.warning);
+
+      expect(scheme.delayGroupTint(120, testing: true), scheme.success);
+      expect(scheme.delayGroupTint(800, testing: true), scheme.warning);
+      expect(scheme.delayGroupTint(-1, testing: true), scheme.error);
+      expect(scheme.delayGroupTint(null, testing: true), groupProbeTint);
+      expect(scheme.delayGroupTint(null, testing: false), isNull);
+    }
+  });
 }
