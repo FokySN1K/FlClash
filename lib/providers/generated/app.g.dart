@@ -1992,6 +1992,68 @@ abstract class _$Loading extends $Notifier<bool> {
   }
 }
 
+/// The dialog that starts a download and the rows that report it share one
+/// transfer; a second caller joins the attempt in flight.
+
+@ProviderFor(ReleaseDownload)
+final releaseDownloadProvider = ReleaseDownloadProvider._();
+
+/// The dialog that starts a download and the rows that report it share one
+/// transfer; a second caller joins the attempt in flight.
+final class ReleaseDownloadProvider
+    extends $NotifierProvider<ReleaseDownload, ReleaseDownloadState> {
+  /// The dialog that starts a download and the rows that report it share one
+  /// transfer; a second caller joins the attempt in flight.
+  ReleaseDownloadProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'releaseDownloadProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$releaseDownloadHash();
+
+  @$internal
+  @override
+  ReleaseDownload create() => ReleaseDownload();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ReleaseDownloadState value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ReleaseDownloadState>(value),
+    );
+  }
+}
+
+String _$releaseDownloadHash() => r'e8266dc86dd7077f98469bdcce0c76b75448990c';
+
+/// The dialog that starts a download and the rows that report it share one
+/// transfer; a second caller joins the attempt in flight.
+
+abstract class _$ReleaseDownload extends $Notifier<ReleaseDownloadState> {
+  ReleaseDownloadState build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<ReleaseDownloadState, ReleaseDownloadState>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ReleaseDownloadState, ReleaseDownloadState>,
+              ReleaseDownloadState,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(Items)
 final itemsProvider = ItemsFamily._();
 

@@ -350,6 +350,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "autoCloseConnectionsDesc": MessageLookupByLibrary.simpleMessage(
       "Auto close connections drops open connections when you switch proxies.",
     ),
+    "autoDownloadUpdate": MessageLookupByLibrary.simpleMessage(
+      "Auto download updates",
+    ),
+    "autoDownloadUpdateDesc": MessageLookupByLibrary.simpleMessage(
+      "The automatic check downloads the update in the background, so installing it takes one tap.",
+    ),
     "autoInclude": MessageLookupByLibrary.simpleMessage("Auto-include"),
     "autoLaunch": MessageLookupByLibrary.simpleMessage("Auto launch"),
     "autoRun": MessageLookupByLibrary.simpleMessage("Auto run"),
@@ -744,6 +750,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Download bandwidth",
     ),
+    "downloadFailed": MessageLookupByLibrary.simpleMessage("Download failed"),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage(
+      "Downloading the update",
+    ),
     "duration": MessageLookupByLibrary.simpleMessage("Duration"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editDashboard": MessageLookupByLibrary.simpleMessage("Edit dashboard"),
@@ -970,6 +980,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Enter the rule content",
     ),
+    "installNow": MessageLookupByLibrary.simpleMessage("Install"),
     "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
       "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
     ),
@@ -1875,6 +1886,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("Unnamed"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("Unpin window"),
     "update": MessageLookupByLibrary.simpleMessage("Update"),
+    "updateReady": MessageLookupByLibrary.simpleMessage("The update is ready"),
     "upload": MessageLookupByLibrary.simpleMessage("Upload"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Upload bandwidth"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
@@ -1886,6 +1898,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "userAgent": MessageLookupByLibrary.simpleMessage("User-Agent"),
     "username": MessageLookupByLibrary.simpleMessage("Username"),
     "value": MessageLookupByLibrary.simpleMessage("Value"),
+    "verifyingUpdate": MessageLookupByLibrary.simpleMessage(
+      "Verifying the download",
+    ),
     "view": MessageLookupByLibrary.simpleMessage("View"),
     "virtualIpv4": MessageLookupByLibrary.simpleMessage("Virtual IPv4"),
     "vividStyle": MessageLookupByLibrary.simpleMessage("Vivid"),

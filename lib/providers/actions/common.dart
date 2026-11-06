@@ -160,8 +160,6 @@ class CommonAction extends _$CommonAction {
   Future<void> installRelease(Map<String, dynamic> release) async {
     final asset = releaseAsset(release);
     if (asset == null) {
-      // The dialog names the release, not the archive; the log says which one
-      // this build looked for, so a jump to the page can be explained later.
       final tagName = release['tag_name'];
       commonPrint.log(
         'no ${releaseAssetSuffix()} archive in release $tagName',
@@ -172,18 +170,47 @@ class CommonAction extends _$CommonAction {
       );
       return;
     }
-    final file = await globalState.loadingRun(
-      () => downloadReleaseAsset(asset),
-      title: currentAppLocalizations.download,
-      tag: LoadingTag.checkUpdate,
-    );
+    final download = ref.read(releaseDownloadProvider.notifier);
+    final prepared = await download.readyFile(asset);
+    final File? file;
+    if (prepared != null) {
+      file = prepared;
+    } else {
+      // The dialog shows the transfer and closes itself once the file is ready.
+      unawaited(
+        dialogs.showCommonDialog<void>(
+          dismissible: false,
+          child: const ReleaseDownloadDialog(),
+        ),
+      );
+      file = await download.run(asset, version: _releaseVersion(release));
+    }
     if (file == null) return;
+    final archive = file;
     final handedOff = await globalState.safeRun(
-      () => launchReleaseAsset(file),
+      () => launchReleaseAsset(archive),
       title: currentAppLocalizations.update,
     );
     if (handedOff != true) return;
     await ref.read(systemActionProvider.notifier).handleExit();
+  }
+
+  Future<void> _autoDownloadRelease(Map<String, dynamic> release) async {
+    final asset = releaseAsset(release);
+    if (asset == null) return;
+    final file = await ref
+        .read(releaseDownloadProvider.notifier)
+        .run(asset, version: _releaseVersion(release));
+    if (file == null) return;
+    final localizations = currentAppLocalizations;
+    dialogs.showNotifier(
+      localizations.updateReady,
+      level: MessageLevel.success,
+      actionState: MessageActionState(
+        actionText: localizations.installNow,
+        action: () => unawaited(installRelease(release)),
+      ),
+    );
   }
 
   Future<void> checkUpdateResultHandle({
@@ -191,6 +218,9 @@ class CommonAction extends _$CommonAction {
     bool isUser = false,
   }) async {
     if (data != null) {
+      if (!isUser && ref.read(appSettingProvider).autoDownloadUpdate) {
+        unawaited(_autoDownloadRelease(data));
+      }
       final context = globalState.navigatorKey.currentContext!;
       final res = await dialogs.showMessage(
         title: currentAppLocalizations.discoverNewVersion,
@@ -218,4 +248,9 @@ class CommonAction extends _$CommonAction {
       );
     }
   }
+}
+
+String? _releaseVersion(Map<String, dynamic> release) {
+  final tag = release['tag_name'];
+  return tag is String ? tag : null;
 }

@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:ui' show Locale;
 
+import 'package:dio/dio.dart' show CancelToken;
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
@@ -593,6 +594,116 @@ class Loading extends _$Loading with AutoDisposeNotifierMixin {
       }
       value = false;
     });
+  }
+}
+
+/// The dialog that starts a download and the rows that report it share one
+/// transfer; a second caller joins the attempt in flight.
+@Riverpod(keepAlive: true)
+class ReleaseDownload extends _$ReleaseDownload with AutoDisposeNotifierMixin {
+  CancelToken? _cancelToken;
+  Future<File?>? _inFlight;
+  File? _readyFile;
+  String? _readyName;
+  DateTime? _reportedAt;
+
+  @override
+  ReleaseDownloadState build() {
+    return const ReleaseDownloadState();
+  }
+
+  /// The finished archive, when it is the one [asset] names.
+  Future<File?> readyFile(ReleaseAsset asset) async {
+    final file = _readyFile;
+    if (file == null || _readyName != asset.name) {
+      return null;
+    }
+    return await file.exists() ? file : null;
+  }
+
+  Future<File?> run(ReleaseAsset asset, {String? version}) {
+    final inFlight = _inFlight;
+    if (inFlight != null) {
+      return inFlight;
+    }
+    final future = _run(asset, version: version);
+    _inFlight = future;
+    unawaited(
+      future.whenComplete(() {
+        if (identical(_inFlight, future)) {
+          _inFlight = null;
+        }
+      }),
+    );
+    return future;
+  }
+
+  /// Stops the transfer; the state settles on [ReleaseDownloadPhase.cancelled].
+  void cancel() {
+    _cancelToken?.cancel();
+  }
+
+  Future<File?> _run(ReleaseAsset asset, {String? version}) async {
+    final cancelToken = CancelToken();
+    _cancelToken = cancelToken;
+    _reportedAt = null;
+    state = ReleaseDownloadState(
+      phase: ReleaseDownloadPhase.downloading,
+      total: asset.size ?? 0,
+    );
+    try {
+      final file = await downloadReleaseAsset(
+        asset,
+        version: version,
+        cancelToken: cancelToken,
+        onDownloadProgress: (received, total) =>
+            _report(ReleaseDownloadPhase.downloading, received, total),
+        onVerifyProgress: (done, total) =>
+            _report(ReleaseDownloadPhase.verifying, done, total),
+      );
+      _readyFile = file;
+      _readyName = asset.name;
+      state = const ReleaseDownloadState(phase: ReleaseDownloadPhase.ready);
+      return file;
+    } catch (error) {
+      final cancelled = cancelToken.isCancelled;
+      if (!cancelled) {
+        commonPrint.log(
+          'update download failed: ${compactError(error)}',
+          logLevel: LogLevel.warning,
+        );
+      }
+      state = ReleaseDownloadState(
+        phase: cancelled
+            ? ReleaseDownloadPhase.cancelled
+            : ReleaseDownloadPhase.failed,
+        error: cancelled ? null : error,
+      );
+      return null;
+    } finally {
+      if (identical(_cancelToken, cancelToken)) {
+        _cancelToken = null;
+      }
+    }
+  }
+
+  void _report(ReleaseDownloadPhase phase, int received, int total) {
+    final now = DateTime.now();
+    final last = _reportedAt;
+    final switched = state.phase != phase;
+    final settled = total > 0 && received >= total;
+    if (!switched &&
+        !settled &&
+        last != null &&
+        now.difference(last) < const Duration(milliseconds: 100)) {
+      return;
+    }
+    _reportedAt = now;
+    state = ReleaseDownloadState(
+      phase: phase,
+      received: received,
+      total: total,
+    );
   }
 }
 

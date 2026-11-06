@@ -293,6 +293,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "autoCloseConnectionsDesc": MessageLookupByLibrary.simpleMessage(
       "自动关闭连接会在切换代理后断开已有连接。",
     ),
+    "autoDownloadUpdate": MessageLookupByLibrary.simpleMessage("自动下载更新"),
+    "autoDownloadUpdateDesc": MessageLookupByLibrary.simpleMessage(
+      "自动检查会在后台下载更新，安装时只需一步。",
+    ),
     "autoInclude": MessageLookupByLibrary.simpleMessage("自动包含"),
     "autoLaunch": MessageLookupByLibrary.simpleMessage("自启动"),
     "autoRun": MessageLookupByLibrary.simpleMessage("自动运行"),
@@ -573,6 +577,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "done": MessageLookupByLibrary.simpleMessage("完成"),
     "download": MessageLookupByLibrary.simpleMessage("下载"),
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage("下行带宽"),
+    "downloadFailed": MessageLookupByLibrary.simpleMessage("下载失败"),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage("正在下载更新"),
     "duration": MessageLookupByLibrary.simpleMessage("时长"),
     "edit": MessageLookupByLibrary.simpleMessage("编辑"),
     "editDashboard": MessageLookupByLibrary.simpleMessage("编辑仪表盘"),
@@ -749,6 +755,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "initiatorShort": MessageLookupByLibrary.simpleMessage("发起"),
     "inputProxyGroupName": MessageLookupByLibrary.simpleMessage("输入策略组名称"),
     "inputRuleContent": MessageLookupByLibrary.simpleMessage("输入规则内容"),
+    "installNow": MessageLookupByLibrary.simpleMessage("安装"),
     "installedAppsPermissionDeniedMessage":
         MessageLookupByLibrary.simpleMessage(
           "读取应用列表权限已被拒绝，无法获取已安装的应用。请前往系统设置手动开启。",
@@ -1463,6 +1470,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("未命名"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("取消置顶"),
     "update": MessageLookupByLibrary.simpleMessage("更新"),
+    "updateReady": MessageLookupByLibrary.simpleMessage("更新已准备好"),
     "upload": MessageLookupByLibrary.simpleMessage("上传"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("上行带宽"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
@@ -1474,6 +1482,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "userAgent": MessageLookupByLibrary.simpleMessage("用户代理"),
     "username": MessageLookupByLibrary.simpleMessage("用户名"),
     "value": MessageLookupByLibrary.simpleMessage("值"),
+    "verifyingUpdate": MessageLookupByLibrary.simpleMessage("正在校验下载的文件"),
     "view": MessageLookupByLibrary.simpleMessage("查看"),
     "virtualIpv4": MessageLookupByLibrary.simpleMessage("虚拟 IPv4"),
     "vividStyle": MessageLookupByLibrary.simpleMessage("鲜明"),

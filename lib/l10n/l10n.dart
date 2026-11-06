@@ -520,6 +520,71 @@ class AppLocalizations {
     );
   }
 
+  /// `Auto download updates`
+  String get autoDownloadUpdate {
+    return Intl.message(
+      'Auto download updates',
+      name: 'autoDownloadUpdate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The automatic check downloads the update in the background, so installing it takes one tap.`
+  String get autoDownloadUpdateDesc {
+    return Intl.message(
+      'The automatic check downloads the update in the background, so installing it takes one tap.',
+      name: 'autoDownloadUpdateDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Downloading the update`
+  String get downloadingUpdate {
+    return Intl.message(
+      'Downloading the update',
+      name: 'downloadingUpdate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verifying the download`
+  String get verifyingUpdate {
+    return Intl.message(
+      'Verifying the download',
+      name: 'verifyingUpdate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The update is ready`
+  String get updateReady {
+    return Intl.message(
+      'The update is ready',
+      name: 'updateReady',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Install`
+  String get installNow {
+    return Intl.message('Install', name: 'installNow', desc: '', args: []);
+  }
+
+  /// `Download failed`
+  String get downloadFailed {
+    return Intl.message(
+      'Download failed',
+      name: 'downloadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Verify TLS certificates`
   String get checkCertificate {
     return Intl.message(

@@ -87,15 +87,35 @@ class Request {
 
   /// Streams a release archive to [path]; the shared download deadline bounds
   /// a stalled body here rather than the whole transfer a provider download is.
-  Future<void> downloadToFile(String url, String path) async {
+  Future<Response<dynamic>> downloadToFile(
+    String url,
+    String path, {
+    int startAt = 0,
+    void Function(int received, int total)? onReceiveProgress,
+    CancelToken? cancelToken,
+  }) {
     final target = downloadTarget(url);
-    await _clashDio.downloadUri(
+    final resuming = startAt > 0;
+    return _clashDio.downloadUri(
       target.uri,
       path,
       options: Options(
-        headers: target.headers,
+        headers: {
+          ...target.headers,
+          if (resuming) HttpHeaders.rangeHeader: 'bytes=$startAt-',
+        },
         receiveTimeout: downloadTimeoutDuration,
       ),
+      // A stopped attempt keeps its bytes, and the next one resumes them.
+      deleteOnError: false,
+      fileAccessMode: resuming ? FileAccessMode.append : FileAccessMode.write,
+      cancelToken: cancelToken,
+      onReceiveProgress: onReceiveProgress == null
+          ? null
+          : (count, total) => onReceiveProgress(
+              startAt + count,
+              total < 0 ? -1 : startAt + total,
+            ),
     );
   }
 

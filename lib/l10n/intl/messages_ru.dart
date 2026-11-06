@@ -358,6 +358,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "autoCloseConnectionsDesc": MessageLookupByLibrary.simpleMessage(
       "Автозакрытие соединений обрывает открытые соединения при смене прокси.",
     ),
+    "autoDownloadUpdate": MessageLookupByLibrary.simpleMessage(
+      "Автозагрузка обновлений",
+    ),
+    "autoDownloadUpdateDesc": MessageLookupByLibrary.simpleMessage(
+      "Автоматическая проверка скачивает обновление в фоне, чтобы его оставалось только установить.",
+    ),
     "autoInclude": MessageLookupByLibrary.simpleMessage(
       "Автоматическое включение",
     ),
@@ -766,6 +772,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Скорость загрузки",
     ),
+    "downloadFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось скачать обновление",
+    ),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage(
+      "Загрузка обновления",
+    ),
     "duration": MessageLookupByLibrary.simpleMessage("Длительность"),
     "edit": MessageLookupByLibrary.simpleMessage("Редактировать"),
     "editDashboard": MessageLookupByLibrary.simpleMessage("Изменить панель"),
@@ -1002,6 +1014,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Введите содержимое правила",
     ),
+    "installNow": MessageLookupByLibrary.simpleMessage("Установить"),
     "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
       "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
     ),
@@ -1967,6 +1980,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("Без названия"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("Открепить окно"),
     "update": MessageLookupByLibrary.simpleMessage("Обновить"),
+    "updateReady": MessageLookupByLibrary.simpleMessage(
+      "Обновление готово к установке",
+    ),
     "upload": MessageLookupByLibrary.simpleMessage("Отдача"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Скорость отдачи"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
@@ -1982,6 +1998,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "userAgent": MessageLookupByLibrary.simpleMessage("User-Agent"),
     "username": MessageLookupByLibrary.simpleMessage("Имя пользователя"),
     "value": MessageLookupByLibrary.simpleMessage("Значение"),
+    "verifyingUpdate": MessageLookupByLibrary.simpleMessage(
+      "Проверка загруженного файла",
+    ),
     "view": MessageLookupByLibrary.simpleMessage("Просмотр"),
     "virtualIpv4": MessageLookupByLibrary.simpleMessage("Виртуальный IPv4"),
     "vividStyle": MessageLookupByLibrary.simpleMessage("Яркий"),

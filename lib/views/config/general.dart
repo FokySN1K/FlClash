@@ -339,7 +339,7 @@ class GeneralView extends ConsumerWidget {
     ];
   }
 
-  List<Widget> _requestItems() {
+  List<Widget> _requestItems({required bool autoCheckUpdate}) {
     return [
       const UaItem(),
       _appSettingToggle(
@@ -352,6 +352,12 @@ class GeneralView extends ConsumerWidget {
         select: (state) => state.autoCheckUpdate,
         update: (state, value) => state.copyWith(autoCheckUpdate: value),
       ),
+      if (autoCheckUpdate)
+        _appSettingToggle(
+          title: (l) => l.autoDownloadUpdate,
+          select: (state) => state.autoDownloadUpdate,
+          update: (state, value) => state.copyWith(autoDownloadUpdate: value),
+        ),
     ];
   }
 
@@ -393,6 +399,9 @@ class GeneralView extends ConsumerWidget {
         (state) => state.externalController == ExternalControllerStatus.open,
       ),
     );
+    final autoCheckUpdate = ref.watch(
+      appSettingProvider.select((state) => state.autoCheckUpdate),
+    );
     return BaseScaffold(
       title: appLocalizations.general,
       body: ListView(
@@ -412,8 +421,11 @@ class GeneralView extends ConsumerWidget {
           ),
           generateSection(
             title: appLocalizations.requestsAndUpdates,
-            items: _requestItems(),
-            footer: appLocalizations.checkCertificateDesc,
+            items: _requestItems(autoCheckUpdate: autoCheckUpdate),
+            footer: [
+              appLocalizations.checkCertificateDesc,
+              if (autoCheckUpdate) appLocalizations.autoDownloadUpdateDesc,
+            ].join('\n'),
           ),
           generateSection(
             title: appLocalizations.inbound,

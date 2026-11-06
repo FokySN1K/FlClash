@@ -300,6 +300,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "autoCloseConnectionsDesc": MessageLookupByLibrary.simpleMessage(
       "プロキシを切り替えると、既存の接続を自動的に閉じます。",
     ),
+    "autoDownloadUpdate": MessageLookupByLibrary.simpleMessage(
+      "アップデートを自動ダウンロード",
+    ),
+    "autoDownloadUpdateDesc": MessageLookupByLibrary.simpleMessage(
+      "自動チェックがバックグラウンドで更新をダウンロードするため、インストールはワンタップで済みます。",
+    ),
     "autoInclude": MessageLookupByLibrary.simpleMessage("自動で含める"),
     "autoLaunch": MessageLookupByLibrary.simpleMessage("自動起動"),
     "autoRun": MessageLookupByLibrary.simpleMessage("自動実行"),
@@ -630,6 +636,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "done": MessageLookupByLibrary.simpleMessage("完了"),
     "download": MessageLookupByLibrary.simpleMessage("ダウンロード"),
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage("ダウンロード帯域幅"),
+    "downloadFailed": MessageLookupByLibrary.simpleMessage("ダウンロードに失敗しました"),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage("アップデートをダウンロード中"),
     "duration": MessageLookupByLibrary.simpleMessage("経過時間"),
     "edit": MessageLookupByLibrary.simpleMessage("編集"),
     "editDashboard": MessageLookupByLibrary.simpleMessage("ダッシュボードを編集"),
@@ -824,6 +832,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "プロキシグループ名を入力してください",
     ),
     "inputRuleContent": MessageLookupByLibrary.simpleMessage("ルールの内容を入力してください"),
+    "installNow": MessageLookupByLibrary.simpleMessage("インストール"),
     "installedAppsPermissionDeniedMessage":
         MessageLookupByLibrary.simpleMessage(
           "アプリ一覧の権限が拒否されたため、インストール済みアプリを取得できません。システム設定から手動で許可してください。",
@@ -1614,6 +1623,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("名称未設定"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("固定を解除"),
     "update": MessageLookupByLibrary.simpleMessage("更新"),
+    "updateReady": MessageLookupByLibrary.simpleMessage("アップデートの準備ができました"),
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("アップロード帯域幅"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
@@ -1625,6 +1635,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "userAgent": MessageLookupByLibrary.simpleMessage("User-Agent"),
     "username": MessageLookupByLibrary.simpleMessage("ユーザー名"),
     "value": MessageLookupByLibrary.simpleMessage("値"),
+    "verifyingUpdate": MessageLookupByLibrary.simpleMessage("ダウンロードを検証中"),
     "view": MessageLookupByLibrary.simpleMessage("表示"),
     "virtualIpv4": MessageLookupByLibrary.simpleMessage("仮想 IPv4"),
     "vividStyle": MessageLookupByLibrary.simpleMessage("ビビッド"),

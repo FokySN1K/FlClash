@@ -1,11 +1,18 @@
+import 'dart:io';
+
+import 'package:crypto/crypto.dart';
 import 'package:fl_clash/common/app_update.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
 
-Map<String, dynamic> _release(List<String> names) => {
+Map<String, dynamic> _release(List<Map<String, dynamic>> assets) => {
   'tag_name': 'v1.0.6',
   'assets': [
-    for (final name in names)
-      {'name': name, 'browser_download_url': 'https://example.com/$name'},
+    for (final asset in assets)
+      {
+        'browser_download_url': 'https://example.com/${asset['name']}',
+        ...asset,
+      },
   ],
 };
 
@@ -14,8 +21,8 @@ void main() {
     test('takes the setup the suffix names, not the portable zip', () {
       final asset = releaseAsset(
         _release([
-          'FlClash-1.0.6-windows-amd64.zip',
-          'FlClash-1.0.6-windows-amd64-setup.exe',
+          {'name': 'FlClash-1.0.6-windows-amd64.zip'},
+          {'name': 'FlClash-1.0.6-windows-amd64-setup.exe'},
         ]),
         suffix: '-windows-amd64-setup.exe',
       );
@@ -23,12 +30,16 @@ void main() {
       expect(asset, (
         name: 'FlClash-1.0.6-windows-amd64-setup.exe',
         url: 'https://example.com/FlClash-1.0.6-windows-amd64-setup.exe',
+        size: null,
+        sha256: null,
       ));
     });
 
     test('answers nothing when the release built another platform', () {
       final asset = releaseAsset(
-        _release(['FlClash-1.0.6-android-arm64-v8a.apk']),
+        _release([
+          {'name': 'FlClash-1.0.6-android-arm64-v8a.apk'},
+        ]),
         suffix: '-macos-arm64.dmg',
       );
 
@@ -38,6 +49,49 @@ void main() {
     test('answers nothing when the release lists no assets', () {
       expect(releaseAsset({'tag_name': 'v1.0.6'}, suffix: '.dmg'), isNull);
     });
+
+    test('keeps the size and the digest the release publishes', () {
+      final asset = releaseAsset(
+        _release([
+          {
+            'name': 'FlClash-1.0.6-windows-amd64-setup.exe',
+            'size': 1048576,
+            'digest': 'sha256:${'a' * 64}',
+          },
+        ]),
+        suffix: '-windows-amd64-setup.exe',
+      );
+
+      expect(asset?.size, 1048576);
+      expect(asset?.sha256, 'a' * 64);
+    });
+
+    test(
+      'leaves the digest empty under another algorithm or a malformed one',
+      () {
+        for (final digest in [
+          'sha512:${'a' * 128}',
+          'md5:${'a' * 32}',
+          'sha256:not-a-hash',
+          'sha256:${'a' * 63}',
+          'sha256:',
+          '',
+          42,
+        ]) {
+          final asset = releaseAsset(
+            _release([
+              {
+                'name': 'FlClash-1.0.6-windows-amd64-setup.exe',
+                'digest': digest,
+              },
+            ]),
+            suffix: '-windows-amd64-setup.exe',
+          );
+
+          expect(asset?.sha256, isNull, reason: '$digest');
+        }
+      },
+    );
   });
 
   group('releaseAssetsFromPage', () {
@@ -79,7 +133,31 @@ void main() {
         name: 'FlClash-1.0.9-windows-amd64-setup.exe',
         url:
             'https://github.com/FokySN1K/FlClash/releases/download/v1.0.9/FlClash-1.0.9-windows-amd64-setup.exe',
+        size: null,
+        sha256: null,
       ));
     });
+  });
+
+  group('fileSha256', () {
+    test(
+      'hashes a file in chunks the way the release digest names it',
+      () async {
+        final directory = await Directory.systemTemp.createTemp('fl_clash_sha');
+        addTearDown(() => directory.delete(recursive: true));
+        final file = File(p.join(directory.path, 'archive.bin'));
+        final bytes = List<int>.generate(200 * 1024, (index) => index % 251);
+        await file.writeAsBytes(bytes);
+        var reported = 0;
+
+        final digest = await fileSha256(
+          file,
+          onProgress: (done, total) => reported = done,
+        );
+
+        expect(digest, sha256.convert(bytes).toString());
+        expect(reported, bytes.length);
+      },
+    );
   });
 }

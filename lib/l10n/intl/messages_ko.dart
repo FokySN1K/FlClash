@@ -297,6 +297,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "autoCloseConnectionsDesc": MessageLookupByLibrary.simpleMessage(
       "연결 자동 종료는 프록시를 전환할 때 열려 있는 연결을 끊습니다.",
     ),
+    "autoDownloadUpdate": MessageLookupByLibrary.simpleMessage("업데이트 자동 다운로드"),
+    "autoDownloadUpdateDesc": MessageLookupByLibrary.simpleMessage(
+      "자동 확인이 백그라운드에서 업데이트를 내려받아 설치만 남습니다.",
+    ),
     "autoInclude": MessageLookupByLibrary.simpleMessage("자동 포함"),
     "autoLaunch": MessageLookupByLibrary.simpleMessage("자동 실행"),
     "autoRun": MessageLookupByLibrary.simpleMessage("자동 시작"),
@@ -619,6 +623,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "done": MessageLookupByLibrary.simpleMessage("완료"),
     "download": MessageLookupByLibrary.simpleMessage("다운로드"),
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage("다운로드 대역폭"),
+    "downloadFailed": MessageLookupByLibrary.simpleMessage("다운로드 실패"),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage("업데이트 다운로드 중"),
     "duration": MessageLookupByLibrary.simpleMessage("소요 시간"),
     "edit": MessageLookupByLibrary.simpleMessage("편집"),
     "editDashboard": MessageLookupByLibrary.simpleMessage("대시보드 편집"),
@@ -813,6 +819,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "프록시 그룹 이름을 입력하세요",
     ),
     "inputRuleContent": MessageLookupByLibrary.simpleMessage("규칙 내용을 입력하세요"),
+    "installNow": MessageLookupByLibrary.simpleMessage("설치"),
     "installedAppsPermissionDeniedMessage":
         MessageLookupByLibrary.simpleMessage(
           "앱 목록 권한이 거부되어 설치된 앱을 표시할 수 없습니다. 시스템 설정에서 직접 허용해 주세요.",
@@ -1589,6 +1596,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("이름 없음"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("창 고정 해제"),
     "update": MessageLookupByLibrary.simpleMessage("업데이트"),
+    "updateReady": MessageLookupByLibrary.simpleMessage("업데이트 준비 완료"),
     "upload": MessageLookupByLibrary.simpleMessage("업로드"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("업로드 대역폭"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
@@ -1600,6 +1608,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "userAgent": MessageLookupByLibrary.simpleMessage("User-Agent"),
     "username": MessageLookupByLibrary.simpleMessage("사용자 이름"),
     "value": MessageLookupByLibrary.simpleMessage("값"),
+    "verifyingUpdate": MessageLookupByLibrary.simpleMessage("다운로드 검증 중"),
     "view": MessageLookupByLibrary.simpleMessage("보기"),
     "virtualIpv4": MessageLookupByLibrary.simpleMessage("가상 IPv4"),
     "vividStyle": MessageLookupByLibrary.simpleMessage("선명"),

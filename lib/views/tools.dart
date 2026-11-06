@@ -249,15 +249,26 @@ class _CheckUpdateItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isChecking = ref.watch(loadingProvider(LoadingTag.checkUpdate));
+    final download = ref.watch(releaseDownloadProvider);
     return ListItem(
       leading: const GlyphIcon(AppGlyphs.sync),
       title: Text(context.appLocalizations.checkUpdate),
-      onTap: isChecking ? null : () => _checkUpdate(ref),
+      subtitle: download.isBusy
+          ? ReleaseDownloadProgress(state: download)
+          : null,
+      onTap: isChecking
+          ? null
+          : () => download.isBusy ? _showDownload() : _checkUpdate(ref),
     );
   }
 
   Future<void> _checkUpdate(WidgetRef ref) {
     return ref.read(commonActionProvider.notifier).checkUpdate(isUser: true);
+  }
+
+  /// A download the automatic check started has no other place to cancel from.
+  Future<void> _showDownload() {
+    return dialogs.showCommonDialog<void>(child: const ReleaseDownloadDialog());
   }
 }
 

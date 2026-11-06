@@ -7,5 +7,6 @@ export 'last_update_time_text.dart';
 export 'palette.dart';
 export 'record.dart';
 export 'record_table.dart';
+export 'release_download.dart';
 export 'subscription_info_view.dart';
 export 'package:fl_clash/ui/ui.dart';

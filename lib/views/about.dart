@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
-import 'package:fl_clash/ui/ui.dart';
+import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -51,6 +52,7 @@ class AboutView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
     final isLoading = ref.watch(loadingProvider(LoadingTag.checkUpdate));
+    final download = ref.watch(releaseDownloadProvider);
     return CommonScaffold(
       isLoading: isLoading,
       title: appLocalizations.about,
@@ -62,6 +64,7 @@ class AboutView extends ConsumerWidget {
         children: [
           _AboutHero(
             isCheckingUpdate: isLoading,
+            download: download,
             onCheckUpdate: () {
               _checkUpdate(ref);
             },
@@ -120,11 +123,13 @@ class AboutView extends ConsumerWidget {
 
 class _AboutHero extends StatelessWidget {
   final bool isCheckingUpdate;
+  final ReleaseDownloadState download;
   final VoidCallback onCheckUpdate;
   final VoidCallback onEnterDeveloperMode;
 
   const _AboutHero({
     required this.isCheckingUpdate,
+    required this.download,
     required this.onCheckUpdate,
     required this.onEnterDeveloperMode,
   });
@@ -192,12 +197,18 @@ class _AboutHero extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          TonalButton(
-            size: TonalButtonSize.bar,
-            glyph: AppGlyphs.sync,
-            label: appLocalizations.checkUpdate,
-            onPressed: isCheckingUpdate ? null : onCheckUpdate,
-          ),
+          if (download.isBusy)
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 320),
+              child: ReleaseDownloadProgress(state: download),
+            )
+          else
+            TonalButton(
+              size: TonalButtonSize.bar,
+              glyph: AppGlyphs.sync,
+              label: appLocalizations.checkUpdate,
+              onPressed: isCheckingUpdate ? null : onCheckUpdate,
+            ),
         ],
       ),
     );

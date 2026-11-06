@@ -3,10 +3,12 @@ package com.follow.clash.plugins
 import android.Manifest
 import android.app.Activity
 import android.app.ActivityManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
 import android.net.VpnService
 import android.os.Build
@@ -16,7 +18,6 @@ import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.FileProvider
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -90,6 +91,41 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
     }
 
     private var packageChangeContext: Context? = null
+
+    private var installResultContext: Context? = null
+
+    // The installer answers a commit through this receiver with its result.
+    private val installResultReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent == null) return
+            val status = intent.getIntExtra(
+                PackageInstaller.EXTRA_STATUS,
+                PackageInstaller.STATUS_FAILURE,
+            )
+            when (status) {
+                PackageInstaller.STATUS_PENDING_USER_ACTION -> {
+                    val confirmation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        intent.getParcelableExtra(Intent.EXTRA_INTENT, Intent::class.java)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        intent.getParcelableExtra(Intent.EXTRA_INTENT)
+                    }
+                    if (confirmation != null) {
+                        confirmation.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        (activity ?: GlobalState.application).startActivity(confirmation)
+                    }
+                }
+
+                PackageInstaller.STATUS_SUCCESS -> GlobalState.log("Update installed")
+
+                else -> GlobalState.log(
+                    "Update failed: ${
+                        intent?.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE)
+                    }",
+                )
+            }
+        }
+    }
 
     private val packageChangeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -230,11 +266,8 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         GlobalState.application.packageManager.getPackageIconPath(packageName)
     }
 
-    // The updater downloads into the app's own files directory, which the installer
-    // cannot open directly: the archive goes out as a content:// URI from this app's
-    // provider, and only after the user has allowed this app to install packages —
-    // the settings screen that grants it takes the place of the install dialog the
-    // first time round.
+    // The APK is streamed into a session this process feeds: no file URI and no
+    // storage permission, and the system still shows its own confirmation.
     private fun installApk(file: File, result: Result) = onMainThread {
         val activity = activity
         if (activity == null) {
@@ -247,7 +280,7 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
             result.success(openInstallPermissionSettings(activity))
             return@onMainThread
         }
-        result.success(openInstaller(activity, file))
+        result.success(commitInstallSession(activity, file))
     }
 
     private fun openInstallPermissionSettings(activity: Activity): Boolean = runCatching {
@@ -258,22 +291,32 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         )
     }.isSuccess
 
-    private fun openInstaller(activity: Activity, file: File): Boolean = runCatching {
-        activity.startActivity(
-            Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(
-                    FileProvider.getUriForFile(
-                        GlobalState.application,
-                        "${GlobalState.application.packageName}.fileprovider",
-                        file,
-                    ),
-                    "application/vnd.android.package-archive",
-                )
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            },
-        )
+    private fun commitInstallSession(activity: Activity, file: File): Boolean = runCatching {
+        val installer = activity.packageManager.packageInstaller
+        val params = PackageInstaller.SessionParams(
+            PackageInstaller.SessionParams.MODE_FULL_INSTALL,
+        ).apply {
+            setAppPackageName(activity.packageName)
+        }
+        val session = installer.openSession(installer.createSession(params))
+        try {
+            session.openWrite("base.apk", 0, file.length()).use { output ->
+                file.inputStream().use { input -> input.copyTo(output) }
+                session.fsync(output)
+            }
+            val intent = Intent(ACTION_INSTALL_COMMIT).setPackage(activity.packageName)
+            val pending = PendingIntent.getBroadcast(
+                GlobalState.application,
+                INSTALL_COMMIT_REQUEST_CODE,
+                intent,
+                PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
+            session.commit(pending.intentSender)
+        } finally {
+            session.close()
+        }
     }.onFailure { error ->
-        GlobalState.log("Unable to hand the update to the installer: $error")
+        GlobalState.log("Unable to install the update: $error")
     }.isSuccess
 
     // A throw inside the plugin scope has no handler and ends the process;
@@ -474,6 +517,15 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
             MethodChannel(flutterPluginBinding.binaryMessenger, "${Components.PACKAGE_NAME}/app")
         channel.setMethodCallHandler(this)
         watchPackageChanges(flutterPluginBinding.applicationContext)
+        watchInstallResult(flutterPluginBinding.applicationContext)
+    }
+
+    private fun watchInstallResult(context: Context) {
+        context.registerReceiverCompat(
+            installResultReceiver,
+            IntentFilter(ACTION_INSTALL_COMMIT),
+        )
+        installResultContext = context
     }
 
     private fun watchPackageChanges(context: Context) {
@@ -490,6 +542,8 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         packageChangeContext?.unregisterReceiver(packageChangeReceiver)
         packageChangeContext = null
+        installResultContext?.unregisterReceiver(installResultReceiver)
+        installResultContext = null
         channel.setMethodCallHandler(null)
         scope.cancel()
         invokeVpnPrepareCallback(false)
@@ -600,5 +654,7 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1002
         const val INSTALLED_APPS_PERMISSION_REQUEST_CODE = 1003
         const val LOCAL_NETWORK_PERMISSION_REQUEST_CODE = 1004
+        const val INSTALL_COMMIT_REQUEST_CODE = 1005
+        const val ACTION_INSTALL_COMMIT = "com.follow.clash.INSTALL_COMMIT"
     }
 }

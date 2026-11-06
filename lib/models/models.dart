@@ -7,4 +7,5 @@ export 'core.dart';
 export 'ip_quality.dart';
 export 'profile.dart';
 export 'references.dart';
+export 'release_download.dart';
 export 'state.dart';

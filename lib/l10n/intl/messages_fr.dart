@@ -370,6 +370,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "autoCloseConnectionsDesc": MessageLookupByLibrary.simpleMessage(
       "La fermeture automatique coupe les connexions ouvertes lorsque vous changez de proxy.",
     ),
+    "autoDownloadUpdate": MessageLookupByLibrary.simpleMessage(
+      "Télécharger les mises à jour automatiquement",
+    ),
+    "autoDownloadUpdateDesc": MessageLookupByLibrary.simpleMessage(
+      "La vérification automatique télécharge la mise à jour en arrière-plan, il ne reste plus qu\'à l\'installer.",
+    ),
     "autoInclude": MessageLookupByLibrary.simpleMessage(
       "Inclure automatiquement",
     ),
@@ -788,6 +794,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "downloadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Bande passante de réception",
     ),
+    "downloadFailed": MessageLookupByLibrary.simpleMessage(
+      "Échec du téléchargement",
+    ),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage(
+      "Téléchargement de la mise à jour",
+    ),
     "duration": MessageLookupByLibrary.simpleMessage("Durée"),
     "edit": MessageLookupByLibrary.simpleMessage("Modifier"),
     "editDashboard": MessageLookupByLibrary.simpleMessage(
@@ -1036,6 +1048,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Saisissez le contenu de la règle",
     ),
+    "installNow": MessageLookupByLibrary.simpleMessage("Installer"),
     "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
       "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
     ),
@@ -2025,6 +2038,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Désépingler la fenêtre",
     ),
     "update": MessageLookupByLibrary.simpleMessage("Mettre à jour"),
+    "updateReady": MessageLookupByLibrary.simpleMessage(
+      "La mise à jour est prête",
+    ),
     "upload": MessageLookupByLibrary.simpleMessage("Envoi"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Bande passante d’envoi",
@@ -2040,6 +2056,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "userAgent": MessageLookupByLibrary.simpleMessage("User-Agent"),
     "username": MessageLookupByLibrary.simpleMessage("Nom d’utilisateur"),
     "value": MessageLookupByLibrary.simpleMessage("Valeur"),
+    "verifyingUpdate": MessageLookupByLibrary.simpleMessage(
+      "Vérification du téléchargement",
+    ),
     "view": MessageLookupByLibrary.simpleMessage("Afficher"),
     "virtualIpv4": MessageLookupByLibrary.simpleMessage("IPv4 virtuelle"),
     "vividStyle": MessageLookupByLibrary.simpleMessage("Vif"),
