@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.18 (2026-11-06)
+
+**Features**
+
+- **update** Download with progress, resume and a digest check (e6d7da0)
+
 ## v1.0.17 (2026-11-06)
 
 **Features**

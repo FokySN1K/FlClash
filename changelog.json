@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.18",
+      "tag": "v1.0.18",
+      "date": "2026-11-06",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "e6d7da0",
+              "scope": "update",
+              "text": "Download with progress, resume and a digest check"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.17",
       "tag": "v1.0.17",
       "date": "2026-11-06",
