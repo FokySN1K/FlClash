@@ -23,41 +23,23 @@ class _DelayTestJob {
   bool cancelled = false;
 }
 
-/// A group's own check measures its members in the Core and streams each result
-/// back as a delay message, so a member is released the moment its value lands
-/// instead of the whole group waiting for the slowest one.
+/// A group's own check runs inside the Core, which reports the start and the
+/// result of every probe it makes. The app holds only the group's own card for
+/// the run: the members pulse from those reports, so a node shows a spinner
+/// while it is really being measured instead of for the whole sweep.
 class _GroupDelayTestJob {
-  _GroupDelayTestJob(this.groupName, Iterable<_DelayTestTarget> targets) {
-    for (final target in targets) {
-      final key = delayTestKey(
-        target.testUrl,
-        target.proxyName,
-        groupName: groupName,
-      );
-      held.add(key);
-      (_pendingByMember[target.proxyName] ??= {}).add(key);
-    }
-    held.add(groupDelayTestKey(groupName));
-  }
+  _GroupDelayTestJob(this.groupName) : held = {groupDelayTestKey(groupName)};
 
   final String groupName;
 
-  /// The keys still waiting for a value: the members and the group's own card.
-  final Set<String> held = {};
+  /// The group's own card, held until the route it uses has a fresh value.
+  final Set<String> held;
 
-  /// The members whose values have landed, whatever key held them.
+  /// The members whose values have landed in this run.
   final Set<String> settledMembers = {};
 
-  final Map<String, Set<String>> _pendingByMember = {};
-
-  Set<String> settleMember(String proxyName) {
+  void settleMember(String proxyName) {
     settledMembers.add(proxyName);
-    final keys = _pendingByMember.remove(proxyName);
-    if (keys == null) {
-      return const {};
-    }
-    held.removeAll(keys);
-    return keys;
   }
 
   /// Releases the group's own card once its route has a fresh value.
@@ -127,7 +109,7 @@ class ProxiesAction extends _$ProxiesAction {
       ref.read(delayDataSourceProvider.notifier).setDelays(delays);
       for (final job in _groupDelayTestJobs) {
         for (final delay in delays) {
-          settled.addAll(job.settleMember(delay.name));
+          job.settleMember(delay.name);
         }
         if (_groupSelectionSettled(job)) {
           final own = job.settleSelection();
@@ -234,8 +216,15 @@ class ProxiesAction extends _$ProxiesAction {
   }
 
   void setDelay(Delay delay) {
+    ref.read(pendingDelayTestsProvider.notifier).probeEnded(delay.name);
     _bufferedDelays.add(delay);
     _scheduleDelayFlush();
+  }
+
+  /// The Core reports the start of every probe it runs, so a node pulses while
+  /// it is really measured instead of for the whole check it belongs to.
+  void onDelayStart(Delay delay) {
+    ref.read(pendingDelayTestsProvider.notifier).probeStarted(delay.name);
   }
 
   Future<void> changeProxy({
@@ -453,15 +442,13 @@ class ProxiesAction extends _$ProxiesAction {
 
   /// A pool and an ordered fallback re-decide their route only in their own
   /// check, which the Core runs here against the group's own target; the
-  /// members it measures arrive as delay messages on their own.
+  /// members it measures arrive as delay messages on their own, and each of
+  /// them pulses from the probe the Core reports it started.
   Future<void> _runGroupDelayTest(Group group) async {
     if (!group.type.isSelfTested) {
       return;
     }
-    final targets = _resolveDelayTestTargets([
-      (proxies: group.all, testUrl: group.testUrl),
-    ]);
-    final job = _GroupDelayTestJob(group.name, targets);
+    final job = _GroupDelayTestJob(group.name);
     _groupDelayTestJobs.add(job);
     final pending = ref.read(pendingDelayTestsProvider.notifier);
     pending.apply(acquired: job.held, started: job.held);

@@ -161,6 +161,14 @@ String groupDelayTestKey(String groupName) {
   return '$_groupScopeMarker$groupName';
 }
 
+/// Marks a node the Core reported as being probed right now. It is filed by the
+/// name alone: a pulse says the node is being measured, not which target or
+/// group started the check, and a card cannot know the target a group's own
+/// check runs.
+const _coreProbeMarker = '\u0002';
+
+String coreProbeKey(String proxyName) => '$_coreProbeMarker$proxyName';
+
 DelayState computeProxyDelayState({
   required String proxyName,
   required String testUrl,

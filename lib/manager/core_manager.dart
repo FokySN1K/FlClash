@@ -113,6 +113,12 @@ class _CoreContainerState extends ConsumerState<CoreManager>
   }
 
   @override
+  void onDelayStart(Delay delay) {
+    ref.read(proxiesActionProvider.notifier).onDelayStart(delay);
+    super.onDelayStart(delay);
+  }
+
+  @override
   void onLog(Log log) {
     ref.read(logsProvider.notifier).add(log);
     if (log.logLevel == LogLevel.error) {

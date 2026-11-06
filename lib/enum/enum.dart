@@ -241,6 +241,7 @@ enum ResultType {
 enum CoreEventType {
   log,
   delay,
+  delayStart,
   request,
   requestTraffic,
   dns,

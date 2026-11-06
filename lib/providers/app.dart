@@ -362,16 +362,49 @@ class DelayDataSource extends _$DelayDataSource with AutoDisposeNotifierMixin {
   }
 }
 
+/// A probe of a group's own check is measured in the Core, which reports the
+/// start and the result of every probe on its own. A start that no result
+/// follows (a lost message, a Core that went away) must not leave a card
+/// pulsing until the next run, so the mark expires on its own.
+const coreProbeHold = Duration(seconds: 45);
+
 @Riverpod(keepAlive: true)
 class PendingDelayTests extends _$PendingDelayTests
     with AutoDisposeNotifierMixin {
   final Map<String, int> _holds = {};
   final Map<String, int> _runs = {};
   final Map<String, DelayTestPhase> _phases = {};
+  final Map<String, Timer> _probeExpiries = {};
 
   @override
   Map<String, DelayTestPhase> build() {
+    ref.onDispose(() {
+      for (final timer in _probeExpiries.values) {
+        timer.cancel();
+      }
+      _probeExpiries.clear();
+    });
     return const <String, DelayTestPhase>{};
+  }
+
+  /// The Core has just started measuring [proxyName].
+  void probeStarted(String proxyName) {
+    final key = coreProbeKey(proxyName);
+    _probeExpiries.remove(key)?.cancel();
+    _probeExpiries[key] = Timer(coreProbeHold, () => probeEnded(proxyName));
+    if (_phases[key] != DelayTestPhase.running) {
+      _phases[key] = DelayTestPhase.running;
+      _publish();
+    }
+  }
+
+  /// The result of the probe, or its expiry, ends the mark.
+  void probeEnded(String proxyName) {
+    final key = coreProbeKey(proxyName);
+    _probeExpiries.remove(key)?.cancel();
+    if (_phases.remove(key) != null) {
+      _publish();
+    }
   }
 
   /// [finished] keys had started, so they give up their run as well as their
@@ -425,7 +458,11 @@ class PendingDelayTests extends _$PendingDelayTests
   }
 
   void clear() {
-    if (_holds.isEmpty) {
+    for (final timer in _probeExpiries.values) {
+      timer.cancel();
+    }
+    _probeExpiries.clear();
+    if (_holds.isEmpty && _phases.isEmpty) {
       return;
     }
     _holds.clear();

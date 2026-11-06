@@ -26,6 +26,9 @@ abstract mixin class CoreEventListener {
 
   void onDelay(Delay delay) {}
 
+  /// The Core has started a probe; its result arrives through [onDelay].
+  void onDelayStart(Delay delay) {}
+
   void onRequest(TrackerInfo connection) {}
 
   void onRequestTraffic(Map<String, RequestTraffic> traffic) {}
@@ -61,6 +64,9 @@ class CoreEventManager {
               break;
             case CoreEventType.delay:
               listener.onDelay(Delay.fromJson(event.data));
+              break;
+            case CoreEventType.delayStart:
+              listener.onDelayStart(Delay.fromJson(event.data));
               break;
             case CoreEventType.request:
               listener.onRequest(TrackerInfo.fromJson(event.data));

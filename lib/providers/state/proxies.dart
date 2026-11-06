@@ -230,7 +230,13 @@ DelayTestPhase? delayTestPhase(
       }
       // A single node check keeps the shared key and lights the node in every
       // group that shows it.
-      return state[delayTestKey(effectiveTestUrl, effectiveProxyName)];
+      final shared = state[delayTestKey(effectiveTestUrl, effectiveProxyName)];
+      if (shared != null) {
+        return shared;
+      }
+      // A check the Core runs on its own reports every probe it starts, and
+      // that mark is what pulses a node while it is really being measured.
+      return state[coreProbeKey(effectiveProxyName)];
     }),
   );
 }

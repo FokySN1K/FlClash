@@ -782,7 +782,7 @@ void main() {
       all: members,
     );
 
-    test('lights only its own page while its check runs', () async {
+    test('holds only its own card until the Core names a probe', () async {
       final release = Completer<Delay?>();
       when(
         () => core.testGroupDelay(poolName, any()),
@@ -793,15 +793,60 @@ void main() {
       final run = actionOf(container).proxyDelayTest(poolNode);
 
       final pending = container.read(pendingDelayTestsProvider);
+      expect(pending[groupDelayTestKey(poolName)], DelayTestPhase.running);
+      // A member is lit by the probe the Core reports it started, so nothing
+      // of the group is lit before that report arrives.
       expect(
         pending[delayTestKey(_testUrl, 'HK-01', groupName: poolName)],
-        DelayTestPhase.running,
+        isNull,
       );
-      expect(pending[groupDelayTestKey(poolName)], DelayTestPhase.running);
       // The same node in a group that did not run the check stays still.
       expect(pending[delayTestKey(_testUrl, 'HK-01')], isNull);
 
       release.complete(const Delay(name: poolName, url: _testUrl, value: 20));
+      await run;
+
+      expect(container.read(pendingDelayTestsProvider), isEmpty);
+    });
+
+    test('pulses only the member the Core reports it is probing', () async {
+      final release = Completer<Delay?>();
+      when(
+        () => core.testGroupDelay(poolName, any()),
+      ).thenAnswer((_) => release.future);
+      final container = _delayContainer(buildContainer);
+      container.read(groupsProvider.notifier).update((_) => [pool()]);
+
+      final run = actionOf(container).proxyDelayTest(poolNode);
+
+      DelayTestPhase? phaseOf(String name) => container.read(
+        delayTestPhaseProvider(
+          proxyName: name,
+          testUrl: _testUrl,
+          groupName: poolName,
+        ),
+      );
+      expect(phaseOf('HK-01'), isNull);
+      expect(phaseOf('HK-02'), isNull);
+
+      actionOf(
+        container,
+      ).onDelayStart(const Delay(name: 'HK-01', url: _testUrl));
+
+      expect(phaseOf('HK-01'), DelayTestPhase.running);
+      expect(
+        phaseOf('HK-02'),
+        isNull,
+        reason: 'only the node in flight pulses',
+      );
+
+      actionOf(
+        container,
+      ).setDelay(const Delay(name: 'HK-01', url: _testUrl, value: 35));
+
+      expect(phaseOf('HK-01'), isNull, reason: 'the result ends the pulse');
+
+      release.complete(const Delay(name: poolName, url: _testUrl, value: 35));
       await run;
 
       expect(container.read(pendingDelayTestsProvider), isEmpty);
@@ -818,6 +863,9 @@ void main() {
           .update((_) => [pool(now: 'HK-01')]);
 
       final run = actionOf(container).proxyDelayTest(poolNode);
+      actionOf(
+        container,
+      ).onDelayStart(const Delay(name: 'HK-01', url: _testUrl));
 
       actionOf(
         container,
@@ -825,14 +873,12 @@ void main() {
       await Future<void>.delayed(renderThrottleDuration * 2);
 
       final pending = container.read(pendingDelayTestsProvider);
-      expect(
-        pending[delayTestKey(_testUrl, 'HK-01', groupName: poolName)],
-        isNull,
-      );
+      expect(pending[coreProbeKey('HK-01')], isNull);
       expect(pending[groupDelayTestKey(poolName)], isNull);
       expect(
-        pending[delayTestKey(_testUrl, 'HK-02', groupName: poolName)],
-        DelayTestPhase.running,
+        pending[coreProbeKey('HK-02')],
+        isNull,
+        reason: 'a member the Core did not start is not lit',
       );
       expect(container.read(delayDataSourceProvider)[_testUrl]?['HK-01'], 35);
 
