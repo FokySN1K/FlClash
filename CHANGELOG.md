@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.25 (2026-11-07)
+
+**Bug Fixes**
+
+- **android** Take the release key from the secrets alone (385e889)
+
 ## v1.0.24 (2026-11-07)
 
 **Bug Fixes**
