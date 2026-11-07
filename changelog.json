@@ -2,6 +2,34 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.22",
+      "tag": "v1.0.22",
+      "date": "2026-11-07",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "8e7403d",
+              "scope": "system",
+              "text": "Treat a cancelled elevation as a refusal"
+            },
+            {
+              "id": "be0329c",
+              "scope": "providers",
+              "text": "Unfreeze a group whose check never ended"
+            },
+            {
+              "id": "e5c92c1",
+              "scope": "update",
+              "text": "Take an archive a release page publishes without a size"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.21",
       "tag": "v1.0.21",
       "date": "2026-11-07",

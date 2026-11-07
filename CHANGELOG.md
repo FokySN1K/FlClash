@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.22 (2026-11-07)
+
+**Bug Fixes**
+
+- **system** Treat a cancelled elevation as a refusal (8e7403d)
+- **providers** Unfreeze a group whose check never ended (be0329c)
+- **update** Take an archive a release page publishes without a size (e5c92c1)
+
 ## v1.0.21 (2026-11-07)
 
 **Features**
