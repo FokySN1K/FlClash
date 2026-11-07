@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.21",
+      "tag": "v1.0.21",
+      "date": "2026-11-07",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "b01a45f",
+              "scope": "app",
+              "text": "Follow a recovering group and share the logs"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.20",
       "tag": "v1.0.20",
       "date": "2026-11-07",

@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.21 (2026-11-07)
+
+**Features**
+
+- **app** Follow a recovering group and share the logs (b01a45f)
+
 ## v1.0.20 (2026-11-07)
 
 **Features**
