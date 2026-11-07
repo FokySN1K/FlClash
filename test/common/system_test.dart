@@ -375,6 +375,24 @@ void main() {
     });
   });
 
+  group('Windows elevationAccepted', () {
+    test('accepts a command that started', () {
+      expect(Windows.elevationAccepted(42), isTrue);
+    });
+
+    test('refuses an error answer', () {
+      expect(Windows.elevationAccepted(5), isFalse);
+    });
+
+    test('refuses a prompt the user dismissed', () {
+      expect(
+        Windows.elevationAccepted(1223),
+        isFalse,
+        reason: 'a dismissed prompt must not quit the app as if it installed',
+      );
+    });
+  });
+
   group('Linux installService', () {
     test('asks pkexec to install the bundled Helper', () async {
       expect(await Linux().installService(), isTrue);

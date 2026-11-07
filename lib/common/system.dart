@@ -325,11 +325,17 @@ class Windows {
       logLevel: LogLevel.warning,
     );
 
-    if (result <= 32) {
-      return false;
-    }
-    return true;
+    return elevationAccepted(result);
   }
+
+  /// ShellExecuteW answers above 32 once the command started, and
+  /// ERROR_CANCELLED when the user declines the elevation prompt: that one is
+  /// above 32 as well, but it launched nothing.
+  @visibleForTesting
+  static bool elevationAccepted(int result) =>
+      result > 32 && result != _errorCancelled;
+
+  static const _errorCancelled = 1223;
 
   /// The installer may be another administrator, so this process names the owner.
   @visibleForTesting
