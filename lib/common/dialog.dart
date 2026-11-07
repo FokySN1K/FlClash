@@ -221,11 +221,13 @@ class Dialogs {
     String text, {
     MessageLevel level = MessageLevel.info,
     MessageActionState? actionState,
+    Duration? duration,
   }) {
     rootNavigatorKey.currentContext?.showNotifier(
       text,
       level: level,
       actionState: actionState,
+      duration: duration,
     );
   }
 

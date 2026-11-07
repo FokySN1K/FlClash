@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
@@ -250,15 +252,28 @@ class _CheckUpdateItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isChecking = ref.watch(loadingProvider(LoadingTag.checkUpdate));
     final download = ref.watch(releaseDownloadProvider);
+    final ready = download.phase == ReleaseDownloadPhase.ready;
     return ListItem(
       leading: const GlyphIcon(AppGlyphs.sync),
       title: Text(context.appLocalizations.checkUpdate),
       subtitle: download.isBusy
           ? ReleaseDownloadProgress(state: download)
+          : ready
+          ? Text(context.appLocalizations.updateReady)
           : null,
       onTap: isChecking
           ? null
-          : () => download.isBusy ? _showDownload() : _checkUpdate(ref),
+          : () {
+              if (download.isBusy) {
+                unawaited(_showDownload());
+              } else if (ready) {
+                unawaited(
+                  ref.read(commonActionProvider.notifier).installReadyRelease(),
+                );
+              } else {
+                unawaited(_checkUpdate(ref));
+              }
+            },
     );
   }
 

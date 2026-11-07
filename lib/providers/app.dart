@@ -621,6 +621,10 @@ class ReleaseDownload extends _$ReleaseDownload with AutoDisposeNotifierMixin {
     return await file.exists() ? file : null;
   }
 
+  /// The archive the last finished transfer left, for a caller that holds an
+  /// install action and no asset to match it against.
+  File? get readyArchive => _readyFile;
+
   Future<File?> run(ReleaseAsset asset, {String? version}) {
     final inFlight = _inFlight;
     if (inFlight != null) {

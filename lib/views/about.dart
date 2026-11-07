@@ -68,6 +68,11 @@ class AboutView extends ConsumerWidget {
             onCheckUpdate: () {
               _checkUpdate(ref);
             },
+            onInstall: () {
+              unawaited(
+                ref.read(commonActionProvider.notifier).installReadyRelease(),
+              );
+            },
             onEnterDeveloperMode: () {
               ref
                   .read(appSettingProvider.notifier)
@@ -125,12 +130,14 @@ class _AboutHero extends StatelessWidget {
   final bool isCheckingUpdate;
   final ReleaseDownloadState download;
   final VoidCallback onCheckUpdate;
+  final VoidCallback onInstall;
   final VoidCallback onEnterDeveloperMode;
 
   const _AboutHero({
     required this.isCheckingUpdate,
     required this.download,
     required this.onCheckUpdate,
+    required this.onInstall,
     required this.onEnterDeveloperMode,
   });
 
@@ -201,6 +208,13 @@ class _AboutHero extends StatelessWidget {
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 320),
               child: ReleaseDownloadProgress(state: download),
+            )
+          else if (download.phase == ReleaseDownloadPhase.ready)
+            TonalButton(
+              size: TonalButtonSize.bar,
+              glyph: AppGlyphs.cloudDownload,
+              label: appLocalizations.installNow,
+              onPressed: onInstall,
             )
           else
             TonalButton(

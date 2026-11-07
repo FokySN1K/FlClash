@@ -64,10 +64,13 @@ class StatusManagerState extends ConsumerState<StatusManager> {
   Iterable<_MessageEntry> get _visibleEntries =>
       _entries.where((entry) => entry.visible);
 
+  /// Shows [text]; a zero [duration] keeps the message until the user
+  /// dismisses it, which an action the user must not miss relies on.
   void message(
     String text, {
     MessageLevel level = MessageLevel.info,
     MessageActionState? actionState,
+    Duration? duration,
   }) {
     if (text.isEmpty) {
       return;
@@ -76,7 +79,7 @@ class StatusManagerState extends ConsumerState<StatusManager> {
       id: uuidV4,
       text: text,
       level: level,
-      duration: _resolveDuration(level, actionState),
+      duration: duration ?? _resolveDuration(level, actionState),
       actionState: actionState,
     );
     commonPrint.log('message: $text');
@@ -164,7 +167,7 @@ class StatusManagerState extends ConsumerState<StatusManager> {
 
   void _startTimer(CommonMessage message) {
     _activeTimers.remove(message.id)?.cancel();
-    if (_draggingId != null) {
+    if (_draggingId != null || message.duration <= Duration.zero) {
       return;
     }
     _activeTimers[message.id] = Timer(message.duration, () {

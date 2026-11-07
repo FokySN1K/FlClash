@@ -154,54 +154,48 @@ class CommonAction extends _$CommonAction {
     await checkUpdateResultHandle(data: result.release, isUser: isUser);
   }
 
-  /// Downloads the archive this build can install and hands the process over
-  /// to it; a release that never built for this platform keeps the release page
-  /// as the way to its download.
-  Future<void> installRelease(Map<String, dynamic> release) async {
+  /// Downloads the archive this build can install without blocking the page
+  /// that asked for it; the end of the transfer turns into an install action.
+  /// A release that never built for this platform keeps the release page as
+  /// the way to its download.
+  Future<void> downloadRelease(Map<String, dynamic> release) async {
     final asset = releaseAsset(release);
     if (asset == null) {
-      final tagName = release['tag_name'];
-      commonPrint.log(
-        'no ${releaseAssetSuffix()} archive in release $tagName',
-        logLevel: LogLevel.warning,
-      );
-      unawaited(
-        launchUrl(Uri.parse('https://github.com/$repository/releases/latest')),
-      );
+      _openReleasePage(release);
       return;
     }
-    final download = ref.read(releaseDownloadProvider.notifier);
-    final prepared = await download.readyFile(asset);
-    final File? file;
-    if (prepared != null) {
-      file = prepared;
-    } else {
-      // The dialog shows the transfer and closes itself once the file is ready.
-      unawaited(
-        dialogs.showCommonDialog<void>(
-          dismissible: false,
-          child: const ReleaseDownloadDialog(),
-        ),
-      );
-      file = await download.run(asset, version: _releaseVersion(release));
-    }
-    if (file == null) return;
-    final archive = file;
-    final handedOff = await globalState.safeRun(
-      () => launchReleaseAsset(archive),
-      title: currentAppLocalizations.update,
-    );
-    if (handedOff != true) return;
-    await ref.read(systemActionProvider.notifier).handleExit();
-  }
-
-  Future<void> _autoDownloadRelease(Map<String, dynamic> release) async {
-    final asset = releaseAsset(release);
-    if (asset == null) return;
     final file = await ref
         .read(releaseDownloadProvider.notifier)
         .run(asset, version: _releaseVersion(release));
     if (file == null) return;
+    _offerInstall(release);
+  }
+
+  /// Installs [release], waiting for a transfer that is still running.
+  Future<void> installRelease(Map<String, dynamic> release) async {
+    final asset = releaseAsset(release);
+    if (asset == null) {
+      _openReleasePage(release);
+      return;
+    }
+    final download = ref.read(releaseDownloadProvider.notifier);
+    final file =
+        await download.readyFile(asset) ??
+        await download.run(asset, version: _releaseVersion(release));
+    if (file == null) return;
+    await _installArchive(file);
+  }
+
+  /// Installs the archive the last finished download left on disk.
+  Future<void> installReadyRelease() async {
+    final file = ref.read(releaseDownloadProvider.notifier).readyArchive;
+    if (file == null || !await file.exists()) return;
+    await _installArchive(file);
+  }
+
+  /// Offers the finished archive as a floating action that waits for the user
+  /// instead of expiring with a regular toast.
+  void _offerInstall(Map<String, dynamic> release) {
     final localizations = currentAppLocalizations;
     dialogs.showNotifier(
       localizations.updateReady,
@@ -210,7 +204,28 @@ class CommonAction extends _$CommonAction {
         actionText: localizations.installNow,
         action: () => unawaited(installRelease(release)),
       ),
+      duration: Duration.zero,
     );
+  }
+
+  void _openReleasePage(Map<String, dynamic> release) {
+    final tagName = release['tag_name'];
+    commonPrint.log(
+      'no ${releaseAssetSuffix()} archive in release $tagName',
+      logLevel: LogLevel.warning,
+    );
+    unawaited(
+      launchUrl(Uri.parse('https://github.com/$repository/releases/latest')),
+    );
+  }
+
+  Future<void> _installArchive(File file) async {
+    final handedOff = await globalState.safeRun(
+      () => launchReleaseAsset(file),
+      title: currentAppLocalizations.update,
+    );
+    if (handedOff != true) return;
+    await ref.read(systemActionProvider.notifier).handleExit();
   }
 
   Future<void> checkUpdateResultHandle({
@@ -219,7 +234,7 @@ class CommonAction extends _$CommonAction {
   }) async {
     if (data != null) {
       if (!isUser && ref.read(appSettingProvider).autoDownloadUpdate) {
-        unawaited(_autoDownloadRelease(data));
+        unawaited(downloadRelease(data));
       }
       final context = globalState.navigatorKey.currentContext!;
       final res = await dialogs.showMessage(
@@ -233,7 +248,7 @@ class CommonAction extends _$CommonAction {
         cancelText: isUser ? null : currentAppLocalizations.noLongerRemind,
       );
       if (res == true) {
-        await installRelease(data);
+        unawaited(downloadRelease(data));
       } else if (!isUser && res == false) {
         ref
             .read(appSettingProvider.notifier)
