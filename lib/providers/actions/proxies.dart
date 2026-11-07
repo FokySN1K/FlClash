@@ -131,6 +131,9 @@ class ProxiesAction extends _$ProxiesAction {
     _bufferedStarts.clear();
     _bufferedFinishes.clear();
     ref.read(pendingDelayTestsProvider.notifier).clear();
+    // The checks the frozen set waits for are exactly the ones that just died,
+    // so no end will ever unfreeze their groups.
+    ref.read(delayTestingGroupsProvider.notifier).reset();
   }
 
   void _scheduleDelayFlush() {

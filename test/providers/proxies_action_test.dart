@@ -824,6 +824,43 @@ void main() {
     });
   });
 
+  group('delay testing groups', () {
+    test('a Core that goes away drops the frozen groups', () async {
+      final container = _delayContainer(buildContainer);
+      container.listen(proxiesActionProvider, (_, _) {});
+      container.read(coreStatusProvider.notifier).value = CoreStatus.connected;
+      container.read(delayTestingGroupsProvider.notifier).coreStarted('Proxy');
+      expect(container.read(delayTestingGroupsProvider), {'Proxy'});
+
+      container.read(coreStatusProvider.notifier).value =
+          CoreStatus.disconnected;
+
+      expect(
+        container.read(delayTestingGroupsProvider),
+        isEmpty,
+        reason: 'no end can arrive for a check the Core took with it',
+      );
+    });
+
+    testWidgets('a Core check that never ends unfreezes its group', (
+      tester,
+    ) async {
+      final container = buildContainer();
+      final groups = container.read(delayTestingGroupsProvider.notifier);
+
+      groups.coreStarted('Proxy');
+      expect(container.read(delayTestingGroupsProvider), {'Proxy'});
+
+      await tester.pump(coreCheckHold - const Duration(seconds: 1));
+      expect(container.read(delayTestingGroupsProvider), {
+        'Proxy',
+      }, reason: 'a check still running keeps its cards in place');
+
+      await tester.pump(const Duration(seconds: 2));
+      expect(container.read(delayTestingGroupsProvider), isEmpty);
+    });
+  });
+
   group('a self tested group', () {
     const poolName = 'Pool';
     const poolNode = Proxy(name: 'Pool', type: 'URLTestPool');

@@ -622,9 +622,18 @@ class DelayTestingGroups extends _$DelayTestingGroups
   final Set<String> _runs = {};
   final Map<String, int> _coreChecks = {};
 
+  /// A check the Core started and never declared over (a lost message, a Core
+  /// that went away) must not keep its group frozen until the next run, so it
+  /// expires on the same hold as the cards the check keeps in place.
+  final Map<String, Timer> _watchdogs = {};
+
   @override
   Set<String> build() {
     ref.onDispose(() {
+      for (final timer in _watchdogs.values) {
+        timer.cancel();
+      }
+      _watchdogs.clear();
       _runs.clear();
       _coreChecks.clear();
     });
@@ -649,6 +658,8 @@ class DelayTestingGroups extends _$DelayTestingGroups
   /// A check the Core runs on its own has begun.
   void coreStarted(String groupName) {
     _coreChecks[groupName] = (_coreChecks[groupName] ?? 0) + 1;
+    _watchdogs.remove(groupName)?.cancel();
+    _watchdogs[groupName] = Timer(coreCheckHold, () => coreEnded(groupName));
     _sync();
   }
 
@@ -663,6 +674,23 @@ class DelayTestingGroups extends _$DelayTestingGroups
       return;
     }
     _coreChecks.remove(groupName);
+    _watchdogs.remove(groupName)?.cancel();
+    _sync();
+  }
+
+  /// Drops every group of the list: either the Core that would report the end
+  /// of their checks is gone, or the checks do not concern the profile that
+  /// replaced it.
+  void reset() {
+    if (_runs.isEmpty && _coreChecks.isEmpty && _watchdogs.isEmpty) {
+      return;
+    }
+    for (final timer in _watchdogs.values) {
+      timer.cancel();
+    }
+    _watchdogs.clear();
+    _runs.clear();
+    _coreChecks.clear();
     _sync();
   }
 
