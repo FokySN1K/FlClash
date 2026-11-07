@@ -13,14 +13,17 @@ val localProperties = Properties().apply {
     }
 }
 
+// The key is committed so that every build signs with one certificate: Android
+// refuses to replace an installed app signed with another key, and a fresh CI
+// runner invents a new debug key on every run. The update is then rejected, the
+// old app is deleted by hand and the profiles go with it. The properties file
+// still wins when it is present, so release secrets can take over later and
+// keep the same certificate.
 val releaseStoreFile = file("keystore.jks")
-val releaseStorePassword = localProperties.getProperty("storePassword")
-val releaseKeyAlias = localProperties.getProperty("keyAlias")
-val releaseKeyPassword = localProperties.getProperty("keyPassword")
-val hasReleaseSigning = releaseStoreFile.exists() &&
-    releaseStorePassword != null &&
-    releaseKeyAlias != null &&
-    releaseKeyPassword != null
+val releaseStorePassword = localProperties.getProperty("storePassword") ?: "flclash"
+val releaseKeyAlias = localProperties.getProperty("keyAlias") ?: "flclash"
+val releaseKeyPassword = localProperties.getProperty("keyPassword") ?: "flclash"
+val hasReleaseSigning = releaseStoreFile.exists()
 
 android {
     namespace = "com.follow.clash"
@@ -66,11 +69,15 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            // The application id must not depend on whether a keystore is
+            // present: a build that flips it installs beside the old app and
+            // starts with no profiles, which reads as an update that wiped them.
+            // The committed keystore makes the first branch the normal one; the
+            // fallback only covers a checkout that dropped the file.
             if (hasReleaseSigning) {
                 signingConfig = signingConfigs.getByName("release")
             } else {
                 signingConfig = signingConfigs.getByName("debug")
-                applicationIdSuffix = ".dev"
             }
 
             proguardFiles(
