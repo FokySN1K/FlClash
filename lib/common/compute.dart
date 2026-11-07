@@ -34,17 +34,54 @@ List<Group> computeSort({
     return List.of(proxies)..sort((a, b) => a.name.compareTo(b.name));
   }
 
+  // A selector keeps the groups the profile put among its members where they
+  // are and sorts only the nodes into the places that are left.
+  List<Proxy> sortSelectorOfDelay({
+    required List<Group> groups,
+    required List<Proxy> proxies,
+    required DelayMap delayMap,
+    required Map<String, String> selectedMap,
+    required String testUrl,
+  }) {
+    final groupNames = {for (final group in groups) group.name};
+    final sorted = sortOfDelay(
+      groups: groups,
+      proxies: [
+        for (final proxy in proxies)
+          if (!groupNames.contains(proxy.name)) proxy,
+      ],
+      delayMap: delayMap,
+      selectedMap: selectedMap,
+      testUrl: testUrl,
+    );
+    var next = 0;
+    return [
+      for (final proxy in proxies)
+        if (groupNames.contains(proxy.name)) proxy else sorted[next++],
+    ];
+  }
+
   return groups.map((group) {
     final proxies = group.all;
+    final testUrl = group.testUrl.takeFirstValid([defaultTestUrl]);
     final newProxies = switch (sortType) {
       ProxiesSortType.none => proxies,
-      ProxiesSortType.delay => sortOfDelay(
-        groups: groups,
-        proxies: proxies,
-        delayMap: delayMap,
-        selectedMap: selectedMap,
-        testUrl: group.testUrl.takeFirstValid([defaultTestUrl]),
-      ),
+      ProxiesSortType.delay => switch (group.type) {
+        GroupType.Selector => sortSelectorOfDelay(
+          groups: groups,
+          proxies: proxies,
+          delayMap: delayMap,
+          selectedMap: selectedMap,
+          testUrl: testUrl,
+        ),
+        _ => sortOfDelay(
+          groups: groups,
+          proxies: proxies,
+          delayMap: delayMap,
+          selectedMap: selectedMap,
+          testUrl: testUrl,
+        ),
+      },
       ProxiesSortType.name => sortOfName(proxies),
     };
     return group.copyWith(all: newProxies);

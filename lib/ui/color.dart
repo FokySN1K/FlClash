@@ -302,12 +302,14 @@ extension ColorExtension on Color {
   }
 }
 
-/// The purple a card wears while a test measures it: a number is on its
-/// way, so it must not read as one of the delay verdicts.
-const probeTint = Color(0xFFB388FF);
+/// The purple a card wears while it waits for the test that will measure
+/// it: the number it shows is the old one, so the wash must not read as a
+/// delay verdict.
+const queuedProbeTint = Color(0xFFB388FF);
 
-/// The blue a group wears while its own test runs and it has no pick yet.
-const groupProbeTint = Color(0xFF4FC3F7);
+/// The blue a card wears while the test measures it: the spinner takes the
+/// place of its number.
+const runningProbeTint = Color(0xFF4FC3F7);
 
 extension ColorSchemeExtension on ColorScheme {
   ColorScheme toPureBlack(bool isPureBlack) {
@@ -361,19 +363,16 @@ extension ColorSchemeExtension on ColorScheme {
     return warning;
   }
 
-  /// The pale wash a proxy card wears: purple while a test measures it, red
-  /// for an unreachable node, yellow for a slow one and green for a fast one.
-  Color? delayCardTint(int? delay, {required bool testing}) {
-    if (testing) return probeTint;
-    return delayColor(delay);
-  }
-
-  /// The wash a group header wears: the verdict of the node the group routes
-  /// to, and blue while its own test runs before it has such a node.
-  Color? delayGroupTint(int? delay, {required bool testing}) {
-    if (delay == null) {
-      return testing ? groupProbeTint : null;
-    }
+  /// The pale wash a proxy card wears: purple while a test queues it, blue
+  /// while the test measures it, red for an unreachable node, yellow for a
+  /// slow one and green for a fast one.
+  Color? delayCardTint(
+    int? delay, {
+    required bool queued,
+    required bool running,
+  }) {
+    if (running) return runningProbeTint;
+    if (queued) return queuedProbeTint;
     return delayColor(delay);
   }
 }

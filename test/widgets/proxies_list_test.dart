@@ -396,7 +396,34 @@ void main() {
     expect(_RecordingProxiesAction.tested, ['G0']);
   });
 
-  testWidgets('a group under test spins its button and ignores taps', (
+  testWidgets('a queued card turns purple and a measured one turns blue', (
+    tester,
+  ) async {
+    await pumpList(tester);
+    CommonCard cardOf(String name) => tester.widget<CommonCard>(
+      find
+          .ancestor(of: find.text(name), matching: find.byType(CommonCard))
+          .first,
+    );
+    final pending = container.read(pendingDelayTestsProvider.notifier);
+
+    pending.apply(acquired: [coreProbeKey('G0-0')]);
+    await tester.pump();
+
+    expect(cardOf('G0-0').tint, queuedProbeTint);
+    expect(cardOf('G0-0').tintPulse, isFalse);
+
+    pending.probeStarted('G0-0');
+    await tester.pump();
+
+    expect(cardOf('G0-0').tint, runningProbeTint);
+    expect(cardOf('G0-0').tintPulse, isTrue);
+
+    pending.probeEnded('G0-0');
+    await tester.pump();
+  });
+
+  testWidgets('a group under test keeps its card and only spins its button', (
     tester,
   ) async {
     await pumpList(tester);
@@ -405,7 +432,7 @@ void main() {
     container.read(delayTestingGroupsProvider.notifier).start('G0');
     await tester.pump();
 
-    expect(headerColor(tester, 'G0'), isNot(idle));
+    expect(headerColor(tester, 'G0'), idle);
     expect(
       find.descendant(
         of: headerOf('G0'),

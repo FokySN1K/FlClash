@@ -206,7 +206,8 @@ class ProxyCard extends ConsumerWidget {
         );
         final tint = context.colorScheme.delayCardTint(
           ref.watch(delayProvider(proxyName: proxy.name, testUrl: testUrl)),
-          testing: phase != null,
+          queued: phase == DelayTestPhase.queued,
+          running: phase == DelayTestPhase.running,
         );
         return ContextMenuRegion(
           menuItems: _menuItems(
@@ -234,7 +235,7 @@ class ProxyCard extends ConsumerWidget {
             onPressed: () => _handleSelect(ref),
             isSelected: inUse,
             tint: tint,
-            tintPulse: phase != null,
+            tintPulse: phase == DelayTestPhase.running,
             child: Container(
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -368,6 +369,62 @@ class _DelayTextState extends ConsumerState<_DelayText> {
     );
   }
 
+  /// A queued card keeps the number it had while it waits, so only the
+  /// measurement itself swaps it for the spinner.
+  Widget _buildDelaySlot(
+    BuildContext context,
+    int? delay,
+    DelayTestPhase? phase,
+  ) {
+    final size = globalState.measure.textHeight(AppTextStyle.caption2);
+    if (phase == DelayTestPhase.running) {
+      return SizedBox(
+        height: size,
+        width: size,
+        child: _withFocusRing(context, CommonCircleLoading(size: size)),
+      );
+    }
+    if (delay == null) {
+      return SizedBox(
+        height: size,
+        width: size,
+        child: _withFocusRing(context, switch (phase) {
+          DelayTestPhase.queued => GlyphIcon(
+            AppGlyphs.clock,
+            size: size,
+            color: context.colorScheme.onSurfaceVariant.opacity38,
+          ),
+          _ => Tooltip(
+            message: context.appLocalizations.delayTest,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: _handleTestCurrentDelay,
+              child: GlyphIcon(AppGlyphs.bolt, size: size),
+            ),
+          ),
+        }),
+      );
+    }
+    return GestureDetector(
+      onTap: _handleTestCurrentDelay,
+      child: _withFocusRing(
+        context,
+        Text(
+          delay > 0
+              ? '$delay ms'
+              : delayFailureText(delay, context.appLocalizations),
+          maxLines: 1,
+          style: AppTextStyle.caption2
+              .of(context, emphasized: true)
+              .copyWith(
+                overflow: TextOverflow.ellipsis,
+                color: context.colorScheme.delayColor(delay),
+              ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final measure = globalState.measure;
@@ -396,50 +453,7 @@ class _DelayTextState extends ConsumerState<_DelayText> {
           height: measure.textHeight(AppTextStyle.caption2),
           child: FadeBox(
             alignment: widget.alignment,
-            child: phase != null || delay == null
-                ? SizedBox(
-                    height: measure.textHeight(AppTextStyle.caption2),
-                    width: measure.textHeight(AppTextStyle.caption2),
-                    child: _withFocusRing(context, switch (phase) {
-                      DelayTestPhase.running => CommonCircleLoading(
-                        size: measure.textHeight(AppTextStyle.caption2),
-                      ),
-                      DelayTestPhase.queued => GlyphIcon(
-                        AppGlyphs.clock,
-                        size: measure.textHeight(AppTextStyle.caption2),
-                        color: context.colorScheme.onSurfaceVariant.opacity38,
-                      ),
-                      null => Tooltip(
-                        message: context.appLocalizations.delayTest,
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: _handleTestCurrentDelay,
-                          child: GlyphIcon(
-                            AppGlyphs.bolt,
-                            size: measure.textHeight(AppTextStyle.caption2),
-                          ),
-                        ),
-                      ),
-                    }),
-                  )
-                : GestureDetector(
-                    onTap: _handleTestCurrentDelay,
-                    child: _withFocusRing(
-                      context,
-                      Text(
-                        delay > 0
-                            ? '$delay ms'
-                            : delayFailureText(delay, context.appLocalizations),
-                        maxLines: 1,
-                        style: AppTextStyle.caption2
-                            .of(context, emphasized: true)
-                            .copyWith(
-                              overflow: TextOverflow.ellipsis,
-                              color: context.colorScheme.delayColor(delay),
-                            ),
-                      ),
-                    ),
-                  ),
+            child: _buildDelaySlot(context, delay, phase),
           ),
         ),
       ),

@@ -610,9 +610,6 @@ class ListHeader extends ConsumerWidget {
     final isDelayTesting = ref.watch(
       delayTestingGroupsProvider.select((state) => state.contains(groupName)),
     );
-    final delay = ref.watch(
-      delayProvider(proxyName: groupName, testUrl: group.testUrl),
-    );
     final colorScheme = context.colorScheme;
     final level = floating > 0
         ? SurfaceLevel.floatingOf(colorScheme)
@@ -623,8 +620,6 @@ class ListHeader extends ConsumerWidget {
       enterAnimated: enterAnimated,
       key: key,
       radius: radius - _headerButtonInset,
-      tint: colorScheme.delayGroupTint(delay, testing: isDelayTesting),
-      tintPulse: isDelayTesting && delay == null,
       child: Padding(
         padding: const EdgeInsets.all(_headerInset - _headerButtonInset),
         child: Row(
