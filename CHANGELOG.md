@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.20 (2026-11-07)
+
+**Features**
+
+- **proxies** Queue in purple, measure in blue and pin groups in a selector (906cb45)
+- **update** Keep a release download off the UI and offer the install (52e4e89)
+
 ## v1.0.19 (2026-11-06)
 
 **Features**

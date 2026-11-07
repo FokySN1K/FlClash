@@ -2,6 +2,29 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.20",
+      "tag": "v1.0.20",
+      "date": "2026-11-07",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "906cb45",
+              "scope": "proxies",
+              "text": "Queue in purple, measure in blue and pin groups in a selector"
+            },
+            {
+              "id": "52e4e89",
+              "scope": "update",
+              "text": "Keep a release download off the UI and offer the install"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.19",
       "tag": "v1.0.19",
       "date": "2026-11-06",
