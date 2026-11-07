@@ -29,6 +29,9 @@ class _ReleaseHost {
   /// A host that ignores the Range header answers 200 with the whole archive.
   bool ignoresRange = false;
 
+  /// A host that refuses a range past the archive answers 416.
+  bool refusesRange = false;
+
   /// Holds the next answer until the test completes it.
   Completer<void>? hold;
 
@@ -55,6 +58,13 @@ class _ReleaseHost {
     hold = null;
     await holding?.future;
     final start = ignoresRange ? 0 : _startOf(range);
+    if (refusesRange && start > 0) {
+      final response = request.response
+        ..statusCode = HttpStatus.requestedRangeNotSatisfiable
+        ..headers.contentLength = 0;
+      await response.close();
+      return;
+    }
     final body = bytes.sublist(start);
     final response = request.response
       ..statusCode = start == 0 ? HttpStatus.ok : HttpStatus.partialContent
@@ -121,12 +131,15 @@ void main() {
     String name = 'FlClash-1.0.6-linux-amd64.AppImage',
     int? size,
     String? sha256,
+    bool published = true,
   }) {
     return (
       name: name,
       url: host.urlOf(name),
-      size: size ?? bytes.length,
-      sha256: sha256 ?? _digestOf(bytes),
+      // A release read from its page rather than the API publishes neither a
+      // size nor a digest for its archives.
+      size: published ? (size ?? bytes.length) : null,
+      sha256: published ? (sha256 ?? _digestOf(bytes)) : null,
     );
   }
 
@@ -179,6 +192,58 @@ void main() {
 
     expect(downloaded.path, file.path);
     expect(host.ranges, isEmpty);
+  });
+
+  test('takes the archive of a release page that publishes no size', () async {
+    final file = await downloadReleaseAsset(
+      assetFor(published: false),
+      version: 'v1.0.6',
+    );
+
+    expect(await file.readAsBytes(), bytes);
+    expect(await File('${file.path}.part').exists(), isFalse);
+    expect(
+      host.ranges,
+      hasLength(1),
+      reason: 'the finished transfer is the proof, so one download is enough',
+    );
+  });
+
+  test('reuses the page archive an earlier run already finished', () async {
+    final directory = await versionDirectoryOf('v1.0.6');
+    final file = File(
+      p.join(directory.path, 'FlClash-1.0.6-linux-amd64.AppImage'),
+    );
+    await file.writeAsBytes(bytes);
+
+    final downloaded = await downloadReleaseAsset(
+      assetFor(published: false),
+      version: 'v1.0.6',
+    );
+
+    expect(downloaded.path, file.path);
+    expect(
+      host.ranges,
+      isEmpty,
+      reason: 'a restart must not download it again',
+    );
+  });
+
+  test('takes a page archive a resumed attempt completed', () async {
+    final directory = await versionDirectoryOf('v1.0.6');
+    final part = File(
+      p.join(directory.path, 'FlClash-1.0.6-linux-amd64.AppImage.part'),
+    );
+    await part.writeAsBytes(bytes.sublist(0, 8));
+
+    final file = await downloadReleaseAsset(
+      assetFor(published: false),
+      version: 'v1.0.6',
+    );
+
+    expect(host.ranges, ['bytes=8-']);
+    expect(await file.readAsBytes(), bytes);
+    expect(await part.exists(), isFalse);
   });
 
   test('clears the archives of the versions before it', () async {
@@ -236,6 +301,21 @@ void main() {
     final file = await downloadReleaseAsset(assetFor(), version: 'v1.0.6');
 
     expect(host.ranges.first, 'bytes=8-');
+    expect(await file.readAsBytes(), bytes);
+    expect(await part.exists(), isFalse);
+  });
+
+  test('starts the archive over when the host refuses the range', () async {
+    final directory = await versionDirectoryOf('v1.0.6');
+    final part = File(
+      p.join(directory.path, 'FlClash-1.0.6-linux-amd64.AppImage.part'),
+    );
+    await part.writeAsBytes(List<int>.filled(bytes.length + 8, 0));
+    host.refusesRange = true;
+
+    final file = await downloadReleaseAsset(assetFor(), version: 'v1.0.6');
+
+    expect(host.ranges, ['bytes=${bytes.length + 8}-', null]);
     expect(await file.readAsBytes(), bytes);
     expect(await part.exists(), isFalse);
   });

@@ -175,13 +175,22 @@ Future<File> downloadReleaseAsset(
   DioException? failure;
   for (var attempt = 0; attempt < _releaseDownloadAttempts; attempt++) {
     final startAt = await _lengthOf(part);
+    // What the host says the whole archive is. The release page names its
+    // archives without a size or a digest, so this length is what a finished
+    // transfer is checked against.
+    var expectedTotal = -1;
     try {
       final response = await request.downloadToFile(
         asset.url,
         part.path,
         startAt: startAt,
         cancelToken: cancelToken,
-        onReceiveProgress: onDownloadProgress,
+        onReceiveProgress: (received, total) {
+          if (total > 0) {
+            expectedTotal = total;
+          }
+          onDownloadProgress?.call(received, total);
+        },
       );
       // A server that ignores the Range answers 200, and the appended tail
       // would corrupt the archive.
@@ -192,6 +201,7 @@ Future<File> downloadReleaseAsset(
       if (!await _matchesRelease(
         part,
         asset,
+        expectedTotal: expectedTotal,
         onVerifyProgress: onVerifyProgress,
       )) {
         await part.delete();
@@ -202,6 +212,14 @@ Future<File> downloadReleaseAsset(
     } on DioException catch (error) {
       if (cancelToken?.isCancelled ?? false) {
         rethrow;
+      }
+      // A part the host refuses to resume — a leftover longer than the
+      // archive, a file that changed between attempts — would make every
+      // later attempt send the same rejected range, so it starts over.
+      if (error.response?.statusCode ==
+          HttpStatus.requestedRangeNotSatisfiable) {
+        await part.delete();
+        continue;
       }
       failure = error;
     }
@@ -239,24 +257,37 @@ class _DigestCollector implements Sink<Digest> {
   void close() {}
 }
 
-/// A release with no size and no digest leaves nothing to compare.
+/// A file matches [asset] when it carries the published size and digest. A
+/// release page publishes neither, so there [expectedTotal] — the length the
+/// host reported while the body streamed — is what a finished transfer is
+/// checked against, and a non-empty file with no length to compare is taken as
+/// it arrived. Refusing that one would download the same archive on every
+/// attempt and never install anything.
 Future<bool> _matchesRelease(
   File file,
   ReleaseAsset asset, {
+  int expectedTotal = -1,
   void Function(int done, int total)? onVerifyProgress,
 }) async {
   if (!await file.exists()) {
     return false;
   }
+  final length = await file.length();
   final size = asset.size;
-  if (size != null && await file.length() != size) {
+  if (size != null && length != size) {
     return false;
   }
   final sha256 = asset.sha256;
-  if (sha256 == null) {
-    return size != null;
+  if (sha256 != null) {
+    return await fileSha256(file, onProgress: onVerifyProgress) == sha256;
   }
-  return await fileSha256(file, onProgress: onVerifyProgress) == sha256;
+  if (size != null) {
+    return true;
+  }
+  if (length == 0) {
+    return false;
+  }
+  return expectedTotal <= 0 || length == expectedTotal;
 }
 
 Future<int> _lengthOf(File file) async {
