@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.24 (2026-11-07)
+
+**Bug Fixes**
+
+- **android** Sign every release with one committed key (1697505)
+
 ## v1.0.23 (2026-11-07)
 
 Internal improvements only.

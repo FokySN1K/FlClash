@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.24",
+      "tag": "v1.0.24",
+      "date": "2026-11-07",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "1697505",
+              "scope": "android",
+              "text": "Sign every release with one committed key"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.23",
       "tag": "v1.0.23",
       "date": "2026-11-07",
