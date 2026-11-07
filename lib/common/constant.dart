@@ -103,6 +103,12 @@ const maxConcurrentImports = 4;
 const maxConcurrentIconLoads = 8;
 
 const renderThrottleDuration = Duration(milliseconds: 300);
+
+/// How often the page re-pulls the groups while a pool reports itself
+/// recovering. The Core publishes the state and re-decides the group's route on
+/// its own, but the app only learns that route by pulling again: without this
+/// the card keeps showing the node that just died until an unrelated refresh.
+const defaultRecoveryRefreshInterval = Duration(seconds: 2);
 const defaultUpdateDuration = Duration(days: 1);
 const MMDB = 'GEOIP.metadb';
 const ASN = 'ASN.mmdb';

@@ -86,6 +86,7 @@ GroupsState _hideTimeoutProxies(Ref ref, GroupsState groups) {
       delayMap: ref.watch(delaysAtLastTestBatchProvider),
       selectedMap: ref.watch(selectedMapProvider),
       defaultTestUrl: ref.watch(realTestUrlProvider()),
+      frozen: ref.watch(delayTestingGroupsProvider),
     ),
   );
 }
@@ -229,14 +230,19 @@ DelayTestPhase? delayTestPhase(
         }
       }
       // A single node check keeps the shared key and lights the node in every
-      // group that shows it.
+      // group that shows it, and a check the Core runs on its own queues the
+      // whole set it is about to measure under that same key.
       final shared = state[delayTestKey(effectiveTestUrl, effectiveProxyName)];
+      // A probe the Core reported it started wins over a queue: the node is
+      // being measured now, whatever queued it.
+      final probe = state[coreProbeKey(effectiveProxyName)];
+      if (probe == DelayTestPhase.running) {
+        return probe;
+      }
       if (shared != null) {
         return shared;
       }
-      // A check the Core runs on its own reports every probe it starts, and
-      // that mark is what pulses a node while it is really being measured.
-      return state[coreProbeKey(effectiveProxyName)];
+      return probe;
     }),
   );
 }

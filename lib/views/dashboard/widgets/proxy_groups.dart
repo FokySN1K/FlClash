@@ -102,11 +102,29 @@ class _SelectedName extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final name = ref.watch(selectedProxyNameProvider(group.name)) ?? '';
-    return EmojiText(
+    final style = DashboardText.label(context);
+    final text = EmojiText(
       name.isEmpty ? '—' : name,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: DashboardText.label(context),
+      style: style,
+    );
+    if (!group.recovering) {
+      return text;
+    }
+    // The pool has nothing measured alive and is searching: the route still
+    // points at the node that just failed, so the tile says so instead of
+    // looking like a plain selection.
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      spacing: 4,
+      children: [
+        Tooltip(
+          message: context.appLocalizations.groupRecovering,
+          child: GlyphIcon(AppGlyphs.refresh, size: style.fontSize ?? 12),
+        ),
+        Flexible(child: text),
+      ],
     );
   }
 }

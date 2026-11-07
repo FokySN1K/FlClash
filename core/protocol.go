@@ -83,6 +83,8 @@ const (
 	DialerLoopMessage     MessageType = "dialerLoop"
 	RequestTrafficMessage MessageType = "requestTraffic"
 	DelayStartMessage     MessageType = "delayStart"
+	CheckStartMessage     MessageType = "checkStart"
+	CheckEndMessage       MessageType = "checkEnd"
 )
 
 type Message struct {
@@ -205,6 +207,21 @@ type Delay struct {
 type DelayStart struct {
 	Url  string `json:"url"`
 	Name string `json:"name"`
+}
+
+// A check a group has begun. The names are the members it is about to measure,
+// which the app shows as queued until each result arrives or the check ends.
+type CheckStart struct {
+	Group string   `json:"group"`
+	Url   string   `json:"url"`
+	Names []string `json:"names"`
+}
+
+// The check that started under the same group and target is over, whatever it
+// managed to measure.
+type CheckEnd struct {
+	Group string `json:"group"`
+	Url   string `json:"url"`
 }
 
 type ProbeParams struct {

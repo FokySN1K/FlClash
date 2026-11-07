@@ -29,6 +29,12 @@ abstract mixin class CoreEventListener {
   /// The Core has started a probe; its result arrives through [onDelay].
   void onDelayStart(Delay delay) {}
 
+  /// The Core has started a check of [group] and is about to measure [names].
+  void onCheckStart(String group, String url, List<String> names) {}
+
+  /// That check is over, whatever it managed to measure.
+  void onCheckEnd(String group, String url) {}
+
   void onRequest(TrackerInfo connection) {}
 
   void onRequestTraffic(Map<String, RequestTraffic> traffic) {}
@@ -105,6 +111,18 @@ class CoreEventManager {
               break;
             case CoreEventType.dialerLoop:
               listener.onDialerLoop(event.data as String);
+              break;
+            case CoreEventType.checkStart:
+              final start = event.data as Map<String, dynamic>;
+              listener.onCheckStart(
+                start['group'] as String,
+                start['url'] as String,
+                (start['names'] as List).cast<String>(),
+              );
+              break;
+            case CoreEventType.checkEnd:
+              final end = event.data as Map<String, dynamic>;
+              listener.onCheckEnd(end['group'] as String, end['url'] as String);
               break;
           }
         } catch (error) {

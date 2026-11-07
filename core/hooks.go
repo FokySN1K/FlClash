@@ -5,9 +5,11 @@ import (
 	"time"
 
 	"github.com/metacubex/mihomo/adapter"
+	"github.com/metacubex/mihomo/adapter/outboundgroup"
 	mihomoHttp "github.com/metacubex/mihomo/component/http"
 	"github.com/metacubex/mihomo/component/proxydialer"
 	"github.com/metacubex/mihomo/component/updater"
+	constant "github.com/metacubex/mihomo/constant"
 	"github.com/metacubex/mihomo/dns"
 	"github.com/metacubex/mihomo/hub/executor"
 	"github.com/metacubex/mihomo/tunnel/statistic"
@@ -23,6 +25,19 @@ func init() {
 	}
 	adapter.UrlTestStartHook = func(url string, name string) {
 		sendMessage(DelayStartMessage, &DelayStart{Url: url, Name: name})
+	}
+	outboundgroup.CheckStartHook = func(group string, url string, proxies []constant.Proxy) {
+		if !hasEventListener() {
+			return
+		}
+		names := make([]string, 0, len(proxies))
+		for _, proxy := range proxies {
+			names = append(names, proxy.Name())
+		}
+		sendMessage(CheckStartMessage, &CheckStart{Group: group, Url: url, Names: names})
+	}
+	outboundgroup.CheckEndHook = func(group string, url string) {
+		sendMessage(CheckEndMessage, &CheckEnd{Group: group, Url: url})
 	}
 	statistic.DefaultRequestNotify = func(c statistic.Tracker) {
 		notifyProbeRoute(c)

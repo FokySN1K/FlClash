@@ -8162,6 +8162,11 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Share logs`
+  String get shareLogs {
+    return Intl.message('Share logs', name: 'shareLogs', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

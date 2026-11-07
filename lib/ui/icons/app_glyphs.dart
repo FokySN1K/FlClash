@@ -341,6 +341,20 @@ abstract final class AppGlyphs {
     ], role: GlyphRole.line),
   ]);
 
+  static const share = Glyph([
+    GlyphCircle(17.6, 5.6, 2.5, role: GlyphRole.line),
+    GlyphCircle(6.4, 12, 2.5, role: GlyphRole.line),
+    GlyphCircle(17.6, 18.4, 2.5, role: GlyphRole.line),
+    GlyphPolyline([
+      GlyphVertex(8.7, 10.8),
+      GlyphVertex(15.3, 6.8),
+    ], role: GlyphRole.detail),
+    GlyphPolyline([
+      GlyphVertex(8.7, 13.2),
+      GlyphVertex(15.3, 17.2),
+    ], role: GlyphRole.detail),
+  ]);
+
   static const upload = Glyph([
     GlyphPolyline([
       GlyphVertex(4.5, 16.4),

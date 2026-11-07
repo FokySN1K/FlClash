@@ -67,16 +67,56 @@ class ProxiesAction extends _$ProxiesAction {
 
   Timer? _delayFlushTimer;
 
+  /// The pull that keeps a recovering pool's card in step with the Core.
+  Timer? _recoveryRefreshTimer;
+
+  bool _recoveringPullInFlight = false;
+
+  /// The pull period of a recovering group. A test shortens it: waiting two
+  /// seconds per pull is not something a suite can afford.
+  Duration recoveryRefreshInterval = defaultRecoveryRefreshInterval;
+
   final Map<String, String> _pendingSelectedRollback = {};
 
   @override
   void build() {
-    ref.onDispose(() => _delayFlushTimer?.cancel());
+    ref.onDispose(() {
+      _delayFlushTimer?.cancel();
+      _recoveryRefreshTimer?.cancel();
+    });
     ref.listen(coreStatusProvider, (_, next) {
       if (next != CoreStatus.connected) {
         cancelDelayTests();
+        _cancelRecoveryRefresh();
       }
     });
+  }
+
+  /// A recovering pool keeps testing its nodes and re-decides the group's route
+  /// inside the Core, but the card only learns that route by pulling again:
+  /// without the pull it keeps showing the node that just died.
+  void _syncRecoveryRefresh(List<Group> groups) {
+    if (!groups.any((group) => group.recovering)) {
+      _cancelRecoveryRefresh();
+      return;
+    }
+    _recoveryRefreshTimer ??= Timer.periodic(
+      recoveryRefreshInterval,
+      (_) => _pullRecoveringGroups(),
+    );
+  }
+
+  void _pullRecoveringGroups() {
+    if (_recoveringPullInFlight) {
+      return;
+    }
+    _recoveringPullInFlight = true;
+    updateGroups().whenComplete(() => _recoveringPullInFlight = false);
+  }
+
+  void _cancelRecoveryRefresh() {
+    _recoveryRefreshTimer?.cancel();
+    _recoveryRefreshTimer = null;
   }
 
   void cancelDelayTests() {
@@ -159,7 +199,7 @@ class ProxiesAction extends _$ProxiesAction {
 
   Future<void> updateGroups() async {
     try {
-      ref.read(groupsProvider.notifier).value = await retry(
+      final List<Group> groups = await retry(
         task: () async {
           final sortType = ref.read(
             proxiesStyleSettingProvider.select((state) => state.sortType),
@@ -188,6 +228,15 @@ class ProxiesAction extends _$ProxiesAction {
         },
         retryIf: (res) => res.isEmpty,
       );
+      // A group under test keeps the order the page already shows: its results
+      // land one at a time, so the sort that follows every one of them would
+      // otherwise move a card out from under the cursor.
+      ref.read(groupsProvider.notifier).value = keepTestedGroupOrder(
+        previous: ref.read(groupsProvider),
+        next: groups,
+        frozen: ref.read(delayTestingGroupsProvider),
+      );
+      _syncRecoveryRefresh(groups);
     } catch (e) {
       // The Core failure path already runs inside the retry task above; a
       // throw here only means ref.read hit a disposed container or the
@@ -216,7 +265,7 @@ class ProxiesAction extends _$ProxiesAction {
   }
 
   void setDelay(Delay delay) {
-    ref.read(pendingDelayTestsProvider.notifier).probeEnded(delay.name);
+    ref.read(pendingDelayTestsProvider.notifier).probeAnswered(delay.name);
     _bufferedDelays.add(delay);
     _scheduleDelayFlush();
   }
@@ -225,6 +274,32 @@ class ProxiesAction extends _$ProxiesAction {
   /// it is really measured instead of for the whole check it belongs to.
   void onDelayStart(Delay delay) {
     ref.read(pendingDelayTestsProvider.notifier).probeStarted(delay.name);
+  }
+
+  /// The Core has begun a check of its own. Its members queue with the value
+  /// they already had, and the group keeps its card order until it is over.
+  void onCheckStart({
+    required String group,
+    required String url,
+    required List<String> names,
+  }) {
+    final testUrl = url.takeFirstValid([
+      ref.read(groupsProvider).getGroup(group)?.testUrl,
+      ref.read(patchClashConfigProvider.select((state) => state.testUrl)),
+    ]);
+    ref
+        .read(pendingDelayTestsProvider.notifier)
+        .coreCheckStarted(group: group, url: testUrl, names: names);
+    ref.read(delayTestingGroupsProvider.notifier).coreStarted(group);
+  }
+
+  /// The check is over and the Core has re-decided the group's route, so the
+  /// page pulls it now instead of leaving the tick on a node that timed out
+  /// until the delay debounce expires.
+  void onCheckEnd({required String group}) {
+    ref.read(pendingDelayTestsProvider.notifier).coreCheckEnded(group: group);
+    ref.read(delayTestingGroupsProvider.notifier).coreEnded(group);
+    _refreshAfterDelayTest();
   }
 
   Future<void> changeProxy({

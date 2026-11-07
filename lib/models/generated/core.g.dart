@@ -282,6 +282,8 @@ const _$CoreEventTypeEnumMap = {
   CoreEventType.geoUpdate: 'geoUpdate',
   CoreEventType.routeChanged: 'routeChanged',
   CoreEventType.dialerLoop: 'dialerLoop',
+  CoreEventType.checkStart: 'checkStart',
+  CoreEventType.checkEnd: 'checkEnd',
 };
 
 _Delay _$DelayFromJson(Map<String, dynamic> json) => _Delay(

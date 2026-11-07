@@ -361,6 +361,7 @@
   "noNetwork": "네트워크 없음",
   "ipv6InboundDesc": "IPv6를 켜면 VPN이 IPv6 인바운드를 허용합니다.",
   "exportLogs": "로그 내보내기",
+  "shareLogs": "로그 공유",
   "exportSuccess": "내보내기 완료",
   "iconStyle": "아이콘 스타일",
   "iconStyleFilled": "채움",

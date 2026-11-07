@@ -361,6 +361,7 @@
   "noNetwork": "No network",
   "ipv6InboundDesc": "With IPv6 on, the VPN allows IPv6 inbound.",
   "exportLogs": "Export logs",
+  "shareLogs": "Share logs",
   "exportSuccess": "Export successful",
   "iconStyle": "Icon style",
   "iconStyleFilled": "Filled",

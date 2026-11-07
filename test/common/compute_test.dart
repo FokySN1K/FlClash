@@ -381,6 +381,57 @@ void main() {
     });
   });
 
+  group('keepTestedGroupOrder', () {
+    const previous = Group(
+      name: 'auto',
+      type: GroupType.URLTest,
+      all: [
+        Proxy(name: 'a', type: 'ss'),
+        Proxy(name: 'b', type: 'ss'),
+        Proxy(name: 'c', type: 'ss'),
+      ],
+    );
+
+    const next = Group(
+      name: 'auto',
+      type: GroupType.URLTest,
+      all: [
+        Proxy(name: 'c', type: 'ss'),
+        Proxy(name: 'd', type: 'ss'),
+        Proxy(name: 'a', type: 'ss'),
+        Proxy(name: 'b', type: 'ss'),
+      ],
+    );
+
+    test('keeps the order the page shows for a group under test', () {
+      final groups = keepTestedGroupOrder(
+        previous: [previous],
+        next: [next],
+        frozen: {'auto'},
+      );
+      expect(groups.single.all.map((proxy) => proxy.name), [
+        'a',
+        'b',
+        'c',
+        'd',
+      ]);
+    });
+
+    test('leaves the order of a group that is not under test', () {
+      final groups = keepTestedGroupOrder(
+        previous: [previous],
+        next: [next],
+        frozen: {},
+      );
+      expect(groups.single.all.map((proxy) => proxy.name), [
+        'c',
+        'd',
+        'a',
+        'b',
+      ]);
+    });
+  });
+
   group('computeHideTimeout', () {
     const defaultTestUrl = 'https://default.test';
 
@@ -388,6 +439,7 @@ void main() {
       required List<Group> groups,
       required DelayMap delayMap,
       Map<String, String> selectedMap = const {},
+      Set<String> frozen = const {},
     }) {
       return computeHideTimeout(
         groups: groups,
@@ -395,6 +447,7 @@ void main() {
         delayMap: delayMap,
         selectedMap: selectedMap,
         defaultTestUrl: defaultTestUrl,
+        frozen: frozen,
       );
     }
 
@@ -428,6 +481,21 @@ void main() {
           defaultTestUrl: {'slow': -1},
         },
         selectedMap: {'sel': 'slow'},
+      );
+      expect(groups.single.all.map((proxy) => proxy.name), [
+        'fast',
+        'slow',
+        'untested',
+      ]);
+    });
+
+    test('keeps every proxy of a group under test', () {
+      final groups = hide(
+        groups: [group],
+        delayMap: {
+          defaultTestUrl: {'slow': -1},
+        },
+        frozen: {'sel'},
       );
       expect(groups.single.all.map((proxy) => proxy.name), [
         'fast',

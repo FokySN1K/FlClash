@@ -89,6 +89,13 @@ class AppPath {
     return join(mTempDir.path, 'temp$uniqueId');
   }
 
+  /// Where a log handed to another app is staged: the share sheet names the
+  /// file after the path, so it carries the same name the export writes.
+  Future<String> get logFilePath async {
+    final mTempDir = await _tempDir.value;
+    return join(mTempDir.path, logFileName);
+  }
+
   Future<String> get lockFilePath async {
     final homeDirPath = await appPath.homeDirPath;
     return join(homeDirPath, 'FlClash.lock');

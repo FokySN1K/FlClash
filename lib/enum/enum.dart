@@ -250,6 +250,8 @@ enum CoreEventType {
   geoUpdate,
   routeChanged,
   dialerLoop,
+  checkStart,
+  checkEnd,
 }
 
 enum FindProcessMode { always, off }

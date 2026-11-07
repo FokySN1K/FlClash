@@ -361,6 +361,7 @@
   "noNetwork": "无网络",
   "ipv6InboundDesc": "开启 IPv6 后，VPN 允许 IPv6 入站。",
   "exportLogs": "导出日志",
+  "shareLogs": "分享日志",
   "exportSuccess": "导出成功",
   "iconStyle": "图标样式",
   "iconStyleFilled": "色块",

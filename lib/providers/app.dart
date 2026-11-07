@@ -10,6 +10,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/core.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:share_plus/share_plus.dart';
 
 part 'generated/app.g.dart';
 
@@ -47,6 +48,17 @@ class Logs extends _$Logs with AutoDisposeNotifierMixin {
     bool res = false;
     res = await picker.saveFileWithPath(logFileName, tempFilePath) != null;
     return res;
+  }
+
+  /// Stages every log the panel holds, whatever a search left on screen, and
+  /// hands the file to the platform share sheet.
+  Future<void> shareLogs() async {
+    final logString = await encodeLogsTask(value.list);
+    final path = await appPath.logFilePath;
+    await File(path).safeWriteAsString(logString);
+    await SharePlus.instance.share(
+      ShareParams(files: [XFile(path, mimeType: 'text/plain')]),
+    );
   }
 }
 
@@ -369,6 +381,26 @@ class DelayDataSource extends _$DelayDataSource with AutoDisposeNotifierMixin {
 /// pulsing until the next run, so the mark expires on its own.
 const coreProbeHold = Duration(seconds: 45);
 
+/// A check the Core runs on its own. Its members queue under the target it
+/// measures them against, so a card shows the value it already had until its
+/// own result lands or the check is over.
+class _CoreCheckScope {
+  _CoreCheckScope(this.url, Iterable<String> names) : pending = names.toSet();
+
+  final String url;
+  final Set<String> pending;
+  Timer? expiry;
+
+  void dispose() {
+    expiry?.cancel();
+    expiry = null;
+  }
+}
+
+/// A check whose end never arrives, which a Core that went away cannot send,
+/// must not leave its members queued until the next run.
+const coreCheckHold = Duration(minutes: 3);
+
 @Riverpod(keepAlive: true)
 class PendingDelayTests extends _$PendingDelayTests
     with AutoDisposeNotifierMixin {
@@ -376,6 +408,7 @@ class PendingDelayTests extends _$PendingDelayTests
   final Map<String, int> _runs = {};
   final Map<String, DelayTestPhase> _phases = {};
   final Map<String, Timer> _probeExpiries = {};
+  final Map<String, _CoreCheckScope> _coreScopes = {};
 
   @override
   Map<String, DelayTestPhase> build() {
@@ -384,6 +417,10 @@ class PendingDelayTests extends _$PendingDelayTests
         timer.cancel();
       }
       _probeExpiries.clear();
+      for (final scope in _coreScopes.values) {
+        scope.dispose();
+      }
+      _coreScopes.clear();
     });
     return const <String, DelayTestPhase>{};
   }
@@ -401,9 +438,75 @@ class PendingDelayTests extends _$PendingDelayTests
 
   /// The result of the probe, or its expiry, ends the mark.
   void probeEnded(String proxyName) {
-    final key = coreProbeKey(proxyName);
-    _probeExpiries.remove(key)?.cancel();
-    if (_phases.remove(key) != null) {
+    final touched = <String>{};
+    _endProbe(proxyName, touched);
+    if (touched.isNotEmpty) {
+      _publish();
+    }
+  }
+
+  /// The Core is about to measure [names] for [group]: they queue with the
+  /// value they already have until each result arrives or the check ends.
+  void coreCheckStarted({
+    required String group,
+    required String url,
+    required Iterable<String> names,
+  }) {
+    coreCheckEnded(group: group);
+    final scope = _CoreCheckScope(url, names);
+    if (scope.pending.isEmpty) {
+      return;
+    }
+    _coreScopes[group] = scope;
+    scope.expiry = Timer(coreCheckHold, () => coreCheckEnded(group: group));
+    final touched = <String>{};
+    for (final name in scope.pending) {
+      final key = delayTestKey(url, name);
+      _holds[key] = (_holds[key] ?? 0) + 1;
+      _settle(key, touched);
+    }
+    if (touched.isNotEmpty) {
+      _publish();
+    }
+  }
+
+  /// The check is over, whatever it managed to measure.
+  void coreCheckEnded({required String group}) {
+    final scope = _coreScopes.remove(group);
+    if (scope == null) {
+      return;
+    }
+    scope.dispose();
+    final touched = <String>{};
+    for (final name in scope.pending) {
+      final key = delayTestKey(scope.url, name);
+      _decrement(_holds, key);
+      _settle(key, touched);
+      // The check is over, so nothing it measured is still in flight.
+      if (!_coreScopes.values.any((item) => item.pending.contains(name))) {
+        _endProbe(name, touched);
+      }
+    }
+    scope.pending.clear();
+    if (touched.isNotEmpty) {
+      _publish();
+    }
+  }
+
+  /// The Core reported the result of a probe on [proxyName]: its mark is over
+  /// and every check that queued the node stops waiting for it.
+  void probeAnswered(String proxyName) {
+    final touched = <String>{};
+    _endProbe(proxyName, touched);
+    for (final scope in _coreScopes.values) {
+      if (!scope.pending.remove(proxyName)) {
+        continue;
+      }
+      final key = delayTestKey(scope.url, proxyName);
+      _decrement(_holds, key);
+      _settle(key, touched);
+    }
+    if (touched.isNotEmpty) {
       _publish();
     }
   }
@@ -436,24 +539,11 @@ class PendingDelayTests extends _$PendingDelayTests
       _decrement(_holds, key);
       touched.add(key);
     }
-    var changed = false;
+    final settled = <String>{};
     for (final key in touched) {
-      final phase = !_holds.containsKey(key)
-          ? null
-          : _runs.containsKey(key)
-          ? DelayTestPhase.running
-          : DelayTestPhase.queued;
-      if (_phases[key] == phase) {
-        continue;
-      }
-      if (phase == null) {
-        _phases.remove(key);
-      } else {
-        _phases[key] = phase;
-      }
-      changed = true;
+      _settle(key, settled);
     }
-    if (changed) {
+    if (settled.isNotEmpty) {
       _publish();
     }
   }
@@ -463,6 +553,10 @@ class PendingDelayTests extends _$PendingDelayTests
       timer.cancel();
     }
     _probeExpiries.clear();
+    for (final scope in _coreScopes.values) {
+      scope.dispose();
+    }
+    _coreScopes.clear();
     if (_holds.isEmpty && _phases.isEmpty) {
       return;
     }
@@ -484,6 +578,34 @@ class PendingDelayTests extends _$PendingDelayTests
     }
   }
 
+  /// Brings the phase of [key] in line with what holds it, and records it in
+  /// [touched] when it changed.
+  void _settle(String key, Set<String> touched) {
+    final phase = !_holds.containsKey(key)
+        ? null
+        : _runs.containsKey(key)
+        ? DelayTestPhase.running
+        : DelayTestPhase.queued;
+    if (_phases[key] == phase) {
+      return;
+    }
+    if (phase == null) {
+      _phases.remove(key);
+    } else {
+      _phases[key] = phase;
+    }
+    touched.add(key);
+  }
+
+  /// Drops the probe mark of [proxyName], which no result closed.
+  void _endProbe(String proxyName, Set<String> touched) {
+    final key = coreProbeKey(proxyName);
+    _probeExpiries.remove(key)?.cancel();
+    if (_phases.remove(key) != null) {
+      touched.add(key);
+    }
+  }
+
   // A copy per publish would make a run over n nodes O(n²). The view is live,
   // so a dependent selects what it needs instead of keeping the map.
   void _publish() {
@@ -491,27 +613,65 @@ class PendingDelayTests extends _$PendingDelayTests
   }
 }
 
+/// The groups a check is running on, whether the page asked for it or the Core
+/// decided to run one on its own. A group on this list keeps its cards where
+/// they are until the check is over.
 @Riverpod(keepAlive: true)
 class DelayTestingGroups extends _$DelayTestingGroups
     with AutoDisposeNotifierMixin {
+  final Set<String> _runs = {};
+  final Map<String, int> _coreChecks = {};
+
   @override
   Set<String> build() {
+    ref.onDispose(() {
+      _runs.clear();
+      _coreChecks.clear();
+    });
     return const <String>{};
   }
 
   bool start(String groupName) {
-    if (value.contains(groupName)) {
+    if (!_runs.add(groupName)) {
       return false;
     }
-    value = {...value, groupName};
+    _sync();
     return true;
   }
 
   void stop(String groupName) {
-    if (!value.contains(groupName)) {
+    if (!_runs.remove(groupName)) {
       return;
     }
-    value = {...value}..remove(groupName);
+    _sync();
+  }
+
+  /// A check the Core runs on its own has begun.
+  void coreStarted(String groupName) {
+    _coreChecks[groupName] = (_coreChecks[groupName] ?? 0) + 1;
+    _sync();
+  }
+
+  /// That check is over.
+  void coreEnded(String groupName) {
+    final count = _coreChecks[groupName];
+    if (count == null) {
+      return;
+    }
+    if (count > 1) {
+      _coreChecks[groupName] = count - 1;
+      return;
+    }
+    _coreChecks.remove(groupName);
+    _sync();
+  }
+
+  void _sync() {
+    final next = {..._runs, ..._coreChecks.keys};
+    if (next.length == value.length && next.containsAll(value)) {
+      return;
+    }
+    value = next;
   }
 }
 

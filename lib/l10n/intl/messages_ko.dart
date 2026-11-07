@@ -673,6 +673,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "expireTime": MessageLookupByLibrary.simpleMessage("만료 시간"),
     "exportFile": MessageLookupByLibrary.simpleMessage("파일 내보내기"),
     "exportLogs": MessageLookupByLibrary.simpleMessage("로그 내보내기"),
+    "shareLogs": MessageLookupByLibrary.simpleMessage("로그 공유"),
     "exportSuccess": MessageLookupByLibrary.simpleMessage("내보내기 완료"),
     "extend": MessageLookupByLibrary.simpleMessage("확장"),
     "extendMode": MessageLookupByLibrary.simpleMessage("확장 모드"),

@@ -361,6 +361,7 @@
   "noNetwork": "Нет сети",
   "ipv6InboundDesc": "При включённом IPv6 VPN принимает входящий IPv6.",
   "exportLogs": "Экспорт логов",
+  "shareLogs": "Поделиться логами",
   "exportSuccess": "Экспорт выполнен",
   "iconStyle": "Стиль значков",
   "iconStyleFilled": "С подложкой",

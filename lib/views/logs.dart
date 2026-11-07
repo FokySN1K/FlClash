@@ -72,6 +72,13 @@ class _LogsViewState extends ConsumerState<LogsView>
 
   List<IconButtonData> _buildActions() {
     return [
+      // The Linux plugin shares text only, so the file would go nowhere.
+      if (!system.isLinux)
+        IconButtonData(
+          glyph: AppGlyphs.share,
+          tooltip: context.appLocalizations.shareLogs,
+          onPressed: _handleShare,
+        ),
       IconButtonData(
         glyph: AppGlyphs.export,
         tooltip: context.appLocalizations.exportLogs,
@@ -99,6 +106,13 @@ class _LogsViewState extends ConsumerState<LogsView>
         message: TextSpan(text: appLocalizations.exportSuccess),
       ),
     );
+  }
+
+  Future<void> _handleShare() async {
+    final appLocalizations = context.appLocalizations;
+    await globalState.safeRun<void>(() async {
+      await ref.read(logsProvider.notifier).shareLogs();
+    }, title: appLocalizations.shareLogs);
   }
 
   void updateLogsThrottler() {

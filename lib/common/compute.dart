@@ -88,6 +88,53 @@ List<Group> computeSort({
   }).toList();
 }
 
+/// Keeps the members of a group a check is running in the order the page
+/// already shows them. A sweep lands one result at a time, and a list that
+/// re-sorted on each of them would move a card out from under the cursor. A
+/// member the group did not have keeps the place the Core gave it.
+List<Group> keepTestedGroupOrder({
+  required List<Group> previous,
+  required List<Group> next,
+  required Set<String> frozen,
+}) {
+  if (frozen.isEmpty || previous.isEmpty) {
+    return next;
+  }
+  final previousMembers = {
+    for (final group in previous) group.name: group.all,
+  };
+  return [
+    for (final group in next)
+      if (frozen.contains(group.name))
+        group.copyWith(
+          all: _keepMemberOrder(group.all, previousMembers[group.name]),
+        )
+      else
+        group,
+  ];
+}
+
+List<Proxy> _keepMemberOrder(List<Proxy> members, List<Proxy>? previous) {
+  if (previous == null || previous.isEmpty) {
+    return members;
+  }
+  final byName = {for (final member in members) member.name: member};
+  final ordered = <Proxy>[];
+  for (final member in previous) {
+    final current = byName.remove(member.name);
+    if (current != null) {
+      ordered.add(current);
+    }
+  }
+  for (final member in members) {
+    final current = byName.remove(member.name);
+    if (current != null) {
+      ordered.add(current);
+    }
+  }
+  return ordered;
+}
+
 /// Built-in adapters whose delay probe always fails, so a timeout says nothing.
 const _unprobeableProxyTypes = {
   'Reject',
@@ -105,6 +152,7 @@ List<Group> computeHideTimeout({
   required DelayMap delayMap,
   required Map<String, String> selectedMap,
   required String defaultTestUrl,
+  Set<String> frozen = const {},
 }) {
   final realStates = <String, SelectedProxyState>{};
   final proxyTypes = {
@@ -112,6 +160,12 @@ List<Group> computeHideTimeout({
       for (final proxy in group.all) proxy.name: proxy.type,
   };
   return groups.map((group) {
+    // A group under test keeps every member: a node that just timed out may
+    // answer on the next check, and dropping it would shuffle the list under
+    // the cursor while the cards are being measured.
+    if (frozen.contains(group.name)) {
+      return group;
+    }
     final groupTestUrl = group.testUrl.takeFirstValid([defaultTestUrl]);
     final groupWithNow = allGroups.getGroup(group.name) ?? group;
     final selectedName = groupWithNow.getCurrentSelectedName(

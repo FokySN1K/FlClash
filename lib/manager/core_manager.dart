@@ -119,6 +119,20 @@ class _CoreContainerState extends ConsumerState<CoreManager>
   }
 
   @override
+  void onCheckStart(String group, String url, List<String> names) {
+    ref
+        .read(proxiesActionProvider.notifier)
+        .onCheckStart(group: group, url: url, names: names);
+    super.onCheckStart(group, url, names);
+  }
+
+  @override
+  void onCheckEnd(String group, String url) {
+    ref.read(proxiesActionProvider.notifier).onCheckEnd(group: group);
+    super.onCheckEnd(group, url);
+  }
+
+  @override
   void onLog(Log log) {
     ref.read(logsProvider.notifier).add(log);
     if (log.logLevel == LogLevel.error) {

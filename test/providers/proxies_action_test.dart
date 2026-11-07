@@ -160,6 +160,59 @@ void main() {
       },
     );
 
+    test('a recovering pool is pulled again until it settles', () async {
+      var recovering = true;
+      var pulls = 0;
+      when(core.getProxies).thenAnswer((_) async {
+        pulls++;
+        return ProxiesData(
+          all: const ['Proxy', 'Direct'],
+          proxies: Map<String, dynamic>.from({
+            'Proxy': Map<String, dynamic>.from({
+              'name': 'Proxy',
+              'type': 'Selector',
+              'now': 'HK-01',
+              'all': ['HK-01'],
+              'recovering': recovering,
+            }),
+            'Direct': Map<String, dynamic>.from({
+              'name': 'Direct',
+              'type': 'Direct',
+            }),
+            'HK-01': Map<String, dynamic>.from({'name': 'HK-01', 'type': 'ss'}),
+          }),
+        );
+      });
+      final container = buildContainer();
+      final action = actionOf(container)
+        ..recoveryRefreshInterval = const Duration(milliseconds: 10);
+
+      await action.updateGroups();
+      expect(pulls, 1);
+      expect(container.read(groupsProvider).single.recovering, isTrue);
+
+      // The Core re-decides the route while the pool searches, and the pull is
+      // what brings it to the card.
+      await Future<void>.delayed(const Duration(milliseconds: 40));
+      expect(
+        pulls,
+        greaterThan(1),
+        reason: 'a recovering pool must be pulled again',
+      );
+
+      // The pool settled: the next pull reports it and stops the loop.
+      recovering = false;
+      await Future<void>.delayed(const Duration(milliseconds: 80));
+      final settledPulls = pulls;
+      await Future<void>.delayed(const Duration(milliseconds: 120));
+      expect(
+        pulls,
+        settledPulls,
+        reason: 'a settled pool must not be pulled again',
+      );
+      expect(container.read(groupsProvider).single.recovering, isFalse);
+    });
+
     test(
       'clears the groups once retry is exhausted after core throws',
       () async {

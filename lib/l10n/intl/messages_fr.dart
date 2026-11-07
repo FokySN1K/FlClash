@@ -866,6 +866,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "expireTime": MessageLookupByLibrary.simpleMessage("Date d’expiration"),
     "exportFile": MessageLookupByLibrary.simpleMessage("Exporter le fichier"),
     "exportLogs": MessageLookupByLibrary.simpleMessage("Exporter les journaux"),
+    "shareLogs": MessageLookupByLibrary.simpleMessage("Partager les journaux"),
     "exportSuccess": MessageLookupByLibrary.simpleMessage(
       "Exportation réussie",
     ),

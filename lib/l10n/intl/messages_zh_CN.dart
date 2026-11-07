@@ -627,6 +627,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "expireTime": MessageLookupByLibrary.simpleMessage("到期时间"),
     "exportFile": MessageLookupByLibrary.simpleMessage("导出文件"),
     "exportLogs": MessageLookupByLibrary.simpleMessage("导出日志"),
+    "shareLogs": MessageLookupByLibrary.simpleMessage("分享日志"),
     "exportSuccess": MessageLookupByLibrary.simpleMessage("导出成功"),
     "extend": MessageLookupByLibrary.simpleMessage("扩展"),
     "extendMode": MessageLookupByLibrary.simpleMessage("扩展模式"),

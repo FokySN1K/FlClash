@@ -361,6 +361,7 @@
   "noNetwork": "Sin red",
   "ipv6InboundDesc": "Con IPv6 activado, la VPN permite el tráfico IPv6 entrante.",
   "exportLogs": "Exportar registros",
+  "shareLogs": "Compartir registros",
   "exportSuccess": "Exportación completada",
   "iconStyle": "Estilo de icono",
   "iconStyleFilled": "Relleno",

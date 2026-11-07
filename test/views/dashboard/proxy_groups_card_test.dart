@@ -3,6 +3,7 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/views/dashboard/layout.dart';
 import 'package:fl_clash/views/dashboard/widgets/card.dart';
 import 'package:fl_clash/views/dashboard/widgets/proxy_groups.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../helpers/glyph_finders.dart';
 import '../../helpers/test_app.dart';
 import '../../helpers/test_profiles.dart';
 
@@ -192,6 +194,44 @@ void main() {
       expect(name('N$index'), findsOneWidget);
     }
     expect(find.text('+2'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a recovering group says it is searching next to its node', (
+    tester,
+  ) async {
+    container.read(groupsProvider.notifier).value = [
+      const Group(
+        type: GroupType.Selector,
+        name: 'Pool',
+        hidden: false,
+        now: 'HK-01',
+        recovering: true,
+        testUrl: _testUrl,
+        all: [Proxy(name: 'HK-01', type: 'ss')],
+      ),
+    ];
+    await pumpCard(tester);
+
+    expect(name('HK-01'), findsOneWidget);
+    expect(find.byTooltip('The group is re-checking its nodes'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byTooltip('The group is re-checking its nodes'),
+        matching: find.byGlyph(AppGlyphs.refresh),
+      ),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+
+    // A healthy group shows no searching mark.
+    container.read(groupsProvider.notifier).value = [
+      _group('Pool', ['HK-01'], now: 'HK-01'),
+    ];
+    await tester.pump();
+
+    expect(find.byTooltip('The group is re-checking its nodes'), findsNothing);
+    expect(name('HK-01'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
