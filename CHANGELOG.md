@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.32 (2026-11-08)
+
+**Features**
+
+- **profile** Take the refresh interval from the profile (391b21c)
+
 ## v1.0.31 (2026-11-08)
 
 Internal improvements only.

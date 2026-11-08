@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.32",
+      "tag": "v1.0.32",
+      "date": "2026-11-08",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "391b21c",
+              "scope": "profile",
+              "text": "Take the refresh interval from the profile"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.31",
       "tag": "v1.0.31",
       "date": "2026-11-08",
