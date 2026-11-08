@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.33 (2026-11-08)
+
+**Features**
+
+- **core** Notify when the REALITY hello keeps its preset (e76c0e4)
+
 ## v1.0.32 (2026-11-08)
 
 **Features**

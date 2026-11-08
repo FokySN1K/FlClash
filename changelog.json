@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.33",
+      "tag": "v1.0.33",
+      "date": "2026-11-08",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "e76c0e4",
+              "scope": "core",
+              "text": "Notify when the REALITY hello keeps its preset"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.32",
       "tag": "v1.0.32",
       "date": "2026-11-08",
