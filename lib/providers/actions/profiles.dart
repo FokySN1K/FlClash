@@ -153,10 +153,17 @@ class ProfilesAction extends _$ProfilesAction {
         await clearEffect(profile.id);
         return;
       }
+      // The file may carry its own refresh interval; a profile the user edited
+      // while the download ran keeps the value that edit set.
+      final autoUpdateDuration =
+          latest.autoUpdateDuration == profile.autoUpdateDuration
+          ? updated.autoUpdateDuration
+          : latest.autoUpdateDuration;
       final newProfile = latest.copyWith(
         label: latest.label.takeFirstValid([updated.label]),
         subscriptionInfo: updated.subscriptionInfo,
         lastUpdateDate: updated.lastUpdateDate,
+        autoUpdateDuration: autoUpdateDuration,
       );
       ref.read(profilesProvider.notifier).put(newProfile);
       if (profile.id == ref.read(currentProfileIdProvider)) {

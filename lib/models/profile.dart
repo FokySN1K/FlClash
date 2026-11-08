@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:yaml/yaml.dart';
 
 import 'clash_config.dart';
 
@@ -210,8 +212,59 @@ extension ProfileExtension on Profile {
       throw MessageException(message);
     }
     final mFile = await file;
+    final interval = await _updateIntervalFor(bytes, mFile);
     await tempFile.copy(mFile.path);
     await tempFile.safeDelete();
-    return copyWith(lastUpdateDate: DateTime.now());
+    return copyWith(
+      lastUpdateDate: DateTime.now(),
+      autoUpdateDuration: interval ?? autoUpdateDuration,
+    );
   }
+
+  /// The interval the new file asks for, or null when the profile keeps the
+  /// one it holds.
+  ///
+  /// The value the user picked outranks the one a file sends: the file being
+  /// replaced carries the value this profile was last given, so any other one
+  /// means the user set it. A file that only now starts naming an interval
+  /// takes over what the user never touched, which is the app default.
+  Future<Duration?> _updateIntervalFor(Uint8List bytes, File current) async {
+    final next = _updateIntervalOf(bytes);
+    if (next == null) {
+      return null;
+    }
+    final previous = _updateIntervalOf(await current.readAsBytes());
+    if (previous != null) {
+      return autoUpdateDuration == previous ? next : null;
+    }
+    return autoUpdateDuration == defaultUpdateDuration ? next : null;
+  }
+}
+
+/// A profile may name its own refresh interval, in seconds; the panels send the
+/// same value in the `profile-update-interval` header.
+const _updateIntervalKey = 'profile-update-interval';
+
+/// package:yaml holds a document in many times its size, and a config that
+/// large is not worth parsing for a single scalar.
+const _maxIntervalConfigBytes = 8 << 20;
+
+Duration? _updateIntervalOf(Uint8List bytes) {
+  if (bytes.length > _maxIntervalConfigBytes) {
+    return null;
+  }
+  final text = utf8.decode(bytes, allowMalformed: true);
+  if (!text.contains(_updateIntervalKey)) {
+    return null;
+  }
+  final document = loadYaml(text);
+  if (document is! YamlMap) {
+    return null;
+  }
+  final seconds = switch (document[_updateIntervalKey]) {
+    final int value => value,
+    final String value => int.tryParse(value.trim()),
+    _ => null,
+  };
+  return seconds != null && seconds > 0 ? Duration(seconds: seconds) : null;
 }
