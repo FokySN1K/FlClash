@@ -161,6 +161,18 @@ class _CoreContainerState extends ConsumerState<CoreManager>
   }
 
   @override
+  void onHelloFallback(String fingerprint, String reason) {
+    // The drop to the original fingerprint does not fail the connection: the
+    // node still dials, only the hello loses the post-quantum key share. The
+    // Core reports each fingerprint once, so the notifier is not throttled.
+    dialogs.showNotifier(
+      currentAppLocalizations.realityHelloFallback(fingerprint, reason),
+      level: MessageLevel.warning,
+    );
+    super.onHelloFallback(fingerprint, reason);
+  }
+
+  @override
   void onRequest(TrackerInfo trackerInfo) async {
     ref.read(requestsProvider.notifier).addRequest(trackerInfo);
     ref.read(requestCountProvider.notifier).update((count) => count + 1);

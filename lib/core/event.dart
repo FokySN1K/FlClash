@@ -55,6 +55,10 @@ abstract mixin class CoreEventListener {
   void onRouteChanged(RouteSnapshot snapshot) {}
 
   void onDialerLoop(String proxyName) {}
+
+  /// A REALITY preset could not be upgraded with the post-quantum key share
+  /// and the Core kept it as recorded; reported once per fingerprint.
+  void onHelloFallback(String fingerprint, String reason) {}
 }
 
 class CoreEventManager {
@@ -123,6 +127,13 @@ class CoreEventManager {
             case CoreEventType.checkEnd:
               final end = event.data as Map<String, dynamic>;
               listener.onCheckEnd(end['group'] as String, end['url'] as String);
+              break;
+            case CoreEventType.helloFallback:
+              final fallback = event.data as Map<String, dynamic>;
+              listener.onHelloFallback(
+                fallback['fingerprint'] as String,
+                fallback['reason'] as String,
+              );
               break;
           }
         } catch (error) {

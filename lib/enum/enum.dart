@@ -252,6 +252,7 @@ enum CoreEventType {
   dialerLoop,
   checkStart,
   checkEnd,
+  helloFallback,
 }
 
 enum FindProcessMode { always, off }

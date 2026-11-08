@@ -976,5 +976,6 @@
   "addedToLocalProxies": "{name} をローカルプロキシに追加しました",
   "alreadyInLocalProxies": "{name} はすでにローカルプロキシにあります",
   "suspiciousNode": "疑わしいノード",
-  "groupRecovering": "グループがノードを再確認しています"
+  "groupRecovering": "グループがノードを再確認しています",
+  "realityHelloFallback": "{fingerprint} 指紋に X25519MLKEM768 を追加できなかったため、REALITY はそのまま使用します: {reason}"
 }

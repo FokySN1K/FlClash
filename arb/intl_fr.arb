@@ -976,5 +976,6 @@
   "addedToLocalProxies": "{name} ajouté aux proxys locaux",
   "alreadyInLocalProxies": "{name} est déjà dans les proxys locaux",
   "suspiciousNode": "Nœud suspect",
-  "groupRecovering": "Le groupe revérifie ses nœuds"
+  "groupRecovering": "Le groupe revérifie ses nœuds",
+  "realityHelloFallback": "Impossible d’ajouter X25519MLKEM768 à l’empreinte {fingerprint}, REALITY la conserve telle quelle : {reason}"
 }

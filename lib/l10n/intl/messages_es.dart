@@ -1530,6 +1530,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "quickActions": MessageLookupByLibrary.simpleMessage("Acciones rápidas"),
     "quickEdit": MessageLookupByLibrary.simpleMessage("Edición rápida"),
+    "realityHelloFallback": MessageLookupByLibrary.simpleMessage(
+      "No se pudo añadir X25519MLKEM768 a la huella {fingerprint}, REALITY la mantiene tal cual: {reason}",
+    ),
     "recentRequests": MessageLookupByLibrary.simpleMessage(
       "Solicitudes recientes",
     ),

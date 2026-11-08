@@ -976,5 +976,6 @@
   "addedToLocalProxies": "«{name}» добавлен в локальные прокси",
   "alreadyInLocalProxies": "«{name}» уже есть в локальных прокси",
   "suspiciousNode": "Подозрительный узел",
-  "groupRecovering": "Группа повторно проверяет узлы"
+  "groupRecovering": "Группа повторно проверяет узлы",
+  "realityHelloFallback": "Не удалось добавить X25519MLKEM768 к отпечатку {fingerprint}, REALITY использует его как есть: {reason}"
 }

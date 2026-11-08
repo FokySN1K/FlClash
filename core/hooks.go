@@ -8,6 +8,7 @@ import (
 	"github.com/metacubex/mihomo/adapter/outboundgroup"
 	mihomoHttp "github.com/metacubex/mihomo/component/http"
 	"github.com/metacubex/mihomo/component/proxydialer"
+	tlsC "github.com/metacubex/mihomo/component/tls"
 	"github.com/metacubex/mihomo/component/updater"
 	constant "github.com/metacubex/mihomo/constant"
 	"github.com/metacubex/mihomo/dns"
@@ -58,6 +59,9 @@ func init() {
 	}
 	updater.GeoUpdateHook = onGeoUpdate
 	proxydialer.DefaultLoopNotify = reportDialerLoop
+	tlsC.DefaultHelloFallbackNotify = func(fingerprint string, reason string) {
+		sendMessage(HelloFallbackMessage, &HelloFallback{Fingerprint: fingerprint, Reason: reason})
+	}
 }
 
 // Every dial through a looping dialer fails; one report stands for the burst.

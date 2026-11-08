@@ -85,6 +85,9 @@ const (
 	DelayStartMessage     MessageType = "delayStart"
 	CheckStartMessage     MessageType = "checkStart"
 	CheckEndMessage       MessageType = "checkEnd"
+	// A REALITY preset could not be upgraded with the X25519MLKEM768 key
+	// share and the connection kept it as recorded; sent once per fingerprint.
+	HelloFallbackMessage MessageType = "helloFallback"
 )
 
 type Message struct {
@@ -222,6 +225,14 @@ type CheckStart struct {
 type CheckEnd struct {
 	Group string `json:"group"`
 	Url   string `json:"url"`
+}
+
+// The original fingerprint of a REALITY node stays usable when the
+// X25519MLKEM768 upgrade cannot be built, so the failure is reported instead
+// of failing the dial. Reason is the error that upgrade returned.
+type HelloFallback struct {
+	Fingerprint string `json:"fingerprint"`
+	Reason      string `json:"reason"`
 }
 
 type ProbeParams struct {

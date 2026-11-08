@@ -8163,6 +8163,16 @@ class AppLocalizations {
     );
   }
 
+  /// `X25519MLKEM768 could not be added to the {fingerprint} fingerprint, REALITY keeps it as recorded: {reason}`
+  String realityHelloFallback(Object fingerprint, Object reason) {
+    return Intl.message(
+      'X25519MLKEM768 could not be added to the $fingerprint fingerprint, REALITY keeps it as recorded: $reason',
+      name: 'realityHelloFallback',
+      desc: '',
+      args: [fingerprint, reason],
+    );
+  }
+
   /// `Share logs`
   String get shareLogs {
     return Intl.message('Share logs', name: 'shareLogs', desc: '', args: []);

@@ -976,5 +976,6 @@
   "addedToLocalProxies": "{name}을(를) 로컬 프록시에 추가했습니다",
   "alreadyInLocalProxies": "{name}은(는) 이미 로컬 프록시에 있습니다",
   "suspiciousNode": "의심스러운 노드",
-  "groupRecovering": "그룹이 노드를 다시 확인하는 중입니다"
+  "groupRecovering": "그룹이 노드를 다시 확인하는 중입니다",
+  "realityHelloFallback": "{fingerprint} 지문에 X25519MLKEM768을 추가하지 못해 REALITY가 그대로 사용합니다: {reason}"
 }

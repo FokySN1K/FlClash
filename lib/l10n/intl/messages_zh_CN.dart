@@ -1107,6 +1107,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "quickActions": MessageLookupByLibrary.simpleMessage("快捷操作"),
     "quickEdit": MessageLookupByLibrary.simpleMessage("快速编辑"),
+    "realityHelloFallback": MessageLookupByLibrary.simpleMessage(
+      "无法为 {fingerprint} 指纹添加 X25519MLKEM768，REALITY 将按原样使用：{reason}",
+    ),
     "recentRequests": MessageLookupByLibrary.simpleMessage("最近请求"),
     "recommendedIcons": MessageLookupByLibrary.simpleMessage("推荐"),
     "recordType": MessageLookupByLibrary.simpleMessage("记录类型"),

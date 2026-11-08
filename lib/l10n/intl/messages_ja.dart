@@ -1216,6 +1216,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "quickActions": MessageLookupByLibrary.simpleMessage("クイック操作"),
     "quickEdit": MessageLookupByLibrary.simpleMessage("クイック編集"),
+    "realityHelloFallback": MessageLookupByLibrary.simpleMessage(
+      "{fingerprint} 指紋に X25519MLKEM768 を追加できなかったため、REALITY はそのまま使用します: {reason}",
+    ),
     "recentRequests": MessageLookupByLibrary.simpleMessage("最近のリクエスト"),
     "recommendedIcons": MessageLookupByLibrary.simpleMessage("おすすめ"),
     "recordType": MessageLookupByLibrary.simpleMessage("レコードタイプ"),

@@ -1531,6 +1531,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "quickActions": MessageLookupByLibrary.simpleMessage("Actions rapides"),
     "quickEdit": MessageLookupByLibrary.simpleMessage("Modification rapide"),
+    "realityHelloFallback": MessageLookupByLibrary.simpleMessage(
+      "Impossible d’ajouter X25519MLKEM768 à l’empreinte {fingerprint}, REALITY la conserve telle quelle : {reason}",
+    ),
     "recentRequests": MessageLookupByLibrary.simpleMessage("Requêtes récentes"),
     "recommendedIcons": MessageLookupByLibrary.simpleMessage("Suggestions"),
     "recordType": MessageLookupByLibrary.simpleMessage("Type d’enregistrement"),

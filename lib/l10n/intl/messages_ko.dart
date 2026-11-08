@@ -1193,6 +1193,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "quickActions": MessageLookupByLibrary.simpleMessage("빠른 작업"),
     "quickEdit": MessageLookupByLibrary.simpleMessage("빠른 편집"),
+    "realityHelloFallback": MessageLookupByLibrary.simpleMessage(
+      "{fingerprint} 지문에 X25519MLKEM768을 추가하지 못해 REALITY가 그대로 사용합니다: {reason}",
+    ),
     "recentRequests": MessageLookupByLibrary.simpleMessage("최근 요청"),
     "recommendedIcons": MessageLookupByLibrary.simpleMessage("추천"),
     "recordType": MessageLookupByLibrary.simpleMessage("레코드 유형"),

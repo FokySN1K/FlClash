@@ -976,5 +976,6 @@
   "addedToLocalProxies": "Added {name} to local proxies",
   "alreadyInLocalProxies": "{name} is already in local proxies",
   "suspiciousNode": "Suspicious node",
-  "groupRecovering": "The group is re-checking its nodes"
+  "groupRecovering": "The group is re-checking its nodes",
+  "realityHelloFallback": "X25519MLKEM768 could not be added to the {fingerprint} fingerprint, REALITY keeps it as recorded: {reason}"
 }
