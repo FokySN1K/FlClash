@@ -49,7 +49,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
     );
     _autoUpdate = widget.profile.autoUpdate;
     _autoUpdateDurationController = TextEditingController(
-      text: widget.profile.autoUpdateDuration.inMinutes.toString(),
+      text: widget.profile.autoUpdateDuration.inSeconds.toString(),
     );
     _setupAction = ref.read(setupActionProvider.notifier);
     _updateFileInfo();
@@ -133,7 +133,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
       label: _labelController.text,
       autoUpdate: _autoUpdate,
       autoUpdateDuration: interval != null && interval > 0
-          ? Duration(minutes: interval)
+          ? Duration(seconds: interval)
           : current.autoUpdateDuration,
     );
     final profilesAction = ref.read(profilesActionProvider.notifier);
@@ -525,7 +525,7 @@ class _AutoUpdateIntervalField extends StatelessWidget {
             ),
           ),
           Text(
-            appLocalizations.minutes,
+            appLocalizations.seconds,
             style: AppTextStyle.subheadline.of(context),
           ),
         ],

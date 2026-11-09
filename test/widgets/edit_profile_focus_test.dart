@@ -189,7 +189,7 @@ void main() {
     final interval = find.byWidgetPredicate(
       (widget) =>
           widget is TextField &&
-          widget.controller?.text == '${profile.autoUpdateDuration.inMinutes}',
+          widget.controller?.text == '${profile.autoUpdateDuration.inSeconds}',
     );
 
     await tester.enterText(interval, '');
