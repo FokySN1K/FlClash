@@ -2,6 +2,28 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.38",
+      "tag": "v1.0.38",
+      "date": "2026-11-09",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "33b2fb6",
+              "text": "Linux packages (AppImage, deb and rpm) are published too"
+            },
+            {
+              "id": "f8c14ef",
+              "scope": "access",
+              "text": "Access control starts as a blacklist and greys the app list out while it is off"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.37",
       "tag": "v1.0.37",
       "date": "2026-11-09",

@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.38 (2026-11-09)
+
+**Features**
+
+- Linux packages (AppImage, deb and rpm) are published too (33b2fb6)
+- **access** Access control starts as a blacklist and greys the app list out while it is off (f8c14ef)
+
 ## v1.0.37 (2026-11-09)
 
 **Features**
