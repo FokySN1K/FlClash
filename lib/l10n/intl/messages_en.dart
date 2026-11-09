@@ -249,6 +249,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "accessControlDisabledDesc": MessageLookupByLibrary.simpleMessage(
       "App access control is disabled",
     ),
+    "accessControlMarkHint": MessageLookupByLibrary.simpleMessage(
+      "The first box is your choice: checked puts the app into the list the current mode applies, empty puts it into the opposite list, a dash leaves it to the profile and the mode. In blacklist mode a checked app stays out of the VPN; in whitelist mode it is one of the apps that use it. Your choice beats the profile\'s PROCESS-NAME rule.",
+    ),
     "accessControlNotAllowDesc": MessageLookupByLibrary.simpleMessage(
       "Selected apps are excluded from the VPN",
     ),
@@ -990,10 +993,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter the rule content",
     ),
     "installNow": MessageLookupByLibrary.simpleMessage("Install"),
-    "installedAppsPermissionDeniedMessage":
-        MessageLookupByLibrary.simpleMessage(
-          "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
-        ),
+    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
+      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+    ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
     ),

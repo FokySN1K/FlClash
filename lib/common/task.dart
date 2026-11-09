@@ -88,8 +88,8 @@ typedef RealProfile = ({
   String md5,
   ConfigCounts counts,
 
-  /// Where the profile's own `PROCESS-NAME` rules send the apps, by package.
-  Map<String, String> processRules,
+  /// Where the profile's own `PROCESS-NAME*` rules send the apps, in order.
+  ProcessRules processRules,
 });
 
 /// Counts what the Core was handed, not what the profile file declares.
@@ -115,57 +115,407 @@ String? lastMatchTarget(List<String> rules) {
   return null;
 }
 
-/// The targets a profile's own `PROCESS-NAME` rules give the apps, first match
-/// wins as the Core applies them. A classical rule-set hands its `PROCESS-NAME`
-/// lines to the Core with the RULE-SET's own target, so they count the same
-/// way. FlClash reads it to exclude the apps the profile sends DIRECT from the
-/// tunnel itself: a rule inside the Core only picks the exit, while the app
-/// still sees the VPN interfaces.
-Map<String, String> processNameTargets(
-  List<String> rules, [
-  Object? ruleProviders,
-]) {
-  final targets = <String, String>{};
-  void add(String? package, String? target) {
-    final name = package?.trim();
-    final value = target?.trim();
-    if (name == null || name.isEmpty || value == null || value.isEmpty) {
-      return;
+/// How a process rule names an app: by package, by a regular expression over
+/// the package, or by a wildcard pattern over it.
+enum ProcessRuleKind { name, regex, wildcard }
+
+/// One `PROCESS-NAME*` rule of the profile, in the order the Core tries it.
+@immutable
+class ProcessRuleEntry {
+  const ProcessRuleEntry(this.kind, this.pattern, this.target);
+
+  const ProcessRuleEntry.name(this.pattern, this.target)
+    : kind = ProcessRuleKind.name;
+
+  const ProcessRuleEntry.regex(this.pattern, this.target)
+    : kind = ProcessRuleKind.regex;
+
+  const ProcessRuleEntry.wildcard(this.pattern, this.target)
+    : kind = ProcessRuleKind.wildcard;
+
+  final ProcessRuleKind kind;
+  final String pattern;
+  final String target;
+
+  bool get targetsDirect => target == RuleTarget.DIRECT.value;
+
+  /// The Core's semantics: an exact name and a regex ignore case, and a
+  /// wildcard matches `*` and `?` on a lowercased pair.
+  bool matches(String packageName) {
+    switch (kind) {
+      case ProcessRuleKind.name:
+        return pattern.toLowerCase() == packageName.toLowerCase();
+      case ProcessRuleKind.regex:
+        return _processRegex(pattern)?.hasMatch(packageName) ?? false;
+      case ProcessRuleKind.wildcard:
+        return _processWildcard(pattern).hasMatch(packageName);
     }
-    targets.putIfAbsent(name, () => value.toUpperCase());
   }
 
+  @override
+  bool operator ==(Object other) =>
+      other is ProcessRuleEntry &&
+      other.kind == kind &&
+      other.pattern == pattern &&
+      other.target == target;
+
+  @override
+  int get hashCode => Object.hash(kind, pattern, target);
+}
+
+final _processRegexCache = <String, RegExp?>{};
+final _processWildcardCache = <String, RegExp>{};
+
+RegExp? _processRegex(String pattern) {
+  return _processRegexCache.putIfAbsent(pattern, () {
+    try {
+      // The Core compiles every process regex with IgnoreCase.
+      return RegExp(pattern, caseSensitive: false);
+    } on FormatException {
+      return null;
+    }
+  });
+}
+
+/// `*` takes any run of characters and `?` exactly one, anchored and case
+/// blind, as the Core's wildcard matcher does.
+RegExp _processWildcard(String pattern) {
+  return _processWildcardCache.putIfAbsent(pattern, () {
+    final source = StringBuffer('^');
+    for (final rune in pattern.runes) {
+      switch (String.fromCharCode(rune)) {
+        case '*':
+          source.write('.*');
+        case '?':
+          source.write('.');
+        case final char:
+          source.write(RegExp.escape(char));
+      }
+    }
+    source.write(r'$');
+    return RegExp(source.toString(), caseSensitive: false);
+  });
+}
+
+/// The process rules of a profile, in the order the Core applies them: the
+/// first rule that matches an app picks its target.
+@immutable
+class ProcessRules {
+  const ProcessRules(this.entries);
+
+  const ProcessRules.empty() : entries = const [];
+
+  /// The exact-name rules of a package-to-target map, for callers that hold
+  /// no profile rules.
+  factory ProcessRules.names(Map<String, String> targets) {
+    return ProcessRules(
+      List.unmodifiable([
+        for (final entry in targets.entries)
+          ProcessRuleEntry.name(entry.key, entry.value.toUpperCase()),
+      ]),
+    );
+  }
+
+  final List<ProcessRuleEntry> entries;
+
+  bool get isEmpty => entries.isEmpty;
+
+  /// Whether an app is named by a pattern rather than by its package, which
+  /// takes the installed app list to resolve.
+  bool get hasPatterns =>
+      entries.any((entry) => entry.kind != ProcessRuleKind.name);
+
+  String? targetFor(String packageName) {
+    for (final entry in entries) {
+      if (entry.matches(packageName)) {
+        return entry.target;
+      }
+    }
+    return null;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is ProcessRules && listEquals(entries, other.entries);
+
+  @override
+  int get hashCode => Object.hashAll(entries);
+}
+
+typedef ResolveProcessRulesState = ({
+  List<String> rules,
+  Object? ruleProviders,
+  String? profilesPath,
+  int? profileId,
+});
+
+Future<ProcessRules> resolveProcessRulesTask(ResolveProcessRulesState data) {
+  return compute<ResolveProcessRulesState, ProcessRules>(
+    _resolveProcessRules,
+    data,
+  );
+}
+
+ProcessRules _resolveProcessRules(ResolveProcessRulesState data) {
+  return resolveProcessRules(
+    data.rules,
+    ruleProviders: data.ruleProviders,
+    profilesPath: data.profilesPath,
+    profileId: data.profileId,
+  );
+}
+
+/// The process rules a profile's own `rules` apply, first match wins as the
+/// Core gives them. A classical rule-set carries such lines for the set's own
+/// target, and a downloaded set is read from the file the Core parses, with
+/// its `payload` as the fallback the Core also keeps. FlClash reads it to
+/// exclude the apps the profile sends DIRECT from the tunnel itself: a rule
+/// inside the Core only picks the exit, while the app still sees the VPN
+/// interfaces.
+ProcessRules resolveProcessRules(
+  List<String> rules, {
+  Object? ruleProviders,
+  String? profilesPath,
+  int? profileId,
+}) {
+  final entries = <ProcessRuleEntry>[];
   final providers = ruleProviders is Map ? ruleProviders : const {};
   for (final value in rules) {
     final rule = Rule.parse(value);
-    if (rule.ruleAction == RuleAction.PROCESS_NAME) {
-      add(rule.content, rule.ruleTarget);
+    final kind = switch (rule.ruleAction) {
+      RuleAction.PROCESS_NAME => ProcessRuleKind.name,
+      RuleAction.PROCESS_NAME_REGEX => ProcessRuleKind.regex,
+      RuleAction.PROCESS_NAME_WILDCARD => ProcessRuleKind.wildcard,
+      _ => null,
+    };
+    if (kind != null) {
+      _addProcessRule(entries, kind, rule.content, rule.ruleTarget);
       continue;
     }
     if (rule.ruleAction != RuleAction.RULE_SET) {
       continue;
     }
-    final provider = providers[rule.ruleProvider];
-    if (provider is! Map ||
-        provider['type'] != 'inline' ||
+    final name = rule.ruleProvider;
+    final provider = name == null ? null : providers[name];
+    if (name == null ||
+        provider is! Map ||
         provider['behavior'] != 'classical') {
       continue;
     }
-    final payload = provider['payload'];
-    if (payload is! List) {
-      continue;
-    }
-    for (final line in payload) {
-      if (line is! String) {
+    for (final line in _classicalRules(
+      name,
+      provider,
+      profilesPath,
+      profileId,
+    )) {
+      final innerKind = _setLineKind(line);
+      if (innerKind == null) {
         continue;
       }
-      final inner = Rule.parse(line);
-      if (inner.ruleAction == RuleAction.PROCESS_NAME) {
-        add(inner.content, rule.ruleTarget);
+      // The set hands its lines to the Core with the RULE-SET's own target.
+      _addProcessRule(
+        entries,
+        innerKind,
+        _setLinePattern(line, innerKind),
+        rule.ruleTarget,
+      );
+    }
+  }
+  return entries.isEmpty
+      ? const ProcessRules.empty()
+      : ProcessRules(List.unmodifiable(entries));
+}
+
+/// A classical set line carries no target: the Core reads it with
+/// `needTarget` off, and the set's own target applies to every line.
+ProcessRuleKind? _setLineKind(String line) {
+  final type = line.split(',').first.trim().toUpperCase();
+  return switch (type) {
+    'PROCESS-NAME' => ProcessRuleKind.name,
+    'PROCESS-NAME-REGEX' => ProcessRuleKind.regex,
+    'PROCESS-NAME-WILDCARD' => ProcessRuleKind.wildcard,
+    _ => null,
+  };
+}
+
+String? _setLinePattern(String line, ProcessRuleKind kind) {
+  final fields = line.split(',').map((item) => item.trim()).toList();
+  if (fields.length < 2) {
+    return null;
+  }
+  // A regex may hold commas of its own; the other kinds take one field.
+  return kind == ProcessRuleKind.regex
+      ? fields.sublist(1).join(',')
+      : fields[1];
+}
+
+void _addProcessRule(
+  List<ProcessRuleEntry> entries,
+  ProcessRuleKind kind,
+  String? pattern,
+  String? target,
+) {
+  final name = pattern?.trim();
+  final value = target?.trim();
+  if (name == null || name.isEmpty || value == null || value.isEmpty) {
+    return;
+  }
+  // A later rule for the same pattern can never win, so it is dropped here.
+  final known = entries.any(
+    (entry) => entry.kind == kind && entry.pattern == name,
+  );
+  if (known) {
+    return;
+  }
+  entries.add(ProcessRuleEntry(kind, name, value.toUpperCase()));
+}
+
+/// Where FlClash keeps a provider's own file: a hash of its name and URL under
+/// the profile's directory, the key `confineProviders` writes as `path`.
+String providerFilePath({
+  required String profilesPath,
+  required int profileId,
+  required String type,
+  required String key,
+}) {
+  return join(
+    profilesPath,
+    providersDirectoryName,
+    profileId.toString(),
+    type,
+    key.toMd5(),
+  );
+}
+
+String? _ruleProviderPath(
+  String name,
+  Map provider,
+  String? profilesPath,
+  int? profileId,
+) {
+  if (profilesPath != null && profileId != null) {
+    final url = provider['url'];
+    final hasUrl = url is String && url.isNotEmpty;
+    final confined = providerFilePath(
+      profilesPath: profilesPath,
+      profileId: profileId,
+      type: rulesProviderDirectoryName,
+      key: hasUrl ? '$name@$url' : 'rule-providers/$name',
+    );
+    if (File(confined).existsSync()) {
+      return confined;
+    }
+    // A file the rename of the legacy url-only key left behind.
+    if (hasUrl) {
+      final legacy = providerFilePath(
+        profilesPath: profilesPath,
+        profileId: profileId,
+        type: rulesProviderDirectoryName,
+        key: url,
+      );
+      if (File(legacy).existsSync()) {
+        return legacy;
       }
     }
   }
-  return targets;
+  // An app-level provider keeps its own path: the setup injects it after the
+  // confinement pass.
+  final path = provider['path'];
+  if (path is String && path.isNotEmpty && File(path).existsSync()) {
+    return path;
+  }
+  return null;
+}
+
+// A set naming every app on the phone is a couple of hundred kilobytes; the
+// cap only keeps a mislabelled binary or a giant dump out of memory.
+const _processRuleFileLimit = 4 << 20;
+
+String? _readProviderText(File file) {
+  try {
+    if (file.lengthSync() > _processRuleFileLimit) {
+      return null;
+    }
+    final bytes = file.readAsBytesSync();
+    final body =
+        bytes.length >= 3 &&
+            bytes[0] == 0xef &&
+            bytes[1] == 0xbb &&
+            bytes[2] == 0xbf
+        ? bytes.sublist(3)
+        : bytes;
+    return utf8.decode(body);
+  } catch (_) {
+    return null;
+  }
+}
+
+/// A non-MRS set is a YAML `payload`/`rules` list or plain lines, the two
+/// shapes the Core reads.
+Iterable<String> _rulesFromSetText(String text) sync* {
+  Object? document;
+  try {
+    document = loadPlainYaml(text);
+  } catch (_) {
+    document = null;
+  }
+  if (document is Map) {
+    final payload = document['rules'] ?? document['payload'];
+    if (payload is List) {
+      yield* _cleanRuleLines(payload.whereType<String>());
+      return;
+    }
+  } else if (document is List) {
+    yield* _cleanRuleLines(document.whereType<String>());
+    return;
+  }
+  yield* _cleanRuleLines(text.split('\n'));
+}
+
+Iterable<String> _cleanRuleLines(Iterable<String> lines) sync* {
+  for (final raw in lines) {
+    var line = raw.trim();
+    if (line.startsWith('- ')) {
+      line = line.substring(2).trim();
+    }
+    if (line.isEmpty || line.startsWith('#') || line.startsWith('//')) {
+      continue;
+    }
+    if (line.length > 1 &&
+        ((line.startsWith("'") && line.endsWith("'")) ||
+            (line.startsWith('"') && line.endsWith('"')))) {
+      line = line.substring(1, line.length - 1);
+    }
+    if (line.isNotEmpty) {
+      yield line;
+    }
+  }
+}
+
+Iterable<String> _classicalRules(
+  String name,
+  Map provider,
+  String? profilesPath,
+  int? profileId,
+) sync* {
+  // MRS carries domains or addresses only, never rule lines.
+  if (provider['format'] == 'mrs') {
+    return;
+  }
+  if (provider['type'] != 'inline') {
+    final path = _ruleProviderPath(name, provider, profilesPath, profileId);
+    if (path != null) {
+      final text = _readProviderText(File(path));
+      if (text != null) {
+        yield* _rulesFromSetText(text);
+        return;
+      }
+    }
+  }
+  final payload = provider['payload'];
+  if (payload is List) {
+    yield* _cleanRuleLines(payload.whereType<String>());
+  }
 }
 
 Future<RealProfile> makeRealProfileTask(MakeRealProfileState data) async {
@@ -182,12 +532,11 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
   final appendSystemDns = data.appendSystemDns;
   final defaultUA = data.defaultUA;
   String getProvidersFilePathInner(String type, String key) {
-    return join(
-      profilesPath,
-      providersDirectoryName,
-      profileId.toString(),
-      type,
-      key.toMd5(),
+    return providerFilePath(
+      profilesPath: profilesPath,
+      profileId: profileId,
+      type: type,
+      key: key,
     );
   }
 
@@ -436,7 +785,12 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
     yaml: yaml,
     md5: yaml.toMd5(),
     counts: configCountsOf(rawConfig),
-    processRules: processNameTargets(rules, rawConfig['rule-providers']),
+    processRules: resolveProcessRules(
+      rules,
+      ruleProviders: rawConfig['rule-providers'],
+      profilesPath: profilesPath,
+      profileId: profileId,
+    ),
   );
 }
 

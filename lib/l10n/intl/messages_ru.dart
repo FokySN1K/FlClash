@@ -247,6 +247,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "accessControlDisabledDesc": MessageLookupByLibrary.simpleMessage(
       "Контроль доступа приложений отключён",
     ),
+    "accessControlMarkHint": MessageLookupByLibrary.simpleMessage(
+      "Первая галка — ваше решение: отмеченная добавляет приложение в список текущего режима, пустая — в противоположный, прочерк оставляет выбор профилю и режиму. В режиме чёрного списка отмеченное приложение не входит в VPN, в режиме белого — входит. Ваше решение важнее правила PROCESS-NAME из профиля.",
+    ),
     "accessControlNotAllowDesc": MessageLookupByLibrary.simpleMessage(
       "Выбранные приложения исключаются из VPN",
     ),
@@ -1024,10 +1027,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Введите содержимое правила",
     ),
     "installNow": MessageLookupByLibrary.simpleMessage("Установить"),
-    "installedAppsPermissionDeniedMessage":
-        MessageLookupByLibrary.simpleMessage(
-          "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
-        ),
+    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
+      "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
+    ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Эта система не выдаёт список установленных приложений без разрешения. Предоставьте его, чтобы настроить прокси для отдельных приложений.",
     ),

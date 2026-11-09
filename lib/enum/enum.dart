@@ -884,7 +884,7 @@ enum Language { yaml, javaScript, json }
 
 enum ScrollPositionCacheKey { proxiesTabList }
 
-enum QueryTag { proxies, access, exclusions }
+enum QueryTag { proxies, access }
 
 enum LoadingTag {
   profiles,

@@ -33,15 +33,19 @@ func handleGetProfileBase(path string) (*ProfileBase, error) {
 		return nil, err
 	}
 	base := &ProfileBase{
-		Digest:      hex.EncodeToString(digest[:]),
-		MatchRules:  []string{},
-		Proxies:     len(raw.Proxy),
-		ProxyGroups: len(raw.ProxyGroup),
-		Rules:       len(raw.Rule),
+		Digest:       hex.EncodeToString(digest[:]),
+		MatchRules:   []string{},
+		ProcessRules: []string{},
+		Proxies:      len(raw.Proxy),
+		ProxyGroups:  len(raw.ProxyGroup),
+		Rules:        len(raw.Rule),
 	}
 	for _, rule := range raw.Rule {
 		if isMatchRule(rule) {
 			base.MatchRules = append(base.MatchRules, rule)
+		}
+		if isProcessRule(rule) {
+			base.ProcessRules = append(base.ProcessRules, rule)
 		}
 	}
 	raw.Proxy, raw.ProxyGroup, raw.Rule, raw.SubRules = nil, nil, nil, nil
@@ -96,6 +100,20 @@ func handleBuildProfile(base *SetupBase) (string, error) {
 func isMatchRule(rule string) bool {
 	kind, _, _ := strings.Cut(rule, ",")
 	return strings.EqualFold(strings.TrimSpace(kind), "MATCH")
+}
+
+// Mirrors resolveProcessRules in Dart: a PROCESS-NAME rule binds an app to a
+// target, a PROCESS-NAME-REGEX or PROCESS-NAME-WILDCARD rule binds every app
+// its pattern covers, and a classical rule-set carries such lines for the
+// set's own target. The host picks the sets itself, so every RULE-SET line
+// goes along.
+func isProcessRule(rule string) bool {
+	kind, _, _ := strings.Cut(rule, ",")
+	switch strings.ToUpper(strings.TrimSpace(kind)) {
+	case "PROCESS-NAME", "PROCESS-NAME-REGEX", "PROCESS-NAME-WILDCARD", "RULE-SET":
+		return true
+	}
+	return false
 }
 
 func loadConfigWithBase(base *SetupBase, configPath string) (*config.Config, error) {

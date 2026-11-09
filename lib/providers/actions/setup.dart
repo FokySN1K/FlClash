@@ -13,7 +13,7 @@ typedef BuiltProfile = ({
   String yaml,
   String md5,
   ConfigCounts counts,
-  Map<String, String> processRules,
+  ProcessRules processRules,
   SetupBase? base,
 });
 
@@ -482,7 +482,7 @@ class SetupAction extends _$SetupAction {
         yaml: '',
         md5: '',
         counts: configCountsOf(const {}),
-        processRules: const <String, String>{},
+        processRules: const ProcessRules.empty(),
         base: null,
       );
     }
@@ -561,6 +561,12 @@ class SetupAction extends _$SetupAction {
       );
     }
     final (:base, :path) = profileBase;
+    final baseProcessRules = await resolveProcessRulesTask((
+      rules: base.processRules,
+      ruleProviders: rawConfig['rule-providers'],
+      profilesPath: directory,
+      profileId: profileId,
+    ));
     return (
       yaml: res.yaml,
       md5: '${res.md5}${base.digest}'.toMd5(),
@@ -569,7 +575,13 @@ class SetupAction extends _$SetupAction {
         proxies: res.counts.proxies + base.proxies,
         rules: res.counts.rules + base.rules,
       ),
-      processRules: res.processRules,
+      // The Core keeps the profile's process rules out of the overlay; the
+      // overlay's own rules are written first, so they win here as they do in
+      // the config.
+      processRules: ProcessRules([
+        ...res.processRules.entries,
+        ...baseProcessRules.entries,
+      ]),
       base: SetupBase(path: path, overlay: res.yaml),
     );
   }
@@ -759,6 +771,16 @@ class SetupAction extends _$SetupAction {
     final processRules = realProfile?.processRules;
     if (processRules != null) {
       ref.read(profileProcessRulesProvider.notifier).update(processRules);
+      // A pattern rule names its apps through the installed list, and the
+      // access view that loads it may never be opened before the tunnel
+      // starts.
+      if (system.isAndroid &&
+          processRules.hasPatterns &&
+          ref.read(packagesProvider).isEmpty) {
+        await globalState.safeRun(
+          () => ref.read(systemActionProvider.notifier).getPackages(),
+        );
+      }
     }
     final profileFailed = realProfile == null;
     final setupParams = _setupParams.copyWith(base: realProfile?.base);

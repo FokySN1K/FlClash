@@ -33,6 +33,10 @@ abstract class ProfileBase with _$ProfileBase {
     required Map<String, dynamic> config,
     required String digest,
     @Default([]) @JsonKey(name: 'match-rules') List<String> matchRules,
+
+    /// The profile's own `PROCESS-NAME` and `RULE-SET` lines: the Core drops
+    /// `rules` from the config it returns, so the host reads them here.
+    @Default([]) @JsonKey(name: 'process-rules') List<String> processRules,
     @Default(0) int proxies,
     @Default(0) @JsonKey(name: 'proxy-groups') int proxyGroups,
     @Default(0) int rules,

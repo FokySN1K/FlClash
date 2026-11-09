@@ -39,6 +39,11 @@ _ProfileBase _$ProfileBaseFromJson(Map<String, dynamic> json) => _ProfileBase(
           ?.map((e) => e as String)
           .toList() ??
       const [],
+  processRules:
+      (json['process-rules'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      const [],
   proxies: (json['proxies'] as num?)?.toInt() ?? 0,
   proxyGroups: (json['proxy-groups'] as num?)?.toInt() ?? 0,
   rules: (json['rules'] as num?)?.toInt() ?? 0,
@@ -49,6 +54,7 @@ Map<String, dynamic> _$ProfileBaseToJson(_ProfileBase instance) =>
       'config': instance.config,
       'digest': instance.digest,
       'match-rules': instance.matchRules,
+      'process-rules': instance.processRules,
       'proxies': instance.proxies,
       'proxy-groups': instance.proxyGroups,
       'rules': instance.rules,

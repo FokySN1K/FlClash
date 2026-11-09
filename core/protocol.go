@@ -118,12 +118,13 @@ type SetupBase struct {
 }
 
 type ProfileBase struct {
-	Config      *config.RawConfig `json:"config"`
-	Digest      string            `json:"digest"`
-	MatchRules  []string          `json:"match-rules"`
-	Proxies     int               `json:"proxies"`
-	ProxyGroups int               `json:"proxy-groups"`
-	Rules       int               `json:"rules"`
+	Config       *config.RawConfig `json:"config"`
+	Digest       string            `json:"digest"`
+	MatchRules   []string          `json:"match-rules"`
+	ProcessRules []string          `json:"process-rules"`
+	Proxies      int               `json:"proxies"`
+	ProxyGroups  int               `json:"proxy-groups"`
+	Rules        int               `json:"rules"`
 }
 
 type ProfileOutbounds struct {

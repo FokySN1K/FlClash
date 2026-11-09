@@ -987,5 +987,6 @@
   "vpnExclusionsGlobalMode": "El modo global ignora las reglas del perfil: solo se aplican tus marcas.",
   "vpnExclusionsLockdown": "Si «Bloquear conexiones sin VPN» está activado en Android, una aplicación excluida tampoco podrá usar la red.",
   "ignoreProfileProcessRules": "Ignorar PROCESS-NAME del perfil",
-  "ignoreProfileProcessRulesDesc": "Las reglas PROCESS-NAME del perfil ya no excluyen aplicaciones del túnel: solo cuentan tus marcas."
+  "ignoreProfileProcessRulesDesc": "Las reglas PROCESS-NAME del perfil ya no excluyen aplicaciones del túnel: solo cuentan tus marcas.",
+  "accessControlMarkHint": "La primera casilla es tu elección: marcada añade la aplicación a la lista del modo actual, vacía a la lista contraria y un guion lo deja al perfil y al modo. En modo lista negra la aplicación marcada queda fuera de la VPN; en modo lista blanca es una de las que la usan. Tu elección prevalece sobre la regla PROCESS-NAME del perfil."
 }

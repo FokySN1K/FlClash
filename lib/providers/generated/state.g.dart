@@ -478,21 +478,21 @@ final class VpnRouteAddressProvider
 
 String _$vpnRouteAddressHash() => r'bae2530b73b71ecff16aadfc395e60996d739d41';
 
-/// The targets the applied profile's own `PROCESS-NAME` rules give the apps,
-/// published by the setup. The exclusion view shows it next to the manual
-/// marks, and Global mode stops counting it.
+/// The process rules of the applied profile, published by the setup. The
+/// access view shows what they say about an app next to the manual marks, and
+/// Global mode stops counting them.
 
 @ProviderFor(ProfileProcessRules)
 final profileProcessRulesProvider = ProfileProcessRulesProvider._();
 
-/// The targets the applied profile's own `PROCESS-NAME` rules give the apps,
-/// published by the setup. The exclusion view shows it next to the manual
-/// marks, and Global mode stops counting it.
+/// The process rules of the applied profile, published by the setup. The
+/// access view shows what they say about an app next to the manual marks, and
+/// Global mode stops counting them.
 final class ProfileProcessRulesProvider
-    extends $NotifierProvider<ProfileProcessRules, Map<String, String>> {
-  /// The targets the applied profile's own `PROCESS-NAME` rules give the apps,
-  /// published by the setup. The exclusion view shows it next to the manual
-  /// marks, and Global mode stops counting it.
+    extends $NotifierProvider<ProfileProcessRules, ProcessRules> {
+  /// The process rules of the applied profile, published by the setup. The
+  /// access view shows what they say about an app next to the manual marks, and
+  /// Global mode stops counting them.
   ProfileProcessRulesProvider._()
     : super(
         from: null,
@@ -512,32 +512,32 @@ final class ProfileProcessRulesProvider
   ProfileProcessRules create() => ProfileProcessRules();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(Map<String, String> value) {
+  Override overrideWithValue(ProcessRules value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<Map<String, String>>(value),
+      providerOverride: $SyncValueProvider<ProcessRules>(value),
     );
   }
 }
 
 String _$profileProcessRulesHash() =>
-    r'e35b2a5e4125d3e1638f0f16e3d301b25b097eb8';
+    r'6db1adfd7f030f9a9e7b221af5bec861cef2fab0';
 
-/// The targets the applied profile's own `PROCESS-NAME` rules give the apps,
-/// published by the setup. The exclusion view shows it next to the manual
-/// marks, and Global mode stops counting it.
+/// The process rules of the applied profile, published by the setup. The
+/// access view shows what they say about an app next to the manual marks, and
+/// Global mode stops counting them.
 
-abstract class _$ProfileProcessRules extends $Notifier<Map<String, String>> {
-  Map<String, String> build();
+abstract class _$ProfileProcessRules extends $Notifier<ProcessRules> {
+  ProcessRules build();
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
-    final ref = this.ref as $Ref<Map<String, String>, Map<String, String>>;
+    final ref = this.ref as $Ref<ProcessRules, ProcessRules>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<Map<String, String>, Map<String, String>>,
-              Map<String, String>,
+              AnyNotifier<ProcessRules, ProcessRules>,
+              ProcessRules,
               Object?,
               Object?
             >;
@@ -581,7 +581,7 @@ final class VpnOptionsProvider
   }
 }
 
-String _$vpnOptionsHash() => r'04b4dff2553c943b9b52f4ab3a7d8211bb37e8dd';
+String _$vpnOptionsHash() => r'315de3d7b9726236152b17e644491e6d6d2acbf6';
 
 @ProviderFor(AccessControlState)
 final accessControlStateProvider = AccessControlStateProvider._();

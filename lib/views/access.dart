@@ -12,6 +12,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// The apps the tunnel carries. The mode picks the list a manual mark writes,
+/// the profile's own `PROCESS-NAME*` rules stand beside it, and a manual mark
+/// always beats the rule.
 class AccessView extends ConsumerStatefulWidget {
   const AccessView({super.key});
 
@@ -22,8 +25,6 @@ class AccessView extends ConsumerStatefulWidget {
 class _AccessViewState extends ConsumerState<AccessView>
     with RouteSettledMixin<AccessView> {
   late ScrollController _controller;
-  List<String>? _pinedList;
-  bool _isInit = false;
   bool _installedAppsPermissionGranted = true;
 
   final _completer = Completer();
@@ -32,26 +33,32 @@ class _AccessViewState extends ConsumerState<AccessView>
   void initState() {
     super.initState();
     _controller = sheetScrollController(context);
-    final accessControl = ref
-        .read(vpnSettingProvider.select((state) => state.accessControlProps))
-        .copyWith();
+    final accessControl = _withLegacyMarks(ref.read(vpnSettingProvider));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return;
       }
       ref.read(accessControlStateProvider.notifier).value = accessControl;
-      _isInit = true;
-      _pinList();
     });
-    ref.listenManual(
-      accessControlStateProvider.select((state) => state.mode),
-      (_, _) => _pinList(),
-    );
     _completer.complete(_loadPackages());
   }
 
   @override
   void didSettleRoute() => setState(() {});
+
+  /// The exclusion screen kept its marks on their own; the merged screen folds
+  /// them into the mode's lists once, a manual inclusion winning over an
+  /// exclusion as the tunnel options always did.
+  AccessControlProps _withLegacyMarks(VpnProps vpnSetting) {
+    final props = vpnSetting.accessControlProps;
+    final accept = {...props.acceptList, ...vpnSetting.includePackages};
+    final reject = {...props.rejectList, ...vpnSetting.excludePackages}
+      ..removeAll(accept);
+    return props.copyWith(
+      acceptList: accept.toList(),
+      rejectList: reject.toList(),
+    );
+  }
 
   Future<void> _loadPackages() async {
     final action = ref.read(systemActionProvider.notifier);
@@ -89,15 +96,6 @@ class _AccessViewState extends ConsumerState<AccessView>
     await globalState.loadingRun(_loadPackages, tag: LoadingTag.access);
   }
 
-  void _pinList() {
-    if (!_isInit || !mounted) {
-      return;
-    }
-    setState(() {
-      _pinedList = ref.read(accessControlStateProvider).currentList;
-    });
-  }
-
   @override
   void dispose() {
     _controller.dispose();
@@ -110,14 +108,16 @@ class _AccessViewState extends ConsumerState<AccessView>
   }) {
     void onPressed() {
       ref.read(accessControlStateProvider.notifier).update((state) {
-        final newSet = Set<String>.from(state.currentList);
-        final isSelectedAll = newSet.containsAll(allValueList);
+        final current = Set<String>.from(state.currentList);
+        final other = Set<String>.from(state.otherList);
+        final isSelectedAll = current.containsAll(allValueList);
         if (isSelectedAll) {
-          newSet.removeAll(allValueList);
+          current.removeAll(allValueList);
         } else {
-          newSet.addAll(allValueList);
+          current.addAll(allValueList);
+          other.removeAll(allValueList);
         }
-        return state.copyWithNewList(newSet.toList());
+        return state.copyWithNewLists(current.toList(), other.toList());
       });
     }
 
@@ -161,12 +161,91 @@ class _AccessViewState extends ConsumerState<AccessView>
         );
   }
 
-  void _handleSelected(String packageName) {
+  /// The manual mark: checked is the mode's own list, empty the opposite one,
+  /// a dash means no choice at all.
+  bool? _manualState(String packageName, AccessControlProps accessControl) {
+    if (accessControl.currentList.contains(packageName)) {
+      return true;
+    }
+    if (accessControl.otherList.contains(packageName)) {
+      return false;
+    }
+    return null;
+  }
+
+  /// No choice -> the mode's list -> the opposite list -> no choice.
+  void _cycleManual(String packageName) {
     ref.read(accessControlStateProvider.notifier).update((state) {
-      final newSet = Set<String>.from(state.currentList)
-        ..addOrRemove(packageName);
-      return state.copyWithNewList(newSet.toList());
+      final current = Set<String>.from(state.currentList);
+      final other = Set<String>.from(state.otherList);
+      switch (_manualState(packageName, state)) {
+        case null:
+          current.add(packageName);
+          other.remove(packageName);
+        case true:
+          current.remove(packageName);
+          other.add(packageName);
+        case false:
+          other.remove(packageName);
+      }
+      return state.copyWithNewLists(current.toList(), other.toList());
     });
+  }
+
+  /// What the profile's own rule says: checked sends the app DIRECT, empty
+  /// sends it through a proxy, a dash says nothing. Global mode ignores the
+  /// rules altogether, and so does the ignore switch.
+  bool? _profileState(
+    String packageName,
+    ProcessRules processRules,
+    Mode mode,
+  ) {
+    if (mode == Mode.global) {
+      return null;
+    }
+    final target = processRules.targetFor(packageName);
+    if (target == null) {
+      return null;
+    }
+    return target == RuleTarget.DIRECT.value;
+  }
+
+  int _rank(
+    String packageName,
+    AccessControlProps accessControl,
+    ProcessRules processRules,
+    Mode mode,
+  ) {
+    if (_manualState(packageName, accessControl) != null) {
+      return 0;
+    }
+    if (_profileState(packageName, processRules, mode) != null) {
+      return 1;
+    }
+    return 2;
+  }
+
+  /// The manual marks come first, then the apps the profile names, then the
+  /// rest; inside a rank the chosen sort holds.
+  List<Package> _ranked(
+    List<Package> packages,
+    AccessControlProps accessControl,
+    ProcessRules processRules,
+    Mode mode,
+  ) {
+    final byRank = <int, List<Package>>{};
+    for (final package in packages) {
+      final rank = _rank(
+        package.packageName,
+        accessControl,
+        processRules,
+        mode,
+      );
+      byRank.putIfAbsent(rank, () => []).add(package);
+    }
+    return [
+      for (final rank in const [0, 1, 2]) ...?byRank[rank],
+    ];
   }
 
   void _update(AccessControlProps Function(AccessControlProps state) update) {
@@ -208,13 +287,19 @@ class _AccessViewState extends ConsumerState<AccessView>
     );
   }
 
+  /// The tunnel options read the exclusion lists on their own, so the saved
+  /// marks are mirrored there as well.
   void _handleSave() {
-    final accessControl = ref.read(accessControlStateProvider);
+    final accessControl = _getRealAccessControlProps(
+      ref.read(accessControlStateProvider),
+    );
     ref
         .read(vpnSettingProvider.notifier)
         .update(
           (state) => state.copyWith(
-            accessControlProps: _getRealAccessControlProps(accessControl),
+            accessControlProps: accessControl,
+            excludePackages: [...accessControl.rejectList]..sort(),
+            includePackages: [...accessControl.acceptList]..sort(),
           ),
         );
   }
@@ -233,16 +318,49 @@ class _AccessViewState extends ConsumerState<AccessView>
       final data = await Clipboard.getData('text/plain');
       final text = data?.text;
       if (text == null) return;
-      final list = text.split('\n');
+      final list = text
+          .split('\n')
+          .map((item) => item.trim())
+          .where((item) => item.isNotEmpty)
+          .toSet();
       ref
           .read(accessControlStateProvider.notifier)
-          .update((state) => state.copyWithNewList(list.toSet().toList()));
+          .update(
+            (state) => state.copyWithNewLists(
+              list.toList(),
+              state.otherList.where((item) => !list.contains(item)).toList(),
+            ),
+          );
     });
+  }
+
+  Future<void> _showLegend() async {
+    final appLocalizations = context.appLocalizations;
+    final vpnSetting = ref.read(vpnSettingProvider);
+    final mode = ref.read(
+      patchClashConfigProvider.select((state) => state.mode),
+    );
+    final ignored = vpnSetting.ignoreProfileProcessRules;
+    await dialogs.showMessage(
+      message: TextSpan(
+        text: [
+          appLocalizations.accessControlMarkHint,
+          if (ignored)
+            appLocalizations.ignoreProfileProcessRulesDesc
+          else if (mode == Mode.global)
+            appLocalizations.vpnExclusionsGlobalMode
+          else
+            appLocalizations.vpnExclusionsProfileHint,
+          appLocalizations.vpnExclusionsLockdown,
+        ].join('\n\n'),
+      ),
+    );
   }
 
   List<CommonPopupMenuItem> _buildMenuItems(
     BuildContext context,
     AccessControlProps accessControl,
+    VpnProps vpnSetting,
   ) {
     final appLocalizations = context.appLocalizations;
     String modeText(AccessControlMode mode) => switch (mode) {
@@ -307,6 +425,18 @@ class _AccessViewState extends ConsumerState<AccessView>
               ),
             ),
           ),
+          CommonPopupMenuItem(
+            label: appLocalizations.ignoreProfileProcessRules,
+            checked: vpnSetting.ignoreProfileProcessRules,
+            section: CommonPopupMenuSection(title: appLocalizations.profile),
+            onPressed: () => ref
+                .read(vpnSettingProvider.notifier)
+                .update(
+                  (state) => state.copyWith(
+                    ignoreProfileProcessRules: !state.ignoreProfileProcessRules,
+                  ),
+                ),
+          ),
         ],
       ),
       CommonPopupMenuItem(
@@ -335,7 +465,9 @@ class _AccessViewState extends ConsumerState<AccessView>
 
   Widget _buildContent({
     required List<Package> packages,
-    required Set<String> selected,
+    required AccessControlProps accessControl,
+    required ProcessRules processRules,
+    required Mode mode,
     required bool isSearching,
   }) {
     return FutureBuilder(
@@ -368,10 +500,13 @@ class _AccessViewState extends ConsumerState<AccessView>
                 return PackageListItem(
                   key: Key(package.packageName),
                   package: package,
-                  value: selected.contains(package.packageName),
-                  onChanged: (value) {
-                    _handleSelected(package.packageName);
-                  },
+                  value: _manualState(package.packageName, accessControl),
+                  profile: _profileState(
+                    package.packageName,
+                    processRules,
+                    mode,
+                  ),
+                  onChanged: () => _cycleManual(package.packageName),
                 );
               },
             ),
@@ -398,33 +533,46 @@ class _AccessViewState extends ConsumerState<AccessView>
 
   void _onSearch(String value) {
     ref.read(queryProvider(QueryTag.access).notifier).value = value;
-    _pinList();
   }
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = context.appLocalizations;
     final isLoading = ref.watch(loadingProvider(LoadingTag.access));
     final query = SearchQuery(ref.watch(queryProvider(QueryTag.access)));
     final packages = ref.watch(packagesProvider);
     final accessControl = ref.watch(accessControlStateProvider);
-    final viewPackages = packages
+    final vpnSetting = ref.watch(vpnSettingProvider);
+    final mode = ref.watch(
+      patchClashConfigProvider.select((state) => state.mode),
+    );
+    // Ignored profile rules must not rank or tick the apps either.
+    final profileRules = ref.watch(profileProcessRulesProvider);
+    final processRules = vpnSetting.ignoreProfileProcessRules
+        ? const ProcessRules.empty()
+        : profileRules;
+    final searchedPackages = packages
         .getViewList(
-          pinedList: _pinedList ?? [],
+          pinedList: const [],
           sortType: accessControl.sort,
           isFilterNonInternetApp: accessControl.isFilterNonInternetApp,
           isFilterSystemApp: accessControl.isFilterSystemApp,
         )
         .whereMatches(query, (package) => [package.label, package.packageName])
         .toList();
+    final viewPackages = _ranked(
+      searchedPackages,
+      accessControl,
+      processRules,
+      mode,
+    );
     final currentList = accessControl.currentList;
     final viewPackageNameList = viewPackages.map((e) => e.packageName).toList();
     final valueList = currentList.intersection(viewPackageNameList);
     final needsInstalledAppsPermission =
         packages.isEmpty && !_installedAppsPermissionGranted;
     final selectAllAction =
-        accessControl.enable &&
-            !needsInstalledAppsPermission &&
-            viewPackageNameList.isNotEmpty
+        !needsInstalledAppsPermission && viewPackageNameList.isNotEmpty
         ? _buildSelectAllAction(
             isSelectedAll: valueList.length == viewPackageNameList.length,
             allValueList: viewPackageNameList,
@@ -449,16 +597,23 @@ class _AccessViewState extends ConsumerState<AccessView>
         searchState: AppBarSearchState(onSearch: _onSearch),
         searchActions: [?selectAllAction],
         searchInBar: true,
-        title: context.appLocalizations.appAccessControl,
+        title: appLocalizations.appAccessControl,
         confirmationAction: hasChanges
             ? IconButtonData(
                 glyph: AppGlyphs.check,
                 onPressed: _handleSave,
-                tooltip: context.appLocalizations.save,
+                tooltip: appLocalizations.save,
               )
             : null,
-        iconActions: [?selectAllAction],
-        menuItems: _buildMenuItems(context, accessControl),
+        iconActions: [
+          ?selectAllAction,
+          IconButtonData(
+            glyph: AppGlyphs.info,
+            onPressed: _showLegend,
+            tooltip: appLocalizations.tip,
+          ),
+        ],
+        menuItems: _buildMenuItems(context, accessControl, vpnSetting),
         body: needsInstalledAppsPermission
             ? _buildInstalledAppsPermissionStatus()
             : FloatingFootBar(
@@ -468,13 +623,12 @@ class _AccessViewState extends ConsumerState<AccessView>
                   onEnable: () =>
                       _update((state) => state.copyWith(enable: true)),
                 ),
-                body: DisabledMask(
-                  status: !accessControl.enable,
-                  child: _buildContent(
-                    packages: viewPackages,
-                    selected: valueList.toSet(),
-                    isSearching: query.isNotEmpty,
-                  ),
+                body: _buildContent(
+                  packages: viewPackages,
+                  accessControl: accessControl,
+                  processRules: processRules,
+                  mode: mode,
+                  isSearching: query.isNotEmpty,
                 ),
               ),
       ),
@@ -546,19 +700,28 @@ class _AccessStatus extends StatelessWidget {
 
 class PackageListItem extends StatelessWidget {
   final Package package;
-  final bool value;
-  final void Function(bool?) onChanged;
+
+  /// The manual mark: checked is the mode's list, empty the opposite one, a
+  /// dash means no choice.
+  final bool? value;
+
+  /// What the profile's own rule says: checked sends the app DIRECT, empty
+  /// sends it through a proxy, a dash names no app.
+  final bool? profile;
+  final VoidCallback onChanged;
 
   const PackageListItem({
     super.key,
     required this.package,
     required this.value,
+    required this.profile,
     required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ListItem.checkbox(
+    final appLocalizations = context.appLocalizations;
+    return ListItem(
       leading: PackageIcon(packageName: package.packageName, size: 48),
       title: Text(
         package.label,
@@ -570,8 +733,33 @@ class PackageListItem extends StatelessWidget {
         style: const TextStyle(overflow: TextOverflow.ellipsis),
         maxLines: 1,
       ),
-      value: value,
-      onChanged: onChanged,
+      onTap: onChanged,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Tooltip(
+            message: appLocalizations.vpnExclusionsManual,
+            child: CommonCheckBox(
+              value: value,
+              tristate: true,
+              onChanged: (_) => onChanged(),
+            ),
+          ),
+          Tooltip(
+            message: appLocalizations.vpnExclusionsProfile,
+            child: GestureDetector(
+              // The box only reports what the profile says: a tap on it must
+              // not reach the row and cycle the manual mark.
+              onTap: () {},
+              child: CommonCheckBox(
+                value: profile,
+                tristate: true,
+                onChanged: null,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

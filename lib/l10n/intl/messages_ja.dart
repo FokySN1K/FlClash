@@ -223,6 +223,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "accessControlDisabledDesc": MessageLookupByLibrary.simpleMessage(
       "アプリアクセス制御は無効です",
     ),
+    "accessControlMarkHint": MessageLookupByLibrary.simpleMessage(
+      "1 つ目のチェックはあなたの選択です。チェックで現在のモードのリストに追加され、空欄で反対のリストに入り、ダッシュはプロファイルとモードに任せます。ブラックリストモードではチェックしたアプリが VPN の対象外になり、ホワイトリストモードでは VPN を使うアプリになります。あなたの選択はプロファイルの PROCESS-NAME ルールより優先されます。",
+    ),
     "accessControlNotAllowDesc": MessageLookupByLibrary.simpleMessage(
       "選択したアプリはVPNから除外されます",
     ),

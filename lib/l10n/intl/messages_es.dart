@@ -254,6 +254,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "accessControlDisabledDesc": MessageLookupByLibrary.simpleMessage(
       "El control de acceso de apps está desactivado",
     ),
+    "accessControlMarkHint": MessageLookupByLibrary.simpleMessage(
+      "La primera casilla es tu elección: marcada añade la aplicación a la lista del modo actual, vacía a la lista contraria y un guion lo deja al perfil y al modo. En modo lista negra la aplicación marcada queda fuera de la VPN; en modo lista blanca es una de las que la usan. Tu elección prevalece sobre la regla PROCESS-NAME del perfil.",
+    ),
     "accessControlNotAllowDesc": MessageLookupByLibrary.simpleMessage(
       "Las apps seleccionadas quedan excluidas de la VPN",
     ),
@@ -1059,10 +1062,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Introduce el contenido de la regla",
     ),
     "installNow": MessageLookupByLibrary.simpleMessage("Instalar"),
-    "installedAppsPermissionDeniedMessage":
-        MessageLookupByLibrary.simpleMessage(
-          "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
-        ),
+    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
+      "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
+    ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Este sistema oculta la lista de apps instaladas hasta que se concede el permiso. Autorízalo para configurar el proxy por app.",
     ),

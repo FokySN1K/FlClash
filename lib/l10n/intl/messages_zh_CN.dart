@@ -220,6 +220,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "accessControlDisabledDesc": MessageLookupByLibrary.simpleMessage(
       "应用访问控制已关闭",
     ),
+    "accessControlMarkHint": MessageLookupByLibrary.simpleMessage(
+      "第一个勾选框是您的选择：勾选会把应用加入当前模式的列表，清空会加入相反的列表，横线则交给配置文件和模式决定。黑名单模式下勾选的应用不经过 VPN，白名单模式下则是使用 VPN 的应用。您的选择优先于配置文件中的 PROCESS-NAME 规则。",
+    ),
     "accessControlNotAllowDesc": MessageLookupByLibrary.simpleMessage(
       "选中应用将会被排除在VPN之外",
     ),

@@ -8038,7 +8038,8 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one:
+          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -8272,6 +8273,16 @@ class AppLocalizations {
     return Intl.message(
       'PROCESS-NAME rules from the profile no longer exclude apps from the VPN: only your own marks apply.',
       name: 'ignoreProfileProcessRulesDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The first box is your choice: checked puts the app into the list the current mode applies, empty puts it into the opposite list, a dash leaves it to the profile and the mode. In blacklist mode a checked app stays out of the VPN; in whitelist mode it is one of the apps that use it. Your choice beats the profile's PROCESS-NAME rule.`
+  String get accessControlMarkHint {
+    return Intl.message(
+      'The first box is your choice: checked puts the app into the list the current mode applies, empty puts it into the opposite list, a dash leaves it to the profile and the mode. In blacklist mode a checked app stays out of the VPN; in whitelist mode it is one of the apps that use it. Your choice beats the profile\'s PROCESS-NAME rule.',
+      name: 'accessControlMarkHint',
       desc: '',
       args: [],
     );

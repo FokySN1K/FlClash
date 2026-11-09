@@ -313,9 +313,30 @@ extension AccessControlPropsExt on AccessControlProps {
     AccessControlMode.rejectSelected => rejectList,
   };
 
+  /// The list a mark on the other side writes: an app there is the opposite
+  /// of what the mode's own list says.
+  List<String> get otherList => switch (mode) {
+    AccessControlMode.acceptSelected => rejectList,
+    AccessControlMode.rejectSelected => acceptList,
+  };
+
   AccessControlProps copyWithNewList(List<String> value) => switch (mode) {
     AccessControlMode.acceptSelected => copyWith(acceptList: value),
     AccessControlMode.rejectSelected => copyWith(rejectList: value),
+  };
+
+  AccessControlProps copyWithNewLists(
+    List<String> current,
+    List<String> other,
+  ) => switch (mode) {
+    AccessControlMode.acceptSelected => copyWith(
+      acceptList: current,
+      rejectList: other,
+    ),
+    AccessControlMode.rejectSelected => copyWith(
+      rejectList: current,
+      acceptList: other,
+    ),
   };
 }
 

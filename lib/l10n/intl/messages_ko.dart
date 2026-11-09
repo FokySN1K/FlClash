@@ -224,6 +224,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "accessControlDisabledDesc": MessageLookupByLibrary.simpleMessage(
       "앱 접근 제어가 꺼져 있습니다",
     ),
+    "accessControlMarkHint": MessageLookupByLibrary.simpleMessage(
+      "첫 번째 확인란은 직접 선택입니다. 선택하면 현재 모드의 목록에 추가되고, 비우면 반대 목록에 들어가며, 대시는 프로필과 모드에 맡깁니다. 블랙리스트 모드에서는 선택한 앱이 VPN에서 제외되고, 화이트리스트 모드에서는 VPN을 사용하는 앱이 됩니다. 직접 선택이 프로필의 PROCESS-NAME 규칙보다 우선합니다.",
+    ),
     "accessControlNotAllowDesc": MessageLookupByLibrary.simpleMessage(
       "선택한 앱은 VPN에서 제외됩니다",
     ),

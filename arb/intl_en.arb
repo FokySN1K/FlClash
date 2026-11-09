@@ -987,5 +987,6 @@
   "vpnExclusionsGlobalMode": "Global mode ignores the profile rules: only your own marks apply.",
   "vpnExclusionsLockdown": "If Android's \"Block connections without VPN\" is on, an excluded app still cannot use the network.",
   "ignoreProfileProcessRules": "Ignore PROCESS-NAME from profile",
-  "ignoreProfileProcessRulesDesc": "PROCESS-NAME rules from the profile no longer exclude apps from the VPN: only your own marks apply."
+  "ignoreProfileProcessRulesDesc": "PROCESS-NAME rules from the profile no longer exclude apps from the VPN: only your own marks apply.",
+  "accessControlMarkHint": "The first box is your choice: checked puts the app into the list the current mode applies, empty puts it into the opposite list, a dash leaves it to the profile and the mode. In blacklist mode a checked app stays out of the VPN; in whitelist mode it is one of the apps that use it. Your choice beats the profile's PROCESS-NAME rule."
 }

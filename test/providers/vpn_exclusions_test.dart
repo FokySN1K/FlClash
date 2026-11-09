@@ -1,4 +1,7 @@
+import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/database.dart';
 import 'package:fl_clash/providers/state.dart';
@@ -38,10 +41,54 @@ void main() {
   });
 
   test('the profile rules exclude the apps they send DIRECT', () async {
-    container.read(profileProcessRulesProvider.notifier).update({
-      'com.example.direct': 'DIRECT',
-      'com.example.proxy': 'PROXY',
-    });
+    container
+        .read(profileProcessRulesProvider.notifier)
+        .update(
+          ProcessRules.names({
+            'com.example.direct': 'DIRECT',
+            'com.example.proxy': 'PROXY',
+          }),
+        );
+
+    expect(await excludedPackages(), ['com.example.direct']);
+  });
+
+  test('a wildcard rule needs the app list to name its apps', () async {
+    container
+        .read(profileProcessRulesProvider.notifier)
+        .update(
+          const ProcessRules([
+            ProcessRuleEntry.wildcard('com.example.*', 'DIRECT'),
+          ]),
+        );
+
+    expect(await excludedPackages(), isEmpty);
+  });
+
+  test('a wildcard rule excludes the installed apps it covers', () async {
+    container.read(packagesProvider.notifier).value = const [
+      Package(
+        packageName: 'com.example.direct',
+        label: 'Direct',
+        system: false,
+        internet: true,
+        lastUpdateTime: 0,
+      ),
+      Package(
+        packageName: 'com.example.inside',
+        label: 'Inside',
+        system: false,
+        internet: true,
+        lastUpdateTime: 0,
+      ),
+    ];
+    container
+        .read(profileProcessRulesProvider.notifier)
+        .update(
+          const ProcessRules([
+            ProcessRuleEntry.wildcard('com.example.d*', 'DIRECT'),
+          ]),
+        );
 
     expect(await excludedPackages(), ['com.example.direct']);
   });
@@ -50,9 +97,9 @@ void main() {
     container
         .read(vpnSettingProvider.notifier)
         .update((state) => state.copyWith(ignoreProfileProcessRules: true));
-    container.read(profileProcessRulesProvider.notifier).update({
-      'com.example.direct': 'DIRECT',
-    });
+    container
+        .read(profileProcessRulesProvider.notifier)
+        .update(ProcessRules.names({'com.example.direct': 'DIRECT'}));
 
     expect(await excludedPackages(), isEmpty);
   });
@@ -66,9 +113,9 @@ void main() {
             excludePackages: const ['com.example.chat'],
           ),
         );
-    container.read(profileProcessRulesProvider.notifier).update({
-      'com.example.direct': 'DIRECT',
-    });
+    container
+        .read(profileProcessRulesProvider.notifier)
+        .update(ProcessRules.names({'com.example.direct': 'DIRECT'}));
 
     expect(await excludedPackages(), ['com.example.chat']);
   });
@@ -77,9 +124,9 @@ void main() {
     container
         .read(patchClashConfigProvider.notifier)
         .update((state) => state.copyWith(mode: Mode.global));
-    container.read(profileProcessRulesProvider.notifier).update({
-      'com.example.direct': 'DIRECT',
-    });
+    container
+        .read(profileProcessRulesProvider.notifier)
+        .update(ProcessRules.names({'com.example.direct': 'DIRECT'}));
 
     expect(await excludedPackages(), isEmpty);
   });
@@ -91,9 +138,9 @@ void main() {
           (state) =>
               state.copyWith(includePackages: const ['com.example.direct']),
         );
-    container.read(profileProcessRulesProvider.notifier).update({
-      'com.example.direct': 'DIRECT',
-    });
+    container
+        .read(profileProcessRulesProvider.notifier)
+        .update(ProcessRules.names({'com.example.direct': 'DIRECT'}));
 
     expect(await excludedPackages(), isEmpty);
   });
@@ -108,9 +155,9 @@ void main() {
           (state) =>
               state.copyWith(excludePackages: const ['com.example.chat']),
         );
-    container.read(profileProcessRulesProvider.notifier).update({
-      'com.example.direct': 'DIRECT',
-    });
+    container
+        .read(profileProcessRulesProvider.notifier)
+        .update(ProcessRules.names({'com.example.direct': 'DIRECT'}));
 
     expect(await excludedPackages(), ['com.example.chat']);
   });

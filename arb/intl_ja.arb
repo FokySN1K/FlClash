@@ -987,5 +987,6 @@
   "vpnExclusionsGlobalMode": "グローバルモードはプロファイルのルールを無視します。手動設定のみ有効です。",
   "vpnExclusionsLockdown": "Android で「VPN なしで接続をブロック」が有効な場合、除外したアプリも通信できません。",
   "ignoreProfileProcessRules": "プロファイルの PROCESS-NAME を無視",
-  "ignoreProfileProcessRulesDesc": "プロファイルの PROCESS-NAME ルールはアプリをトンネルから除外しなくなり、手動のチェックだけが適用されます。"
+  "ignoreProfileProcessRulesDesc": "プロファイルの PROCESS-NAME ルールはアプリをトンネルから除外しなくなり、手動のチェックだけが適用されます。",
+  "accessControlMarkHint": "1 つ目のチェックはあなたの選択です。チェックで現在のモードのリストに追加され、空欄で反対のリストに入り、ダッシュはプロファイルとモードに任せます。ブラックリストモードではチェックしたアプリが VPN の対象外になり、ホワイトリストモードでは VPN を使うアプリになります。あなたの選択はプロファイルの PROCESS-NAME ルールより優先されます。"
 }

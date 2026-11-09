@@ -987,5 +987,6 @@
   "vpnExclusionsGlobalMode": "전역 모드는 프로필 규칙을 무시하며 수동 선택만 적용됩니다.",
   "vpnExclusionsLockdown": "Android에서 'VPN 없이 연결 차단'이 켜져 있으면 제외된 앱도 네트워크를 사용할 수 없습니다.",
   "ignoreProfileProcessRules": "프로필의 PROCESS-NAME 무시",
-  "ignoreProfileProcessRulesDesc": "프로필의 PROCESS-NAME 규칙은 앱을 터널에서 제외하지 않으며, 직접 표시한 항목만 적용됩니다."
+  "ignoreProfileProcessRulesDesc": "프로필의 PROCESS-NAME 규칙은 앱을 터널에서 제외하지 않으며, 직접 표시한 항목만 적용됩니다.",
+  "accessControlMarkHint": "첫 번째 확인란은 직접 선택입니다. 선택하면 현재 모드의 목록에 추가되고, 비우면 반대 목록에 들어가며, 대시는 프로필과 모드에 맡깁니다. 블랙리스트 모드에서는 선택한 앱이 VPN에서 제외되고, 화이트리스트 모드에서는 VPN을 사용하는 앱이 됩니다. 직접 선택이 프로필의 PROCESS-NAME 규칙보다 우선합니다."
 }

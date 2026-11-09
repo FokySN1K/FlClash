@@ -12,8 +12,8 @@ class CommonCheckBox extends StatelessWidget {
   final ValueChanged<bool?>? onChanged;
   final bool isCircle;
 
-  /// A tri-state box shows a dash for null: the exclusion view reads it as
-  /// "no manual choice", where a plain box only knows checked and empty.
+  /// A tri-state box shows a dash for null: the access view reads it as "no
+  /// manual choice", where a plain box only knows checked and empty.
   final bool tristate;
 
   const CommonCheckBox({

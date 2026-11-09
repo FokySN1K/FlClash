@@ -229,16 +229,16 @@ Future<List<String>> vpnRouteAddress(Ref ref) {
   return routes.vpnRouteAddress(bypassPrivateRoute: bypassPrivateRoute);
 }
 
-/// The targets the applied profile's own `PROCESS-NAME` rules give the apps,
-/// published by the setup. The exclusion view shows it next to the manual
-/// marks, and Global mode stops counting it.
+/// The process rules of the applied profile, published by the setup. The
+/// access view shows what they say about an app next to the manual marks, and
+/// Global mode stops counting them.
 @Riverpod(keepAlive: true)
 class ProfileProcessRules extends _$ProfileProcessRules {
   @override
-  Map<String, String> build() => const {};
+  ProcessRules build() => const ProcessRules.empty();
 
-  void update(Map<String, String> value) {
-    if (const MapEquality<String, String>().equals(state, value)) {
+  void update(ProcessRules value) {
+    if (state == value) {
       return;
     }
     state = value;
@@ -246,20 +246,31 @@ class ProfileProcessRules extends _$ProfileProcessRules {
 }
 
 /// The apps the tunnel leaves alone: the manual exclusions, plus the apps the
-/// profile itself sends DIRECT unless the profile rules are ignored. Global
-/// mode routes everything through the selected proxy, so the profile rules stop
-/// counting there; a manual mark always wins, and a manual inclusion cancels a
-/// profile exclusion.
+/// profile itself sends DIRECT unless the profile rules are ignored. A pattern
+/// rule names its apps only through the installed list; without it an exact
+/// name still counts. Global mode routes everything through the selected
+/// proxy, so the profile rules stop counting there; a manual mark always wins,
+/// and a manual inclusion cancels a profile exclusion.
 List<String> _excludedPackages(
   VpnProps vpnSetting,
-  Map<String, String> processRules,
+  ProcessRules processRules,
+  Iterable<String> packageNames,
   Mode mode,
 ) {
   final excluded = {...vpnSetting.excludePackages};
   if (mode != Mode.global && !vpnSetting.ignoreProfileProcessRules) {
-    for (final entry in processRules.entries) {
-      if (entry.value == RuleTarget.DIRECT.value) {
-        excluded.add(entry.key);
+    final names = packageNames.toList();
+    if (names.isEmpty) {
+      for (final entry in processRules.entries) {
+        if (entry.kind == ProcessRuleKind.name && entry.targetsDirect) {
+          excluded.add(entry.pattern);
+        }
+      }
+    } else {
+      for (final packageName in names) {
+        if (processRules.targetFor(packageName) == RuleTarget.DIRECT.value) {
+          excluded.add(packageName);
+        }
       }
     }
   }
@@ -284,6 +295,7 @@ Future<VpnOptions> vpnOptions(Ref ref) async {
   );
   final vpnSetting = ref.watch(vpnSettingProvider);
   final processRules = ref.watch(profileProcessRulesProvider);
+  final packages = ref.watch(packagesProvider);
   final safeMode = ref.watch(safeModeProvider);
   final routeAddress = ref.watch(vpnRouteAddressProvider.future);
   final tun = clashConfig.tun;
@@ -301,6 +313,7 @@ Future<VpnOptions> vpnOptions(Ref ref) async {
     excludePackages: _excludedPackages(
       vpnSetting,
       processRules,
+      packages.map((item) => item.packageName),
       clashConfig.mode,
     ),
     allowBypass: vpnSetting.allowBypass,

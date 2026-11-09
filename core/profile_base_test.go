@@ -105,9 +105,41 @@ func TestHandleGetProfileBaseLeavesTheBulkSectionsInTheCore(t *testing.T) {
 	if want := []string{"match,DIRECT", "MATCH,g"}; !reflect.DeepEqual(base.MatchRules, want) {
 		t.Errorf("match rules = %v, want %v", base.MatchRules, want)
 	}
+	if base.ProcessRules == nil || len(base.ProcessRules) != 0 {
+		t.Errorf("process rules = %v, want an empty list", base.ProcessRules)
+	}
 	digest := sha256.Sum256([]byte(baseProfile))
 	if base.Digest != hex.EncodeToString(digest[:]) {
 		t.Errorf("digest = %s, want the sha256 of the file", base.Digest)
+	}
+}
+
+// The host shows what the profile says about an app beside the manual marks,
+// so what it reads are the process rules, in file order.
+func TestHandleGetProfileBaseKeepsTheProcessRulesForTheHost(t *testing.T) {
+	profile := `rules:
+  - PROCESS-NAME,com.example.tg,DIRECT
+  - DOMAIN-SUFFIX,example.com,g
+  - RULE-SET,apps,Proxy
+  - process-name,com.example.chat,g
+  - PROCESS-NAME-REGEX,^ru\.,Proxy
+  - PROCESS-NAME-WILDCARD,ru.*,DIRECT
+  - MATCH,DIRECT
+`
+	base, err := handleGetProfileBase(writeBaseProfile(t, profile))
+
+	if err != nil {
+		t.Fatalf("handleGetProfileBase = %v", err)
+	}
+	want := []string{
+		"PROCESS-NAME,com.example.tg,DIRECT",
+		"RULE-SET,apps,Proxy",
+		"process-name,com.example.chat,g",
+		"PROCESS-NAME-REGEX,^ru\\.,Proxy",
+		"PROCESS-NAME-WILDCARD,ru.*,DIRECT",
+	}
+	if !reflect.DeepEqual(base.ProcessRules, want) {
+		t.Errorf("process rules = %v, want %v", base.ProcessRules, want)
 	}
 }
 

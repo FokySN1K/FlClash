@@ -1,3 +1,4 @@
+import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
@@ -126,6 +127,23 @@ void main() {
   Future<void> teardownView(WidgetTester tester) async {
     await tester.pumpWidget(const SizedBox.shrink());
   }
+
+  Finder manualBox(String packageName) => find
+      .descendant(
+        of: find.byKey(Key(packageName)),
+        matching: find.byType(Checkbox),
+      )
+      .first;
+
+  Finder profileBox(String packageName) => find
+      .descendant(
+        of: find.byKey(Key(packageName)),
+        matching: find.byType(Checkbox),
+      )
+      .last;
+
+  bool? boxValue(WidgetTester tester, Finder finder) =>
+      tester.widget<Checkbox>(finder).value;
 
   group('visible package list', () {
     testWidgets('hides system and offline apps by default', (tester) async {
@@ -293,21 +311,33 @@ void main() {
   });
 
   group('selection', () {
-    testWidgets('tapping a package adds and removes it from the list', (
-      tester,
-    ) async {
+    testWidgets('the manual box cycles through no choice, the mode list and '
+        'the other list', (tester) async {
       seedAccessControl(const AccessControlProps(enable: true));
       await pumpAccessView(tester);
 
-      await tester.tap(find.text('Browser'));
-      await tester.pump();
-      expect(container.read(accessControlStateProvider).currentList, [
-        'com.example.browser',
-      ]);
+      expect(boxValue(tester, manualBox('com.example.browser')), isNull);
 
       await tester.tap(find.text('Browser'));
       await tester.pump();
-      expect(container.read(accessControlStateProvider).currentList, isEmpty);
+      var state = container.read(accessControlStateProvider);
+      expect(state.rejectList, ['com.example.browser']);
+      expect(state.acceptList, isEmpty);
+      expect(boxValue(tester, manualBox('com.example.browser')), isTrue);
+
+      await tester.tap(find.text('Browser'));
+      await tester.pump();
+      state = container.read(accessControlStateProvider);
+      expect(state.rejectList, isEmpty);
+      expect(state.acceptList, ['com.example.browser']);
+      expect(boxValue(tester, manualBox('com.example.browser')), isFalse);
+
+      await tester.tap(find.text('Browser'));
+      await tester.pump();
+      state = container.read(accessControlStateProvider);
+      expect(state.rejectList, isEmpty);
+      expect(state.acceptList, isEmpty);
+      expect(boxValue(tester, manualBox('com.example.browser')), isNull);
 
       await teardownView(tester);
     });
@@ -474,6 +504,122 @@ void main() {
     });
   });
 
+  group('profile rules', () {
+    testWidgets('the profile box shows what the rules say and takes no taps', (
+      tester,
+    ) async {
+      seedAccessControl(const AccessControlProps(enable: true));
+      container
+          .read(profileProcessRulesProvider.notifier)
+          .update(
+            ProcessRules.names({
+              'com.example.browser': 'DIRECT',
+              'com.example.chat': 'PROXY',
+            }),
+          );
+      await pumpAccessView(tester);
+
+      expect(boxValue(tester, profileBox('com.example.browser')), isTrue);
+      expect(boxValue(tester, profileBox('com.example.chat')), isFalse);
+      expect(boxValue(tester, manualBox('com.example.browser')), isNull);
+
+      final onChanged = tester
+          .widget<Checkbox>(profileBox('com.example.browser'))
+          .onChanged;
+      expect(onChanged, isNull);
+
+      await tester.tap(profileBox('com.example.browser'));
+      await tester.pump();
+      expect(boxValue(tester, profileBox('com.example.browser')), isTrue);
+      expect(boxValue(tester, manualBox('com.example.browser')), isNull);
+
+      await teardownView(tester);
+    });
+
+    testWidgets('the apps the profile names rank before the rest', (
+      tester,
+    ) async {
+      seedAccessControl(
+        const AccessControlProps(enable: true, sort: AccessSortType.name),
+      );
+      container
+          .read(profileProcessRulesProvider.notifier)
+          .update(ProcessRules.names({'com.example.chat': 'PROXY'}));
+      await pumpAccessView(tester);
+
+      final labels = tester
+          .widgetList<PackageListItem>(find.byType(PackageListItem))
+          .map((item) => item.package.label)
+          .toList();
+      expect(labels, ['Chat', 'Browser']);
+
+      await teardownView(tester);
+    });
+
+    testWidgets('a wildcard rule ticks every app it covers', (tester) async {
+      seedAccessControl(const AccessControlProps(enable: true));
+      container
+          .read(profileProcessRulesProvider.notifier)
+          .update(
+            const ProcessRules([
+              ProcessRuleEntry.wildcard('com.example.*', 'DIRECT'),
+            ]),
+          );
+      await pumpAccessView(tester);
+
+      expect(boxValue(tester, profileBox('com.example.browser')), isTrue);
+      expect(boxValue(tester, profileBox('com.example.chat')), isTrue);
+
+      await teardownView(tester);
+    });
+
+    testWidgets('global mode blanks the profile column', (tester) async {
+      container
+          .read(patchClashConfigProvider.notifier)
+          .update((state) => state.copyWith(mode: Mode.global));
+      seedAccessControl(const AccessControlProps(enable: true));
+      container
+          .read(profileProcessRulesProvider.notifier)
+          .update(ProcessRules.names({'com.example.browser': 'DIRECT'}));
+      await pumpAccessView(tester);
+
+      expect(boxValue(tester, profileBox('com.example.browser')), isNull);
+      expect(boxValue(tester, manualBox('com.example.browser')), isNull);
+
+      await teardownView(tester);
+    });
+
+    testWidgets('the settings sub menu ignores the profile rules', (
+      tester,
+    ) async {
+      seedAccessControl(const AccessControlProps(enable: true));
+      container
+          .read(profileProcessRulesProvider.notifier)
+          .update(ProcessRules.names({'com.example.browser': 'DIRECT'}));
+      await pumpAccessView(tester);
+      final l10n = AppLocalizations.current;
+      Finder inMenu(Finder finder) =>
+          find.descendant(of: find.byType(CommonPopupMenu), matching: finder);
+
+      expect(boxValue(tester, profileBox('com.example.browser')), isTrue);
+
+      await openBarMenu(tester);
+      await tester.tap(inMenu(find.text(l10n.settings)).last);
+      await tester.pumpAndSettle();
+      expect(inMenu(find.text(l10n.profile)), findsOneWidget);
+      await tester.tap(inMenu(find.text(l10n.ignoreProfileProcessRules)));
+      await tester.pumpAndSettle();
+
+      expect(
+        container.read(vpnSettingProvider).ignoreProfileProcessRules,
+        isTrue,
+      );
+      expect(boxValue(tester, profileBox('com.example.browser')), isNull);
+
+      await teardownView(tester);
+    });
+  });
+
   testWidgets('asks the platform for the app list on every entry', (
     tester,
   ) async {
@@ -598,11 +744,43 @@ void main() {
       await tester.tap(find.byTooltip('Save'));
       await tester.pumpAndSettle();
 
-      final saved = container
-          .read(vpnSettingProvider)
-          .accessControlProps
-          .rejectList;
-      expect(saved, ['com.example.browser', 'com.example.chat']);
+      final saved = container.read(vpnSettingProvider);
+      expect(saved.accessControlProps.rejectList, [
+        'com.example.browser',
+        'com.example.chat',
+      ]);
+      expect(saved.excludePackages, [
+        'com.example.browser',
+        'com.example.chat',
+      ]);
+      expect(saved.includePackages, isEmpty);
+
+      await teardownView(tester);
+    });
+
+    testWidgets('folds the old exclusion marks into the lists on open', (
+      tester,
+    ) async {
+      container.read(vpnSettingProvider.notifier).value = const VpnProps()
+          .copyWith(
+            accessControlProps: const AccessControlProps(enable: true),
+            excludePackages: ['com.example.browser'],
+            includePackages: ['com.example.chat'],
+          );
+      await pumpAccessView(tester);
+
+      expect(boxValue(tester, manualBox('com.example.browser')), isTrue);
+      expect(boxValue(tester, manualBox('com.example.chat')), isFalse);
+
+      await tester.tap(find.byTooltip('Save'));
+      await tester.pumpAndSettle();
+
+      final saved = container.read(vpnSettingProvider);
+      expect(saved.accessControlProps.rejectList, ['com.example.browser']);
+      expect(saved.accessControlProps.acceptList, ['com.example.chat']);
+      expect(saved.excludePackages, ['com.example.browser']);
+      expect(saved.includePackages, ['com.example.chat']);
+      expect(find.byTooltip('Save'), findsNothing);
 
       await teardownView(tester);
     });
