@@ -124,7 +124,7 @@
   "appAccessControl": "App access control",
   "accessControlAllowDesc": "Only selected apps go through the VPN",
   "accessControlNotAllowDesc": "Selected apps are excluded from the VPN",
-  "accessControlDisabledDesc": "App access control is disabled",
+  "accessControlDisabledDesc": "App access control is off: the VPN carries every app.",
   "accessControlSelectedCount": "{count, plural, other{{count} selected}}",
   "port": "Port",
   "logLevel": "Log level",
@@ -983,10 +983,11 @@
   "vpnExclusionsManual": "Your choice",
   "vpnExclusionsProfile": "Profile rule",
   "vpnExclusionsManualHint": "The first check box is your own choice: empty — against the exclusion, the app stays inside; checked — keep the app out of the VPN; a dash — no choice. Your choice beats the profile's rule.",
-  "vpnExclusionsProfileHint": "The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. In Global mode only the DIRECT marks keep the app out of the VPN.",
+  "vpnExclusionsProfileHint": "The second check box shows the profile: checked means a PROCESS-NAME rule covers the app, and the caption under the box names where the rule sends it — DIRECT or a proxy; a dash means no rule. In Global mode only the DIRECT marks keep the app out of the VPN.",
   "vpnExclusionsWhitelistMode": "The whitelist picks its apps on its own: the profile's marks are hidden here and do not affect the list.",
   "vpnExclusionsLockdown": "If Android's \"Block connections without VPN\" is on, an excluded app still cannot use the network.",
   "ignoreProfileProcessRules": "Ignore PROCESS-NAME from profile",
   "ignoreProfileProcessRulesDesc": "PROCESS-NAME rules from the profile no longer exclude apps from the VPN: only your own marks apply.",
-  "accessControlMarkHint": "The first box is your choice: checked puts the app into the list the current mode applies, empty puts it into the opposite list, a dash leaves it to the profile and the mode. In blacklist mode a checked app stays out of the VPN; in whitelist mode it is one of the apps that use it. Your choice beats the profile's PROCESS-NAME rule."
+  "accessControlMarkHint": "The first box is your choice: checked puts the app into the list the current mode applies, empty puts it into the opposite list, a dash leaves it to the profile and the mode. In blacklist mode a checked app stays out of the VPN; in whitelist mode it is one of the apps that use it. Your choice beats the profile's PROCESS-NAME rule.",
+  "accessControlTargetProxy": "Proxy"
 }

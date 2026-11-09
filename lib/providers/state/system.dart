@@ -252,12 +252,16 @@ class ProfileProcessRules extends _$ProfileProcessRules {
 /// name still counts. Global mode routes everything through the selected
 /// proxy, so there the rule is the only thing that can keep an app out. The
 /// whitelist picks its apps on its own, so the profile adds none. A manual
-/// mark always wins, and a manual inclusion cancels a profile exclusion.
+/// mark always wins, and a manual inclusion cancels a profile exclusion. The
+/// switch off leaves every app inside the tunnel, the manual marks included.
 List<String> _excludedPackages(
   VpnProps vpnSetting,
   ProcessRules processRules,
   Iterable<String> packageNames,
 ) {
+  if (!vpnSetting.accessControlProps.enable) {
+    return const [];
+  }
   final excluded = {...vpnSetting.excludePackages};
   final accepts =
       vpnSetting.accessControlProps.mode == AccessControlMode.acceptSelected;
@@ -329,8 +333,22 @@ Future<VpnOptions> vpnOptions(Ref ref) async {
 @riverpod
 class AccessControlState extends _$AccessControlState
     with AutoDisposeNotifierMixin {
+  /// The screen edits a copy of the saved marks, so only a save changes what
+  /// the tunnel reads. The legacy exclusion lists fold into the mode's lists
+  /// once, a manual inclusion winning over an exclusion as the tunnel options
+  /// always did.
   @override
-  AccessControlProps build() => const AccessControlProps();
+  AccessControlProps build() {
+    final vpnSetting = ref.read(vpnSettingProvider);
+    final props = vpnSetting.accessControlProps;
+    final accept = {...props.acceptList, ...vpnSetting.includePackages};
+    final reject = {...props.rejectList, ...vpnSetting.excludePackages}
+      ..removeAll(accept);
+    return props.copyWith(
+      acceptList: accept.toList(),
+      rejectList: reject.toList(),
+    );
+  }
 }
 
 @riverpod

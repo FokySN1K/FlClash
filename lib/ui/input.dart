@@ -16,18 +16,25 @@ class CommonCheckBox extends StatelessWidget {
   /// manual choice", where a plain box only knows checked and empty.
   final bool tristate;
 
+  /// A compact box drops the padded tap target: the profile column only
+  /// reports, and its caption has to fit under the box inside one row.
+  final bool compact;
+
   const CommonCheckBox({
     required this.value,
     required this.onChanged,
     this.isCircle = false,
     this.tristate = false,
+    this.compact = false,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Checkbox(
-      materialTapTargetSize: MaterialTapTargetSize.padded,
+      materialTapTargetSize: compact
+          ? MaterialTapTargetSize.shrinkWrap
+          : MaterialTapTargetSize.padded,
       visualDensity: VisualDensity.standard,
       shape: isCircle ? AppShape.circle : null,
       tristate: tristate,

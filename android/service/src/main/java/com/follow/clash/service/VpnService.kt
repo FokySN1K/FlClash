@@ -237,9 +237,6 @@ class VpnService : SystemVpnService(), ManagedService {
         val accessControl = options.accessControlProps
         val excluded = options.excludePackages.orEmpty().toSet() - packageName
         if (!accessControl.enable) {
-            excluded.forEach { name ->
-                addApplication(name, ::addDisallowedApplication)
-            }
             return
         }
         when (accessControl.mode) {

@@ -30,36 +30,21 @@ class _AccessViewState extends ConsumerState<AccessView>
 
   final _completer = Completer();
 
+  /// The manual marks the screen opened with: a tap changes the marks, but the
+  /// rows keep the order they were found in, so the row under the finger does
+  /// not run away.
+  late final AccessControlProps _orderMarks;
+
   @override
   void initState() {
     super.initState();
     _controller = sheetScrollController(context);
-    final accessControl = _withLegacyMarks(ref.read(vpnSettingProvider));
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) {
-        return;
-      }
-      ref.read(accessControlStateProvider.notifier).value = accessControl;
-    });
+    _orderMarks = ref.read(accessControlStateProvider);
     _completer.complete(_loadPackages());
   }
 
   @override
   void didSettleRoute() => setState(() {});
-
-  /// The exclusion screen kept its marks on their own; the merged screen folds
-  /// them into the mode's lists once, a manual inclusion winning over an
-  /// exclusion as the tunnel options always did.
-  AccessControlProps _withLegacyMarks(VpnProps vpnSetting) {
-    final props = vpnSetting.accessControlProps;
-    final accept = {...props.acceptList, ...vpnSetting.includePackages};
-    final reject = {...props.rejectList, ...vpnSetting.excludePackages}
-      ..removeAll(accept);
-    return props.copyWith(
-      acceptList: accept.toList(),
-      rejectList: reject.toList(),
-    );
-  }
 
   Future<void> _loadPackages() async {
     final action = ref.read(systemActionProvider.notifier);
@@ -193,41 +178,37 @@ class _AccessViewState extends ConsumerState<AccessView>
     });
   }
 
-  /// What the profile's own rule says: checked sends the app DIRECT, empty
-  /// sends it through a proxy, a dash says nothing. The ignore switch and the
-  /// whitelist pass no rules, so the marks disappear there.
-  bool? _profileState(String packageName, ProcessRules processRules) {
-    final target = processRules.targetFor(packageName);
-    if (target == null) {
-      return null;
-    }
-    return target == RuleTarget.DIRECT.value;
-  }
+  /// Where the profile's own rule sends the app, or null when no
+  /// `PROCESS-NAME*` rule covers it. The ignore switch and the whitelist pass
+  /// no rules, so the column disappears there.
+  String? _profileTarget(String packageName, ProcessRules processRules) =>
+      processRules.targetFor(packageName);
 
   int _rank(
     String packageName,
-    AccessControlProps accessControl,
+    AccessControlProps orderMarks,
     ProcessRules processRules,
   ) {
-    if (_manualState(packageName, accessControl) != null) {
+    if (_manualState(packageName, orderMarks) != null) {
       return 0;
     }
-    if (_profileState(packageName, processRules) != null) {
+    if (_profileTarget(packageName, processRules) != null) {
       return 1;
     }
     return 2;
   }
 
-  /// The manual marks come first, then the apps the profile names, then the
-  /// rest; inside a rank the chosen sort holds.
+  /// The manual marks the screen opened with come first, then the apps the
+  /// profile names, then the rest; inside a rank the chosen sort holds. A tap
+  /// changes the live marks, never [orderMarks], so no row moves under it.
   List<Package> _ranked(
     List<Package> packages,
-    AccessControlProps accessControl,
+    AccessControlProps orderMarks,
     ProcessRules processRules,
   ) {
     final byRank = <int, List<Package>>{};
     for (final package in packages) {
-      final rank = _rank(package.packageName, accessControl, processRules);
+      final rank = _rank(package.packageName, orderMarks, processRules);
       byRank.putIfAbsent(rank, () => []).add(package);
     }
     return [
@@ -488,7 +469,10 @@ class _AccessViewState extends ConsumerState<AccessView>
                   key: Key(package.packageName),
                   package: package,
                   value: _manualState(package.packageName, accessControl),
-                  profile: _profileState(package.packageName, processRules),
+                  profileTarget: _profileTarget(
+                    package.packageName,
+                    processRules,
+                  ),
                   showProfile: showProfile,
                   onChanged: () => _cycleManual(package.packageName),
                 );
@@ -543,7 +527,7 @@ class _AccessViewState extends ConsumerState<AccessView>
         )
         .whereMatches(query, (package) => [package.label, package.packageName])
         .toList();
-    final viewPackages = _ranked(searchedPackages, accessControl, processRules);
+    final viewPackages = _ranked(searchedPackages, _orderMarks, processRules);
     final currentList = accessControl.currentList;
     final viewPackageNameList = viewPackages.map((e) => e.packageName).toList();
     final valueList = currentList.intersection(viewPackageNameList);
@@ -683,9 +667,9 @@ class PackageListItem extends StatelessWidget {
   /// dash means no choice.
   final bool? value;
 
-  /// What the profile's own rule says: checked sends the app DIRECT, empty
-  /// sends it through a proxy, a dash names no app.
-  final bool? profile;
+  /// Where the profile's own rule sends the app, or null when no rule covers
+  /// it: the rule decides the check, the target names it.
+  final String? profileTarget;
 
   /// The whitelist picks its apps on its own, so its profile column is gone.
   final bool showProfile;
@@ -695,7 +679,7 @@ class PackageListItem extends StatelessWidget {
     super.key,
     required this.package,
     required this.value,
-    required this.profile,
+    required this.profileTarget,
     this.showProfile = true,
     required this.onChanged,
   });
@@ -729,15 +713,35 @@ class PackageListItem extends StatelessWidget {
           ),
           if (showProfile)
             Tooltip(
-              message: appLocalizations.vpnExclusionsProfile,
+              message: profileTarget == null
+                  ? appLocalizations.vpnExclusionsProfile
+                  : '${appLocalizations.vpnExclusionsProfile}: $profileTarget',
               child: GestureDetector(
-                // The box only reports what the profile says: a tap on it must
-                // not reach the row and cycle the manual mark.
+                // The column only reports what the profile says: a tap on it
+                // must not reach the row and cycle the manual mark.
                 onTap: () {},
-                child: CommonCheckBox(
-                  value: profile,
-                  tristate: true,
-                  onChanged: null,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CommonCheckBox(
+                      value: profileTarget == null ? null : true,
+                      tristate: true,
+                      compact: true,
+                      onChanged: null,
+                    ),
+                    if (profileTarget != null)
+                      Text(
+                        profileTarget == RuleTarget.DIRECT.value
+                            ? RuleTarget.DIRECT.value
+                            : appLocalizations.accessControlTargetProxy,
+                        maxLines: 1,
+                        style: AppTextStyle.caption2
+                            .of(context)
+                            .copyWith(
+                              color: context.colorScheme.onSurfaceVariant,
+                            ),
+                      ),
+                  ],
                 ),
               ),
             ),

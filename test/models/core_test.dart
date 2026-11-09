@@ -148,6 +148,16 @@ void main() {
       );
     });
 
+    test('drops the excluded apps while access control is off', () {
+      final closed = options.copyWith(excludePackages: const ['c.app']);
+      final open = closed.copyWith(
+        accessControlProps: closed.accessControlProps.copyWith(enable: false),
+      );
+
+      expect(closed.effective.excludePackages, ['c.app']);
+      expect(open.effective.excludePackages, isEmpty);
+    });
+
     test('a proxy-only run reads none of the tunnel options', () {
       final proxyOnly = options.copyWith(enable: false);
 

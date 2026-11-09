@@ -1005,10 +1005,10 @@ class AppLocalizations {
     );
   }
 
-  /// `App access control is disabled`
+  /// `App access control is off: the VPN carries every app.`
   String get accessControlDisabledDesc {
     return Intl.message(
-      'App access control is disabled',
+      'App access control is off: the VPN carries every app.',
       name: 'accessControlDisabledDesc',
       desc: '',
       args: [],
@@ -8038,7 +8038,8 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one:
+          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -8227,10 +8228,10 @@ class AppLocalizations {
     );
   }
 
-  /// `The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. In Global mode only the DIRECT marks keep the app out of the VPN.`
+  /// `The second check box shows the profile: checked means a PROCESS-NAME rule covers the app, and the caption under the box names where the rule sends it — DIRECT or a proxy; a dash means no rule. In Global mode only the DIRECT marks keep the app out of the VPN.`
   String get vpnExclusionsProfileHint {
     return Intl.message(
-      'The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. In Global mode only the DIRECT marks keep the app out of the VPN.',
+      'The second check box shows the profile: checked means a PROCESS-NAME rule covers the app, and the caption under the box names where the rule sends it — DIRECT or a proxy; a dash means no rule. In Global mode only the DIRECT marks keep the app out of the VPN.',
       name: 'vpnExclusionsProfileHint',
       desc: '',
       args: [],
@@ -8282,6 +8283,16 @@ class AppLocalizations {
     return Intl.message(
       'The first box is your choice: checked puts the app into the list the current mode applies, empty puts it into the opposite list, a dash leaves it to the profile and the mode. In blacklist mode a checked app stays out of the VPN; in whitelist mode it is one of the apps that use it. Your choice beats the profile\'s PROCESS-NAME rule.',
       name: 'accessControlMarkHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Proxy`
+  String get accessControlTargetProxy {
+    return Intl.message(
+      'Proxy',
+      name: 'accessControlTargetProxy',
       desc: '',
       args: [],
     );

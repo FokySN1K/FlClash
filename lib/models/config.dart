@@ -89,8 +89,10 @@ const defaultWindowProps = WindowProps();
 /// A new configuration starts with access control on: the default
 /// blacklist mode and an empty list carry every app, so nothing changes until
 /// a mark is made, while the screen itself says on. The class default stays
-/// off: the tunnel options spell "no access control" out with it, and a
-/// configuration that saved the switch off keeps it off.
+/// off: the tunnel options spell "no access control" out with it. A config
+/// saved before the default carried the switch off across the range
+/// migration, so an upgrade turns it on once; a switch turned off after that
+/// keeps it off and excludes nothing.
 const defaultAccessControlProps = AccessControlProps(enable: true);
 const defaultThemeProps = ThemeProps(primaryColor: defaultPrimaryColor);
 

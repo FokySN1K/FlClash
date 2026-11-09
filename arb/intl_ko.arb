@@ -124,7 +124,7 @@
   "appAccessControl": "앱 접근 제어",
   "accessControlAllowDesc": "선택한 앱만 VPN을 거칩니다",
   "accessControlNotAllowDesc": "선택한 앱은 VPN에서 제외됩니다",
-  "accessControlDisabledDesc": "앱 접근 제어가 꺼져 있습니다",
+  "accessControlDisabledDesc": "앱 접근 제어가 꺼져 있습니다: VPN이 모든 앱을 통과시킵니다.",
   "accessControlSelectedCount": "{count}개 선택됨",
   "port": "포트",
   "logLevel": "로그 수준",
@@ -983,10 +983,11 @@
   "vpnExclusionsManual": "수동 선택",
   "vpnExclusionsProfile": "프로필 규칙",
   "vpnExclusionsManualHint": "첫 번째 확인란은 수동 선택입니다. 비어 있음 — 제외에 반대(앱이 VPN 안에 남음), 선택됨 — 앱을 VPN 밖으로 유지, 대시 — 선택 없음. 수동 선택이 프로필 규칙보다 우선합니다.",
-  "vpnExclusionsProfileHint": "두 번째 확인란은 프로필 상태입니다. 선택됨 — PROCESS-NAME 규칙이 DIRECT로 보냄, 비어 있음 — 규칙이 프록시로 보냄, 대시 — 규칙 없음. 전역 모드에서도 DIRECT 앱은 VPN 밖에 남습니다.",
+  "vpnExclusionsProfileHint": "두 번째 체크박스는 프로필을 나타냅니다. 체크되어 있으면 PROCESS-NAME 규칙이 있고, 아래 라벨이 규칙의 대상(DIRECT 또는 프록시)을 보여 줍니다. 대시는 규칙이 없음을 뜻합니다. 전역 모드에서는 DIRECT 표시만 앱을 VPN 밖에 유지합니다.",
   "vpnExclusionsWhitelistMode": "화이트리스트는 앱을 직접 선택합니다. 프로필 표시는 여기에서 숨겨지며 선택에 영향을 주지 않습니다.",
   "vpnExclusionsLockdown": "Android에서 'VPN 없이 연결 차단'이 켜져 있으면 제외된 앱도 네트워크를 사용할 수 없습니다.",
   "ignoreProfileProcessRules": "프로필의 PROCESS-NAME 무시",
   "ignoreProfileProcessRulesDesc": "프로필의 PROCESS-NAME 규칙은 앱을 터널에서 제외하지 않으며, 직접 표시한 항목만 적용됩니다.",
-  "accessControlMarkHint": "첫 번째 확인란은 직접 선택입니다. 선택하면 현재 모드의 목록에 추가되고, 비우면 반대 목록에 들어가며, 대시는 프로필과 모드에 맡깁니다. 블랙리스트 모드에서는 선택한 앱이 VPN에서 제외되고, 화이트리스트 모드에서는 VPN을 사용하는 앱이 됩니다. 직접 선택이 프로필의 PROCESS-NAME 규칙보다 우선합니다."
+  "accessControlMarkHint": "첫 번째 확인란은 직접 선택입니다. 선택하면 현재 모드의 목록에 추가되고, 비우면 반대 목록에 들어가며, 대시는 프로필과 모드에 맡깁니다. 블랙리스트 모드에서는 선택한 앱이 VPN에서 제외되고, 화이트리스트 모드에서는 VPN을 사용하는 앱이 됩니다. 직접 선택이 프로필의 PROCESS-NAME 규칙보다 우선합니다.",
+  "accessControlTargetProxy": "프록시"
 }

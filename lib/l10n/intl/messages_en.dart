@@ -247,7 +247,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Access control picks which apps use the proxy.",
     ),
     "accessControlDisabledDesc": MessageLookupByLibrary.simpleMessage(
-      "App access control is disabled",
+      "App access control is off: the VPN carries every app.",
     ),
     "accessControlMarkHint": MessageLookupByLibrary.simpleMessage(
       "The first box is your choice: checked puts the app into the list the current mode applies, empty puts it into the opposite list, a dash leaves it to the profile and the mode. In blacklist mode a checked app stays out of the VPN; in whitelist mode it is one of the apps that use it. Your choice beats the profile\'s PROCESS-NAME rule.",
@@ -256,6 +256,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Selected apps are excluded from the VPN",
     ),
     "accessControlSelectedCount": m0,
+    "accessControlTargetProxy": MessageLookupByLibrary.simpleMessage("Proxy"),
     "account": MessageLookupByLibrary.simpleMessage("Account"),
     "action": MessageLookupByLibrary.simpleMessage("Action"),
     "actionDelayTest": MessageLookupByLibrary.simpleMessage("Test all delays"),
@@ -993,10 +994,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter the rule content",
     ),
     "installNow": MessageLookupByLibrary.simpleMessage("Install"),
-    "installedAppsPermissionDeniedMessage":
-        MessageLookupByLibrary.simpleMessage(
-          "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
-        ),
+    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
+      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+    ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
     ),
@@ -1940,7 +1940,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Profile rule",
     ),
     "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
-      "The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. In Global mode only the DIRECT marks keep the app out of the VPN.",
+      "The second check box shows the profile: checked means a PROCESS-NAME rule covers the app, and the caption under the box names where the rule sends it — DIRECT or a proxy; a dash means no rule. In Global mode only the DIRECT marks keep the app out of the VPN.",
     ),
     "vpnExclusionsWhitelistMode": MessageLookupByLibrary.simpleMessage(
       "The whitelist picks its apps on its own: the profile\'s marks are hidden here and do not affect the list.",

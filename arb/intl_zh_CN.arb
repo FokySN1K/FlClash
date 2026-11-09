@@ -124,7 +124,7 @@
   "appAccessControl": "应用访问控制",
   "accessControlAllowDesc": "只允许选中应用进入VPN",
   "accessControlNotAllowDesc": "选中应用将会被排除在VPN之外",
-  "accessControlDisabledDesc": "应用访问控制已关闭",
+  "accessControlDisabledDesc": "应用访问控制已关闭：VPN 放行所有应用。",
   "accessControlSelectedCount": "已选 {count}",
   "port": "端口",
   "logLevel": "日志等级",
@@ -983,10 +983,11 @@
   "vpnExclusionsManual": "手动选择",
   "vpnExclusionsProfile": "配置规则",
   "vpnExclusionsManualHint": "第一个复选框是您的手动选择：未勾选表示反对排除（应用留在 VPN 内），勾选表示将应用排除在 VPN 之外，横线表示未选择。手动选择优先于配置文件规则。",
-  "vpnExclusionsProfileHint": "第二个复选框显示配置文件：勾选表示其 PROCESS-NAME 规则将应用发送到 DIRECT，未勾选表示规则将其发送到代理，横线表示配置未提及。全局模式下只有 DIRECT 标记会让应用留在 VPN 之外。",
+  "vpnExclusionsProfileHint": "第二个勾选框显示配置文件：勾选表示存在 PROCESS-NAME 规则，勾选框下方的文字说明规则的去向——DIRECT 或代理；横线表示没有规则。在全局模式下，只有 DIRECT 标记会让应用不经过 VPN。",
   "vpnExclusionsWhitelistMode": "白名单自行选择应用：配置文件标记在此处隐藏，不影响选择。",
   "vpnExclusionsLockdown": "如果 Android 开启了“无 VPN 时阻止连接”，被排除的应用仍然无法联网。",
   "ignoreProfileProcessRules": "忽略配置中的 PROCESS-NAME",
   "ignoreProfileProcessRulesDesc": "配置中的 PROCESS-NAME 规则不再将应用排除在隧道之外，仅应用你的手动勾选。",
-  "accessControlMarkHint": "第一个勾选框是您的选择：勾选会把应用加入当前模式的列表，清空会加入相反的列表，横线则交给配置文件和模式决定。黑名单模式下勾选的应用不经过 VPN，白名单模式下则是使用 VPN 的应用。您的选择优先于配置文件中的 PROCESS-NAME 规则。"
+  "accessControlMarkHint": "第一个勾选框是您的选择：勾选会把应用加入当前模式的列表，清空会加入相反的列表，横线则交给配置文件和模式决定。黑名单模式下勾选的应用不经过 VPN，白名单模式下则是使用 VPN 的应用。您的选择优先于配置文件中的 PROCESS-NAME 规则。",
+  "accessControlTargetProxy": "代理"
 }

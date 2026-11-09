@@ -118,6 +118,9 @@ extension VpnOptionsExt on VpnOptions {
     return copyWith(
       port: systemProxy ? port : 0,
       bypassDomain: systemProxy ? bypassDomain : const [],
+      // The switch off excludes nothing, whatever lists an older build left
+      // beside it.
+      excludePackages: accessControl.enable ? excludePackages : const [],
       accessControlProps: accessControl.enable
           ? AccessControlProps(
               enable: true,

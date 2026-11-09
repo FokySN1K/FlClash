@@ -218,7 +218,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "访问控制决定哪些应用使用代理。",
     ),
     "accessControlDisabledDesc": MessageLookupByLibrary.simpleMessage(
-      "应用访问控制已关闭",
+      "应用访问控制已关闭：VPN 放行所有应用。",
     ),
     "accessControlMarkHint": MessageLookupByLibrary.simpleMessage(
       "第一个勾选框是您的选择：勾选会把应用加入当前模式的列表，清空会加入相反的列表，横线则交给配置文件和模式决定。黑名单模式下勾选的应用不经过 VPN，白名单模式下则是使用 VPN 的应用。您的选择优先于配置文件中的 PROCESS-NAME 规则。",
@@ -227,6 +227,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "选中应用将会被排除在VPN之外",
     ),
     "accessControlSelectedCount": m0,
+    "accessControlTargetProxy": MessageLookupByLibrary.simpleMessage("代理"),
     "account": MessageLookupByLibrary.simpleMessage("账号"),
     "action": MessageLookupByLibrary.simpleMessage("操作"),
     "actionDelayTest": MessageLookupByLibrary.simpleMessage("测试全部延迟"),
@@ -1519,7 +1520,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vpnExclusionsProfile": MessageLookupByLibrary.simpleMessage("配置规则"),
     "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
-      "第二个复选框显示配置文件：勾选表示其 PROCESS-NAME 规则将应用发送到 DIRECT，未勾选表示规则将其发送到代理，横线表示配置未提及。全局模式下只有 DIRECT 标记会让应用留在 VPN 之外。",
+      "第二个勾选框显示配置文件：勾选表示存在 PROCESS-NAME 规则，勾选框下方的文字说明规则的去向——DIRECT 或代理；横线表示没有规则。在全局模式下，只有 DIRECT 标记会让应用不经过 VPN。",
     ),
     "vpnExclusionsWhitelistMode": MessageLookupByLibrary.simpleMessage(
       "白名单自行选择应用：配置文件标记在此处隐藏，不影响选择。",

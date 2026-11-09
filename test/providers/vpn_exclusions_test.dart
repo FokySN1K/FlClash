@@ -169,6 +169,23 @@ void main() {
     expect(await excludedPackages(), ['com.example.chat']);
   });
 
+  test('the switch off leaves every app inside the tunnel', () async {
+    container
+        .read(vpnSettingProvider.notifier)
+        .update(
+          (state) => state.copyWith(
+            accessControlProps: const AccessControlProps(),
+            excludePackages: const ['com.example.chat'],
+            includePackages: const ['com.example.direct'],
+          ),
+        );
+    container
+        .read(profileProcessRulesProvider.notifier)
+        .update(ProcessRules.names({'com.example.direct': 'DIRECT'}));
+
+    expect(await excludedPackages(), isEmpty);
+  });
+
   test('a manual inclusion cancels a profile exclusion', () async {
     container
         .read(vpnSettingProvider.notifier)

@@ -520,7 +520,7 @@ void main() {
       await pumpAccessView(tester);
 
       expect(boxValue(tester, profileBox('com.example.browser')), isTrue);
-      expect(boxValue(tester, profileBox('com.example.chat')), isFalse);
+      expect(boxValue(tester, profileBox('com.example.chat')), isTrue);
       expect(boxValue(tester, manualBox('com.example.browser')), isNull);
 
       final onChanged = tester
@@ -532,6 +532,70 @@ void main() {
       await tester.pump();
       expect(boxValue(tester, profileBox('com.example.browser')), isTrue);
       expect(boxValue(tester, manualBox('com.example.browser')), isNull);
+
+      await teardownView(tester);
+    });
+
+    testWidgets('the profile column names the rule target', (tester) async {
+      seedAccessControl(const AccessControlProps(enable: true));
+      container
+          .read(profileProcessRulesProvider.notifier)
+          .update(
+            ProcessRules.names({
+              'com.example.browser': 'DIRECT',
+              'com.example.chat': '📺 YouTube с резервом',
+            }),
+          );
+      await pumpAccessView(tester);
+      final l10n = AppLocalizations.current;
+
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('com.example.browser')),
+          matching: find.text(RuleTarget.DIRECT.value),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('com.example.chat')),
+          matching: find.text(l10n.accessControlTargetProxy),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('com.example.browser')),
+          matching: find.text(l10n.accessControlTargetProxy),
+        ),
+        findsNothing,
+      );
+
+      await teardownView(tester);
+    });
+
+    testWidgets('a mark does not move the row', (tester) async {
+      seedAccessControl(
+        const AccessControlProps(enable: true, sort: AccessSortType.name),
+      );
+      container
+          .read(profileProcessRulesProvider.notifier)
+          .update(ProcessRules.names({'com.example.browser': 'DIRECT'}));
+      await pumpAccessView(tester);
+
+      List<String> labels() => tester
+          .widgetList<PackageListItem>(find.byType(PackageListItem))
+          .map((item) => item.package.label)
+          .toList();
+      expect(labels(), ['Browser', 'Chat']);
+
+      await tester.tap(manualBox('com.example.chat'));
+      await tester.pump();
+
+      expect(container.read(accessControlStateProvider).rejectList, [
+        'com.example.chat',
+      ]);
+      expect(labels(), ['Browser', 'Chat']);
 
       await teardownView(tester);
     });

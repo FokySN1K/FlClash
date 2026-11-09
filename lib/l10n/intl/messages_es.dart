@@ -252,7 +252,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "El control de acceso elige qué apps usan el proxy.",
     ),
     "accessControlDisabledDesc": MessageLookupByLibrary.simpleMessage(
-      "El control de acceso de apps está desactivado",
+      "El control de acceso de apps está desactivado: la VPN admite todas las aplicaciones.",
     ),
     "accessControlMarkHint": MessageLookupByLibrary.simpleMessage(
       "La primera casilla es tu elección: marcada añade la aplicación a la lista del modo actual, vacía a la lista contraria y un guion lo deja al perfil y al modo. En modo lista negra la aplicación marcada queda fuera de la VPN; en modo lista blanca es una de las que la usan. Tu elección prevalece sobre la regla PROCESS-NAME del perfil.",
@@ -261,6 +261,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Las apps seleccionadas quedan excluidas de la VPN",
     ),
     "accessControlSelectedCount": m0,
+    "accessControlTargetProxy": MessageLookupByLibrary.simpleMessage("Proxy"),
     "account": MessageLookupByLibrary.simpleMessage("Cuenta"),
     "action": MessageLookupByLibrary.simpleMessage("Acción"),
     "actionDelayTest": MessageLookupByLibrary.simpleMessage(
@@ -1062,10 +1063,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Introduce el contenido de la regla",
     ),
     "installNow": MessageLookupByLibrary.simpleMessage("Instalar"),
-    "installedAppsPermissionDeniedMessage":
-        MessageLookupByLibrary.simpleMessage(
-          "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
-        ),
+    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
+      "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
+    ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Este sistema oculta la lista de apps instaladas hasta que se concede el permiso. Autorízalo para configurar el proxy por app.",
     ),
@@ -2099,7 +2099,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Regla del perfil",
     ),
     "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
-      "La segunda casilla muestra el perfil: marcada significa que su regla PROCESS-NAME envía la aplicación a DIRECT, vacía que la envía por un proxy, un guion que el perfil no dice nada. En el modo global solo las marcas DIRECT dejan la aplicación fuera de la VPN.",
+      "La segunda casilla muestra el perfil: marcada significa que una regla PROCESS-NAME cubre la aplicación, y el texto bajo la casilla indica su destino: DIRECT o un proxy; un guion significa que no hay regla. En el modo Global solo las marcas DIRECT dejan la aplicación fuera de la VPN.",
     ),
     "vpnExclusionsWhitelistMode": MessageLookupByLibrary.simpleMessage(
       "La lista blanca elige sus aplicaciones por sí sola: las marcas del perfil se ocultan aquí y no afectan a la lista.",

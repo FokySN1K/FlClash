@@ -91,13 +91,14 @@ class Migration {
 
   /// One-off setting changes for upgrades, apart from [currentVersion], which
   /// backups carry and an older app refuses when it is newer than its own.
-  static const upgradeVersion = 4;
+  static const upgradeVersion = 5;
 
   static const Map<int, Config Function(Config config)> _upgrades = {
     1: _resetThemeColors,
     2: _keepGlassLook,
     3: _followSystemColors,
     4: _turnOffSidebarBlur,
+    5: _turnOnAccessControl,
   };
 
   Future<Config> run() async {
@@ -237,6 +238,22 @@ Config _followSystemColors(Config config) {
 // Releases stored sidebar blur on while its switch stayed hidden.
 Config _turnOffSidebarBlur(Config config) =>
     config.copyWith(themeProps: config.themeProps.copyWith(sidebarBlur: false));
+
+// The access screen shipped with its switch off while the exclusion lists it
+// guards stayed in force, so the screen said "off" about a tunnel that still
+// filtered. Turning it on once makes the switch say what the tunnel does; a
+// switch turned off after this release stays off.
+Config _turnOnAccessControl(Config config) {
+  final vpnProps = config.vpnProps;
+  if (vpnProps.accessControlProps.enable) {
+    return config;
+  }
+  return config.copyWith(
+    vpnProps: vpnProps.copyWith(
+      accessControlProps: vpnProps.accessControlProps.copyWith(enable: true),
+    ),
+  );
+}
 
 bool _isV0(Map<String, Object?>? configMap) =>
     configMap?['proxiesStyle'] != null;

@@ -124,7 +124,7 @@
   "appAccessControl": "Contrôle d’accès des apps",
   "accessControlAllowDesc": "Seules les apps sélectionnées passent par le VPN",
   "accessControlNotAllowDesc": "Les apps sélectionnées sont exclues du VPN",
-  "accessControlDisabledDesc": "Le contrôle d’accès des apps est désactivé",
+  "accessControlDisabledDesc": "Le contrôle d’accès des apps est désactivé : le VPN laisse passer toutes les applications.",
   "accessControlSelectedCount": "{count, plural, one{{count} sélectionnée} other{{count} sélectionnées}}",
   "port": "Port",
   "logLevel": "Niveau de journalisation",
@@ -983,10 +983,11 @@
   "vpnExclusionsManual": "Votre choix",
   "vpnExclusionsProfile": "Règle du profil",
   "vpnExclusionsManualHint": "La première case est votre choix : vide — contre l'exclusion, l'application reste dans le tunnel ; cochée — garde l'application hors du VPN ; un tiret — aucun choix. Votre choix prime sur la règle du profil.",
-  "vpnExclusionsProfileHint": "La seconde case montre le profil : cochée, sa règle PROCESS-NAME envoie l'application en DIRECT ; vide, la règle l'envoie via un proxy ; un tiret, le profil ne dit rien. En mode global, seules les marques DIRECT excluent l'application du VPN.",
+  "vpnExclusionsProfileHint": "La seconde case indique le profil : cochée, une règle PROCESS-NAME couvre l’application, et la légende sous la case précise sa destination — DIRECT ou un proxy ; un tiret signifie aucune règle. En mode Global, seules les marques DIRECT gardent l’application hors du VPN.",
   "vpnExclusionsWhitelistMode": "La liste blanche choisit ses applications elle-même : les marques du profil sont masquées ici et n'affectent pas la liste.",
   "vpnExclusionsLockdown": "Si « Bloquer les connexions sans VPN » est activé sur Android, une application exclue ne pourra pas se connecter non plus.",
   "ignoreProfileProcessRules": "Ignorer PROCESS-NAME du profil",
   "ignoreProfileProcessRulesDesc": "Les règles PROCESS-NAME du profil n'excluent plus les applications du tunnel : seules vos marques comptent.",
-  "accessControlMarkHint": "La première case est votre choix : cochée, elle ajoute l'application à la liste du mode actuel ; vide, à la liste opposée ; un tiret laisse décider le profil et le mode. En mode liste noire, une application cochée reste hors du VPN ; en mode liste blanche, elle fait partie de celles qui l'utilisent. Votre choix prime sur la règle PROCESS-NAME du profil."
+  "accessControlMarkHint": "La première case est votre choix : cochée, elle ajoute l'application à la liste du mode actuel ; vide, à la liste opposée ; un tiret laisse décider le profil et le mode. En mode liste noire, une application cochée reste hors du VPN ; en mode liste blanche, elle fait partie de celles qui l'utilisent. Votre choix prime sur la règle PROCESS-NAME du profil.",
+  "accessControlTargetProxy": "Proxy"
 }

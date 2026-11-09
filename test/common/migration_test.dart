@@ -307,6 +307,27 @@ void main() {
         expect(await upgrade(4), isTrue);
       });
 
+      test('turns the access control switch on once', () async {
+        Future<bool> upgrade(int from) async {
+          final configMap = _createConfigMap();
+          final vpnProps = configMap['vpnProps']! as Map<String, Object?>;
+          final accessControl =
+              vpnProps['accessControlProps']! as Map<String, Object?>;
+          accessControl['enable'] = false;
+          final store = _FakeMigrationStore(
+            configMap: configMap,
+            version: Migration.currentVersion,
+            upgradeVersion: from,
+          );
+          return (await Migration(
+            store: store,
+          ).run()).vpnProps.accessControlProps.enable;
+        }
+
+        expect(await upgrade(4), isTrue);
+        expect(await upgrade(5), isFalse);
+      });
+
       test('a new install only records it', () async {
         final store = _FakeMigrationStore(
           configMap: null,

@@ -245,7 +245,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Контроль доступа выбирает приложения, использующие прокси.",
     ),
     "accessControlDisabledDesc": MessageLookupByLibrary.simpleMessage(
-      "Контроль доступа приложений отключён",
+      "Контроль доступа приложений отключён: VPN пропускает все приложения.",
     ),
     "accessControlMarkHint": MessageLookupByLibrary.simpleMessage(
       "Первая галка — ваше решение: отмеченная добавляет приложение в список текущего режима, пустая — в противоположный, прочерк оставляет выбор профилю и режиму. В режиме чёрного списка отмеченное приложение не входит в VPN, в режиме белого — входит. Ваше решение важнее правила PROCESS-NAME из профиля.",
@@ -254,6 +254,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Выбранные приложения исключаются из VPN",
     ),
     "accessControlSelectedCount": m0,
+    "accessControlTargetProxy": MessageLookupByLibrary.simpleMessage("Прокси"),
     "account": MessageLookupByLibrary.simpleMessage("Аккаунт"),
     "action": MessageLookupByLibrary.simpleMessage("Действие"),
     "actionDelayTest": MessageLookupByLibrary.simpleMessage(
@@ -1027,10 +1028,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Введите содержимое правила",
     ),
     "installNow": MessageLookupByLibrary.simpleMessage("Установить"),
-    "installedAppsPermissionDeniedMessage":
-        MessageLookupByLibrary.simpleMessage(
-          "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
-        ),
+    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
+      "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
+    ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Эта система не выдаёт список установленных приложений без разрешения. Предоставьте его, чтобы настроить прокси для отдельных приложений.",
     ),
@@ -2038,7 +2038,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vpnExclusionsProfile": MessageLookupByLibrary.simpleMessage("Из профиля"),
     "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
-      "Вторая галка показывает профиль: отмеченная — правило PROCESS-NAME отправляет приложение в DIRECT, пустая — в прокси, прочерк — правила нет. В глобальном режиме приложение остаётся вне VPN только при отметке DIRECT.",
+      "Вторая галка показывает профиль: отмеченная — правило PROCESS-NAME для приложения есть, а подпись под галкой говорит, куда оно его отправляет — в DIRECT или в прокси; прочерк — правила нет. В глобальном режиме приложение остаётся вне VPN только при отметке DIRECT.",
     ),
     "vpnExclusionsWhitelistMode": MessageLookupByLibrary.simpleMessage(
       "Белый список выбирает приложения сам: отметки профиля здесь скрыты и на выбор не влияют.",

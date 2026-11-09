@@ -221,7 +221,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "アクセス制御では、プロキシを利用するアプリを選びます。",
     ),
     "accessControlDisabledDesc": MessageLookupByLibrary.simpleMessage(
-      "アプリアクセス制御は無効です",
+      "アプリアクセス制御は無効です: VPN はすべてのアプリを通します。",
     ),
     "accessControlMarkHint": MessageLookupByLibrary.simpleMessage(
       "1 つ目のチェックはあなたの選択です。チェックで現在のモードのリストに追加され、空欄で反対のリストに入り、ダッシュはプロファイルとモードに任せます。ブラックリストモードではチェックしたアプリが VPN の対象外になり、ホワイトリストモードでは VPN を使うアプリになります。あなたの選択はプロファイルの PROCESS-NAME ルールより優先されます。",
@@ -230,6 +230,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "選択したアプリはVPNから除外されます",
     ),
     "accessControlSelectedCount": m0,
+    "accessControlTargetProxy": MessageLookupByLibrary.simpleMessage("プロキシ"),
     "account": MessageLookupByLibrary.simpleMessage("アカウント"),
     "action": MessageLookupByLibrary.simpleMessage("アクション"),
     "actionDelayTest": MessageLookupByLibrary.simpleMessage("すべての遅延をテスト"),
@@ -1672,7 +1673,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vpnExclusionsProfile": MessageLookupByLibrary.simpleMessage("プロファイルのルール"),
     "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
-      "2 つ目のチェックはプロファイルの状態です。チェック — PROCESS-NAME ルールが DIRECT を指定、空 — ルールがプロキシを指定、ダッシュ — ルールなし。グローバルモードでも DIRECT のアプリは VPN の外に置かれます。",
+      "2 つ目のチェックボックスはプロファイルを表します。チェックありは PROCESS-NAME ルールがあることを示し、下のラベルが送り先（DIRECT またはプロキシ）を示します。ダッシュはルールなしです。グローバルモードでは DIRECT のマークだけがアプリを VPN の外に保ちます。",
     ),
     "vpnExclusionsWhitelistMode": MessageLookupByLibrary.simpleMessage(
       "ホワイトリストは独自にアプリを選びます。プロファイルの表示はここでは隠され、選択には影響しません。",
