@@ -37,7 +37,9 @@ List<Group> computeSort({
   // A group keeps the groups the profile put among its members where they
   // are and sorts only the nodes into the places that are left: a card opens
   // another page and shows the pick it makes there, so a delay of the nodes
-  // behind it says nothing about where the card belongs.
+  // behind it says nothing about where the card belongs. The built-in
+  // adapters are not nodes either: they have no server behind them and no
+  // delay of their own to sort by, so they keep their place as well.
   List<Proxy> sortKeepingGroups({
     required List<Group> groups,
     required List<Proxy> proxies,
@@ -46,20 +48,19 @@ List<Group> computeSort({
     required String testUrl,
   }) {
     final groupNames = {for (final group in groups) group.name};
+    bool pinned(Proxy proxy) =>
+        groupNames.contains(proxy.name) ||
+        _pinnedProxyTypes.contains(proxy.type);
     final sorted = sortOfDelay(
       groups: groups,
-      proxies: [
-        for (final proxy in proxies)
-          if (!groupNames.contains(proxy.name)) proxy,
-      ],
+      proxies: [for (final proxy in proxies) if (!pinned(proxy)) proxy],
       delayMap: delayMap,
       selectedMap: selectedMap,
       testUrl: testUrl,
     );
     var next = 0;
     return [
-      for (final proxy in proxies)
-        if (groupNames.contains(proxy.name)) proxy else sorted[next++],
+      for (final proxy in proxies) if (pinned(proxy)) proxy else sorted[next++],
     ];
   }
 
@@ -138,6 +139,10 @@ const _unprobeableProxyTypes = {
   'Compatible',
   'Dns',
 };
+
+/// Built-in adapters that are not nodes: they have no server behind them, so
+/// they keep the place the profile gave them instead of taking one in the sort.
+const _pinnedProxyTypes = {'Direct', ..._unprobeableProxyTypes};
 
 List<Group> computeHideTimeout({
   required List<Group> groups,

@@ -355,6 +355,47 @@ void main() {
       ]);
     });
 
+    test('ProxiesSortType.delay pins built-in adapters next to groups', () {
+      const mixedGroups = [
+        Group(
+          name: 'group-1',
+          type: GroupType.URLTest,
+          now: 'proxy-a',
+          all: [Proxy(name: 'proxy-a', type: 'ss')],
+        ),
+        Group(
+          name: 'select',
+          type: GroupType.Selector,
+          all: [
+            Proxy(name: 'DIRECT', type: 'Direct'),
+            Proxy(name: 'group-1', type: 'url-test'),
+            Proxy(name: 'proxy-c', type: 'ss'),
+            Proxy(name: 'proxy-b', type: 'ss'),
+            Proxy(name: 'proxy-a', type: 'ss'),
+            Proxy(name: 'REJECT', type: 'Reject'),
+          ],
+        ),
+      ];
+      final result = computeSort(
+        groups: mixedGroups,
+        sortType: ProxiesSortType.delay,
+        delayMap: <String, Map<String, int?>>{
+          'http://test.com': {'proxy-a': 100, 'proxy-b': 50, 'proxy-c': 10},
+        },
+        selectedMap: {},
+        defaultTestUrl: 'http://test.com',
+      );
+      final select = result.firstWhere((group) => group.name == 'select');
+      expect(select.all.map((p) => p.name).toList(), [
+        'DIRECT',
+        'group-1',
+        'proxy-c',
+        'proxy-b',
+        'proxy-a',
+        'REJECT',
+      ]);
+    });
+
     test('preserves group count in result', () {
       final multiGroups = [
         ...groups,
