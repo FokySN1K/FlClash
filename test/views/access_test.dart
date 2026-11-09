@@ -458,6 +458,29 @@ void main() {
       await teardownView(tester);
     });
 
+    testWidgets('greys the list out while the switch is off', (tester) async {
+      seedAccessControl(const AccessControlProps(enable: true));
+      await pumpAccessView(tester);
+      bool masked() =>
+          tester.widget<DisabledMask>(find.byType(DisabledMask)).status;
+      final l10n = AppLocalizations.current;
+
+      expect(masked(), isFalse);
+
+      await openBarMenu(tester);
+      await tester.tap(
+        find.descendant(
+          of: find.byType(CommonPopupMenu),
+          matching: find.text(l10n.turnOff),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(masked(), isTrue);
+
+      await teardownView(tester);
+    });
+
     testWidgets('searching selects then clears only the matching apps', (
       tester,
     ) async {

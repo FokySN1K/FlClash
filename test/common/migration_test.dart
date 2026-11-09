@@ -328,6 +328,27 @@ void main() {
         expect(await upgrade(5), isFalse);
       });
 
+      test('starts the access control as a blacklist once', () async {
+        Future<AccessControlMode> upgrade(int from) async {
+          final configMap = _createConfigMap();
+          final vpnProps = configMap['vpnProps']! as Map<String, Object?>;
+          final accessControl =
+              vpnProps['accessControlProps']! as Map<String, Object?>;
+          accessControl['mode'] = 'acceptSelected';
+          final store = _FakeMigrationStore(
+            configMap: configMap,
+            version: Migration.currentVersion,
+            upgradeVersion: from,
+          );
+          return (await Migration(
+            store: store,
+          ).run()).vpnProps.accessControlProps.mode;
+        }
+
+        expect(await upgrade(5), AccessControlMode.rejectSelected);
+        expect(await upgrade(6), AccessControlMode.acceptSelected);
+      });
+
       test('a new install only records it', () async {
         final store = _FakeMigrationStore(
           configMap: null,

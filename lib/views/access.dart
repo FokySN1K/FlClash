@@ -585,12 +585,17 @@ class _AccessViewState extends ConsumerState<AccessView>
                   onEnable: () =>
                       _update((state) => state.copyWith(enable: true)),
                 ),
-                body: _buildContent(
-                  packages: viewPackages,
-                  accessControl: accessControl,
-                  processRules: processRules,
-                  showProfile: showProfile,
-                  isSearching: query.isNotEmpty,
+                // The switch off greys the list out: its marks stay
+                // readable while the tunnel ignores them.
+                body: DisabledMask(
+                  status: !accessControl.enable,
+                  child: _buildContent(
+                    packages: viewPackages,
+                    accessControl: accessControl,
+                    processRules: processRules,
+                    showProfile: showProfile,
+                    isSearching: query.isNotEmpty,
+                  ),
                 ),
               ),
       ),

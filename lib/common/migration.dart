@@ -91,7 +91,7 @@ class Migration {
 
   /// One-off setting changes for upgrades, apart from [currentVersion], which
   /// backups carry and an older app refuses when it is newer than its own.
-  static const upgradeVersion = 5;
+  static const upgradeVersion = 6;
 
   static const Map<int, Config Function(Config config)> _upgrades = {
     1: _resetThemeColors,
@@ -99,6 +99,7 @@ class Migration {
     3: _followSystemColors,
     4: _turnOffSidebarBlur,
     5: _turnOnAccessControl,
+    6: _defaultToBlacklistMode,
   };
 
   Future<Config> run() async {
@@ -251,6 +252,24 @@ Config _turnOnAccessControl(Config config) {
   return config.copyWith(
     vpnProps: vpnProps.copyWith(
       accessControlProps: vpnProps.accessControlProps.copyWith(enable: true),
+    ),
+  );
+}
+
+// The access screen defaults to the blacklist, but a stored whitelist survives
+// every update: with no app on its list nothing routes through the tunnel, so
+// an install left in that mode looks broken. One reset makes every install
+// start from the default; a mode picked after this release stays.
+Config _defaultToBlacklistMode(Config config) {
+  final vpnProps = config.vpnProps;
+  if (vpnProps.accessControlProps.mode == AccessControlMode.rejectSelected) {
+    return config;
+  }
+  return config.copyWith(
+    vpnProps: vpnProps.copyWith(
+      accessControlProps: vpnProps.accessControlProps.copyWith(
+        mode: AccessControlMode.rejectSelected,
+      ),
     ),
   );
 }
