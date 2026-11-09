@@ -34,9 +34,11 @@ List<Group> computeSort({
     return List.of(proxies)..sort((a, b) => a.name.compareTo(b.name));
   }
 
-  // A selector keeps the groups the profile put among its members where they
-  // are and sorts only the nodes into the places that are left.
-  List<Proxy> sortSelectorOfDelay({
+  // A group keeps the groups the profile put among its members where they
+  // are and sorts only the nodes into the places that are left: a card opens
+  // another page and shows the pick it makes there, so a delay of the nodes
+  // behind it says nothing about where the card belongs.
+  List<Proxy> sortKeepingGroups({
     required List<Group> groups,
     required List<Proxy> proxies,
     required DelayMap delayMap,
@@ -66,22 +68,13 @@ List<Group> computeSort({
     final testUrl = group.testUrl.takeFirstValid([defaultTestUrl]);
     final newProxies = switch (sortType) {
       ProxiesSortType.none => proxies,
-      ProxiesSortType.delay => switch (group.type) {
-        GroupType.Selector => sortSelectorOfDelay(
-          groups: groups,
-          proxies: proxies,
-          delayMap: delayMap,
-          selectedMap: selectedMap,
-          testUrl: testUrl,
-        ),
-        _ => sortOfDelay(
-          groups: groups,
-          proxies: proxies,
-          delayMap: delayMap,
-          selectedMap: selectedMap,
-          testUrl: testUrl,
-        ),
-      },
+      ProxiesSortType.delay => sortKeepingGroups(
+        groups: groups,
+        proxies: proxies,
+        delayMap: delayMap,
+        selectedMap: selectedMap,
+        testUrl: testUrl,
+      ),
       ProxiesSortType.name => sortOfName(proxies),
     };
     return group.copyWith(all: newProxies);

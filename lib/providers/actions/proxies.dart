@@ -462,17 +462,34 @@ class ProxiesAction extends _$ProxiesAction {
     _refreshAfterDelayTest();
   }
 
+  /// A run from the tray menu or a hotkey measures every group at once, so
+  /// each of them keeps its cards in place until the run is over: the results
+  /// land one at a time, and a sort after each of them would move the list
+  /// while the numbers are still arriving.
   Future<void> delayTestGroups(List<Group> groups) async {
-    await Future.wait([
-      // A pool or an ordered fallback measures its own members inside the
-      // Core's check, so probing them here again would race that check.
-      _runDelayTests([
-        for (final group in groups)
-          if (!group.type.isSelfTested)
-            (proxies: group.all, testUrl: group.testUrl),
-      ]),
-      Future.wait([for (final group in groups) _runGroupDelayTest(group)]),
-    ]);
+    final testing = ref.read(delayTestingGroupsProvider.notifier);
+    final started = <String>{};
+    for (final group in groups) {
+      if (testing.start(group.name)) {
+        started.add(group.name);
+      }
+    }
+    try {
+      await Future.wait([
+        // A pool or an ordered fallback measures its own members inside the
+        // Core's check, so probing them here again would race that check.
+        _runDelayTests([
+          for (final group in groups)
+            if (!group.type.isSelfTested)
+              (proxies: group.all, testUrl: group.testUrl),
+        ]),
+        Future.wait([for (final group in groups) _runGroupDelayTest(group)]),
+      ]);
+    } finally {
+      for (final name in started) {
+        testing.stop(name);
+      }
+    }
     _refreshAfterDelayTest();
   }
 

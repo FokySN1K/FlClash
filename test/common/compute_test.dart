@@ -307,6 +307,54 @@ void main() {
       ]);
     });
 
+    test('ProxiesSortType.delay pins nested groups outside a selector too', () {
+      const nestedGroups = [
+        Group(
+          name: 'nested',
+          type: GroupType.URLTest,
+          now: 'HK-01',
+          all: [Proxy(name: 'HK-01', type: 'ss')],
+        ),
+        Group(
+          name: 'fast',
+          type: GroupType.URLTest,
+          now: 'HK-02',
+          all: [Proxy(name: 'HK-02', type: 'ss')],
+        ),
+        Group(
+          name: 'grouped',
+          type: GroupType.URLTest,
+          all: [
+            Proxy(name: 'proxy-c', type: 'ss'),
+            Proxy(name: 'nested', type: 'url-test'),
+            Proxy(name: 'proxy-b', type: 'ss'),
+            Proxy(name: 'fast', type: 'url-test'),
+          ],
+        ),
+      ];
+      final result = computeSort(
+        groups: nestedGroups,
+        sortType: ProxiesSortType.delay,
+        delayMap: <String, Map<String, int?>>{
+          'http://test.com': {
+            'HK-01': 5,
+            'HK-02': 7,
+            'proxy-b': 50,
+            'proxy-c': 10,
+          },
+        },
+        selectedMap: {},
+        defaultTestUrl: 'http://test.com',
+      );
+      final grouped = result.firstWhere((group) => group.name == 'grouped');
+      expect(grouped.all.map((p) => p.name).toList(), [
+        'proxy-c',
+        'nested',
+        'proxy-b',
+        'fast',
+      ]);
+    });
+
     test('preserves group count in result', () {
       final multiGroups = [
         ...groups,
