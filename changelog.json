@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.36",
+      "tag": "v1.0.36",
+      "date": "2026-11-09",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "d8451dd",
+              "scope": "access",
+              "text": "Default on, whitelist-only marks, tunnel re-create"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.35",
       "tag": "v1.0.35",
       "date": "2026-11-09",

@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.36 (2026-11-09)
+
+**Features**
+
+- **access** Default on, whitelist-only marks, tunnel re-create (d8451dd)
+
 ## v1.0.35 (2026-11-09)
 
 **Features**
