@@ -321,7 +321,8 @@ merge-only, and a push that a `v1.0.*` tag already covers is skipped, so a redel
   keeps `changelog.dart verify` green on `main`.
 - A release commits only onto the merge commit it built from: when `main` moved during the build the job stops with
   the restart instruction instead of deriving a changelog range the artifacts do not match.
-- The matrix is the release set from `build.yaml`: Android, Windows and Linux amd64 plus arm64, macOS amd64 and arm64.
+- The default matrix is Android, Windows amd64 and Linux amd64; `workflow_dispatch` with `platforms: all` adds
+  the Windows and Linux arm64 builds and both macOS ones.
 - Android signing uses the `KEYSTORE`, `KEY_ALIAS`, `STORE_PASSWORD` and `KEY_PASSWORD` secrets when they exist.
   Without them the APK is debug signed and carries the `.dev` application id suffix from `android/app/build.gradle.kts`.
 

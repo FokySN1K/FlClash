@@ -61,7 +61,7 @@ jobs:
           PLATFORMS: ${{ inputs.platforms || 'default' }}
         run: |
           set -euo pipefail
-          default='{"include":[{"platform":"android","os":"ubuntu-latest"},{"platform":"windows","os":"windows-2022","arch":"amd64"}]}'
+          default='{"include":[{"platform":"android","os":"ubuntu-latest"},{"platform":"windows","os":"windows-2022","arch":"amd64"},{"platform":"linux","os":"ubuntu-22.04","arch":"amd64"}]}'
           all='{"include":[{"platform":"android","os":"ubuntu-latest"},{"platform":"windows","os":"windows-2022","arch":"amd64"},{"platform":"windows","os":"windows-11-arm","arch":"arm64","flutter-channel":"master"},{"platform":"linux","os":"ubuntu-22.04","arch":"amd64"},{"platform":"linux","os":"ubuntu-24.04-arm","arch":"arm64","flutter-channel":"master"},{"platform":"macos","os":"macos-15-intel","arch":"amd64"},{"platform":"macos","os":"macos-latest","arch":"arm64"}]}'
           if [[ "${PLATFORMS}" == "all" ]]; then
             matrix="${all}"
