@@ -2,6 +2,34 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.37",
+      "tag": "v1.0.37",
+      "date": "2026-11-09",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "d64b003",
+              "scope": "core",
+              "text": "Report a network change and share single-node tests"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "2bcb6fc",
+              "scope": "access",
+              "text": "Show the real switch state and keep the list still"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.36",
       "tag": "v1.0.36",
       "date": "2026-11-09",

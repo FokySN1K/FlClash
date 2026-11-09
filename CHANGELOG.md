@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.0.37 (2026-11-09)
+
+**Features**
+
+- **core** Report a network change and share single-node tests (d64b003)
+
+**Bug Fixes**
+
+- **access** Show the real switch state and keep the list still (2bcb6fc)
+
 ## v1.0.36 (2026-11-09)
 
 **Features**
