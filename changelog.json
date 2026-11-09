@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.35",
+      "tag": "v1.0.35",
+      "date": "2026-11-09",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "7ec3bb3",
+              "scope": "access",
+              "text": "Access control replaces VPN exclusions, shows the exit each profile rule picks, and follows PROCESS-NAME rules from downloaded rule-sets, including regex and wildcard patterns."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.34",
       "tag": "v1.0.34",
       "date": "2026-11-09",

@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.35 (2026-11-09)
+
+**Features**
+
+- **access** Access control replaces VPN exclusions, shows the exit each profile rule picks, and follows PROCESS-NAME rules from downloaded rule-sets, including regex and wildcard patterns. (7ec3bb3)
+
 ## v1.0.34 (2026-11-09)
 
 **Features**
