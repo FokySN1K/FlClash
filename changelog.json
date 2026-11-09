@@ -2,6 +2,39 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.34",
+      "tag": "v1.0.34",
+      "date": "2026-11-09",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "ada8af9",
+              "scope": "vpn",
+              "text": "Let the profile's process rules shape the tunnel exclusions"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "e0e69e6",
+              "scope": "profile",
+              "text": "Read the auto-update interval in seconds"
+            },
+            {
+              "id": "40d2418",
+              "scope": "app",
+              "text": "Keep the auto-update timer chain alive"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.33",
       "tag": "v1.0.33",
       "date": "2026-11-08",

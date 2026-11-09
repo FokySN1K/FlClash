@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.0.34 (2026-11-09)
+
+**Features**
+
+- **vpn** Let the profile's process rules shape the tunnel exclusions (ada8af9)
+
+**Bug Fixes**
+
+- **profile** Read the auto-update interval in seconds (e0e69e6)
+- **app** Keep the auto-update timer chain alive (40d2418)
+
 ## v1.0.33 (2026-11-08)
 
 **Features**
