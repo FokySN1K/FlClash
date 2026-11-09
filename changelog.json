@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.39",
+      "tag": "v1.0.39",
+      "date": "2026-11-09",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "3285621",
+              "scope": "proxies",
+              "text": "Group cards keep their places with delay sorting, and a test from the tray no longer moves them"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.38",
       "tag": "v1.0.38",
       "date": "2026-11-09",

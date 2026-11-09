@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.39 (2026-11-09)
+
+**Bug Fixes**
+
+- **proxies** Group cards keep their places with delay sorting, and a test from the tray no longer moves them (3285621)
+
 ## v1.0.38 (2026-11-09)
 
 **Features**
