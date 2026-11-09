@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/metacubex/mihomo/component/iface"
 	"github.com/metacubex/mihomo/component/resolver"
 	"github.com/metacubex/mihomo/dns"
 	"github.com/metacubex/mihomo/tunnel/statistic"
@@ -55,10 +56,16 @@ func handleClearDnsCache() {
 }
 
 // A connection that went out over a network the device has left hangs until
-// TCP gives up on it, and so do the DNS clients' pooled connections.
+// TCP gives up on it, and so do the DNS clients' pooled connections. The
+// verdicts the pools hold belong to the old network too: a timeout it caused is
+// not a dead node, so the new generation drops the marks and lets the first
+// check retry what failed before it publishes the members as dead.
 func handleResetNetwork() {
 	handleCloseConnections()
 	handleClearDnsCache()
+	resolver.ResetConnection()
+	iface.FlushCache()
+	iface.NotifyNetworkChanged()
 }
 
 func handleCloseConnection(connectionId string) bool {

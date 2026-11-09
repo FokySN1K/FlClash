@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/metacubex/mihomo/adapter/outboundgroup"
+	"github.com/metacubex/mihomo/adapter/outboundgroup/probequeue"
 	"github.com/metacubex/mihomo/common/utils"
 	"github.com/metacubex/mihomo/constant"
 )
@@ -90,9 +91,12 @@ func handleTestDelay(params *TestDelayParams) *Delay {
 	}
 	defer delayTestSlots.release()
 
+	// The test joins the shared queue like every group's own sweep: when the
+	// sweep already asks the same node the same question, the queue shares that
+	// measurement instead of loading the path twice.
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
-	delay, err := proxy.URLTest(ctx, url, anyDelayTestStatus)
+	delay, err := probequeue.TestProxyWithBudget(ctx, proxy, url, anyDelayTestStatus, timeout)
 	if err != nil {
 		delay = 0
 	}
