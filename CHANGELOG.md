@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.40 (2026-11-09)
+
+**Bug Fixes**
+
+- **proxies** DIRECT and the other built-in adapters keep their places in a delay sort, and a network switch re-measures the pool at once (f296b07)
+
 ## v1.0.39 (2026-11-09)
 
 **Bug Fixes**

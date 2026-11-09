@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.40",
+      "tag": "v1.0.40",
+      "date": "2026-11-09",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "f296b07",
+              "scope": "proxies",
+              "text": "DIRECT and the other built-in adapters keep their places in a delay sort, and a network switch re-measures the pool at once"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.39",
       "tag": "v1.0.39",
       "date": "2026-11-09",
