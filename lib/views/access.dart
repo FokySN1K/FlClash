@@ -14,7 +14,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// The apps the tunnel carries. The mode picks the list a manual mark writes,
 /// the profile's own `PROCESS-NAME*` rules stand beside it, and a manual mark
-/// always beats the rule.
+/// always beats the rule. The whitelist picks its apps on its own, so the
+/// profile's marks stay hidden there.
 class AccessView extends ConsumerStatefulWidget {
   const AccessView({super.key});
 
@@ -193,16 +194,9 @@ class _AccessViewState extends ConsumerState<AccessView>
   }
 
   /// What the profile's own rule says: checked sends the app DIRECT, empty
-  /// sends it through a proxy, a dash says nothing. Global mode ignores the
-  /// rules altogether, and so does the ignore switch.
-  bool? _profileState(
-    String packageName,
-    ProcessRules processRules,
-    Mode mode,
-  ) {
-    if (mode == Mode.global) {
-      return null;
-    }
+  /// sends it through a proxy, a dash says nothing. The ignore switch and the
+  /// whitelist pass no rules, so the marks disappear there.
+  bool? _profileState(String packageName, ProcessRules processRules) {
     final target = processRules.targetFor(packageName);
     if (target == null) {
       return null;
@@ -214,12 +208,11 @@ class _AccessViewState extends ConsumerState<AccessView>
     String packageName,
     AccessControlProps accessControl,
     ProcessRules processRules,
-    Mode mode,
   ) {
     if (_manualState(packageName, accessControl) != null) {
       return 0;
     }
-    if (_profileState(packageName, processRules, mode) != null) {
+    if (_profileState(packageName, processRules) != null) {
       return 1;
     }
     return 2;
@@ -231,16 +224,10 @@ class _AccessViewState extends ConsumerState<AccessView>
     List<Package> packages,
     AccessControlProps accessControl,
     ProcessRules processRules,
-    Mode mode,
   ) {
     final byRank = <int, List<Package>>{};
     for (final package in packages) {
-      final rank = _rank(
-        package.packageName,
-        accessControl,
-        processRules,
-        mode,
-      );
+      final rank = _rank(package.packageName, accessControl, processRules);
       byRank.putIfAbsent(rank, () => []).add(package);
     }
     return [
@@ -336,19 +323,17 @@ class _AccessViewState extends ConsumerState<AccessView>
 
   Future<void> _showLegend() async {
     final appLocalizations = context.appLocalizations;
-    final vpnSetting = ref.read(vpnSettingProvider);
-    final mode = ref.read(
-      patchClashConfigProvider.select((state) => state.mode),
-    );
-    final ignored = vpnSetting.ignoreProfileProcessRules;
+    final accessControl = ref.read(accessControlStateProvider);
+    final ignored = ref.read(vpnSettingProvider).ignoreProfileProcessRules;
+    final whitelist = accessControl.mode == AccessControlMode.acceptSelected;
     await dialogs.showMessage(
       message: TextSpan(
         text: [
           appLocalizations.accessControlMarkHint,
-          if (ignored)
+          if (whitelist)
+            appLocalizations.vpnExclusionsWhitelistMode
+          else if (ignored)
             appLocalizations.ignoreProfileProcessRulesDesc
-          else if (mode == Mode.global)
-            appLocalizations.vpnExclusionsGlobalMode
           else
             appLocalizations.vpnExclusionsProfileHint,
           appLocalizations.vpnExclusionsLockdown,
@@ -425,18 +410,20 @@ class _AccessViewState extends ConsumerState<AccessView>
               ),
             ),
           ),
-          CommonPopupMenuItem(
-            label: appLocalizations.ignoreProfileProcessRules,
-            checked: vpnSetting.ignoreProfileProcessRules,
-            section: CommonPopupMenuSection(title: appLocalizations.profile),
-            onPressed: () => ref
-                .read(vpnSettingProvider.notifier)
-                .update(
-                  (state) => state.copyWith(
-                    ignoreProfileProcessRules: !state.ignoreProfileProcessRules,
+          if (accessControl.mode != AccessControlMode.acceptSelected)
+            CommonPopupMenuItem(
+              label: appLocalizations.ignoreProfileProcessRules,
+              checked: vpnSetting.ignoreProfileProcessRules,
+              section: CommonPopupMenuSection(title: appLocalizations.profile),
+              onPressed: () => ref
+                  .read(vpnSettingProvider.notifier)
+                  .update(
+                    (state) => state.copyWith(
+                      ignoreProfileProcessRules:
+                          !state.ignoreProfileProcessRules,
+                    ),
                   ),
-                ),
-          ),
+            ),
         ],
       ),
       CommonPopupMenuItem(
@@ -467,7 +454,7 @@ class _AccessViewState extends ConsumerState<AccessView>
     required List<Package> packages,
     required AccessControlProps accessControl,
     required ProcessRules processRules,
-    required Mode mode,
+    required bool showProfile,
     required bool isSearching,
   }) {
     return FutureBuilder(
@@ -501,11 +488,8 @@ class _AccessViewState extends ConsumerState<AccessView>
                   key: Key(package.packageName),
                   package: package,
                   value: _manualState(package.packageName, accessControl),
-                  profile: _profileState(
-                    package.packageName,
-                    processRules,
-                    mode,
-                  ),
+                  profile: _profileState(package.packageName, processRules),
+                  showProfile: showProfile,
                   onChanged: () => _cycleManual(package.packageName),
                 );
               },
@@ -543,12 +527,11 @@ class _AccessViewState extends ConsumerState<AccessView>
     final packages = ref.watch(packagesProvider);
     final accessControl = ref.watch(accessControlStateProvider);
     final vpnSetting = ref.watch(vpnSettingProvider);
-    final mode = ref.watch(
-      patchClashConfigProvider.select((state) => state.mode),
-    );
-    // Ignored profile rules must not rank or tick the apps either.
+    // The whitelist picks its apps on its own, and ignored profile rules must
+    // not rank or tick the apps either.
+    final showProfile = accessControl.mode != AccessControlMode.acceptSelected;
     final profileRules = ref.watch(profileProcessRulesProvider);
-    final processRules = vpnSetting.ignoreProfileProcessRules
+    final processRules = !showProfile || vpnSetting.ignoreProfileProcessRules
         ? const ProcessRules.empty()
         : profileRules;
     final searchedPackages = packages
@@ -560,12 +543,7 @@ class _AccessViewState extends ConsumerState<AccessView>
         )
         .whereMatches(query, (package) => [package.label, package.packageName])
         .toList();
-    final viewPackages = _ranked(
-      searchedPackages,
-      accessControl,
-      processRules,
-      mode,
-    );
+    final viewPackages = _ranked(searchedPackages, accessControl, processRules);
     final currentList = accessControl.currentList;
     final viewPackageNameList = viewPackages.map((e) => e.packageName).toList();
     final valueList = currentList.intersection(viewPackageNameList);
@@ -627,7 +605,7 @@ class _AccessViewState extends ConsumerState<AccessView>
                   packages: viewPackages,
                   accessControl: accessControl,
                   processRules: processRules,
-                  mode: mode,
+                  showProfile: showProfile,
                   isSearching: query.isNotEmpty,
                 ),
               ),
@@ -708,6 +686,9 @@ class PackageListItem extends StatelessWidget {
   /// What the profile's own rule says: checked sends the app DIRECT, empty
   /// sends it through a proxy, a dash names no app.
   final bool? profile;
+
+  /// The whitelist picks its apps on its own, so its profile column is gone.
+  final bool showProfile;
   final VoidCallback onChanged;
 
   const PackageListItem({
@@ -715,6 +696,7 @@ class PackageListItem extends StatelessWidget {
     required this.package,
     required this.value,
     required this.profile,
+    this.showProfile = true,
     required this.onChanged,
   });
 
@@ -745,19 +727,20 @@ class PackageListItem extends StatelessWidget {
               onChanged: (_) => onChanged(),
             ),
           ),
-          Tooltip(
-            message: appLocalizations.vpnExclusionsProfile,
-            child: GestureDetector(
-              // The box only reports what the profile says: a tap on it must
-              // not reach the row and cycle the manual mark.
-              onTap: () {},
-              child: CommonCheckBox(
-                value: profile,
-                tristate: true,
-                onChanged: null,
+          if (showProfile)
+            Tooltip(
+              message: appLocalizations.vpnExclusionsProfile,
+              child: GestureDetector(
+                // The box only reports what the profile says: a tap on it must
+                // not reach the row and cycle the manual mark.
+                onTap: () {},
+                child: CommonCheckBox(
+                  value: profile,
+                  tristate: true,
+                  onChanged: null,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

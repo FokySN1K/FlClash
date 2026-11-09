@@ -1027,9 +1027,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Введите содержимое правила",
     ),
     "installNow": MessageLookupByLibrary.simpleMessage("Установить"),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Эта система не выдаёт список установленных приложений без разрешения. Предоставьте его, чтобы настроить прокси для отдельных приложений.",
     ),
@@ -2028,9 +2029,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnExclusionsDesc": MessageLookupByLibrary.simpleMessage(
       "Исключённые приложения не входят в туннель: сеть для них работает так, будто VPN выключен.",
     ),
-    "vpnExclusionsGlobalMode": MessageLookupByLibrary.simpleMessage(
-      "Глобальный режим не смотрит на правила профиля: действуют только ваши галки.",
-    ),
     "vpnExclusionsLockdown": MessageLookupByLibrary.simpleMessage(
       "Если в Android включено «Блокировать соединения без VPN», исключённое приложение всё равно останется без сети.",
     ),
@@ -2040,7 +2038,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vpnExclusionsProfile": MessageLookupByLibrary.simpleMessage("Из профиля"),
     "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
-      "Вторая галка показывает профиль: отмеченная — правило PROCESS-NAME отправляет приложение в DIRECT, пустая — в прокси, прочерк — правила нет. Глобальный режим эти отметки не учитывает.",
+      "Вторая галка показывает профиль: отмеченная — правило PROCESS-NAME отправляет приложение в DIRECT, пустая — в прокси, прочерк — правила нет. В глобальном режиме приложение остаётся вне VPN только при отметке DIRECT.",
+    ),
+    "vpnExclusionsWhitelistMode": MessageLookupByLibrary.simpleMessage(
+      "Белый список выбирает приложения сам: отметки профиля здесь скрыты и на выбор не влияют.",
     ),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage(
       "Настройка WebDAV",

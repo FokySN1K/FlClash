@@ -1636,9 +1636,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnExclusionsDesc": MessageLookupByLibrary.simpleMessage(
       "제외된 앱은 터널에 들어가지 않습니다. VPN이 꺼진 것처럼 네트워크를 사용합니다.",
     ),
-    "vpnExclusionsGlobalMode": MessageLookupByLibrary.simpleMessage(
-      "전역 모드는 프로필 규칙을 무시하며 수동 선택만 적용됩니다.",
-    ),
     "vpnExclusionsLockdown": MessageLookupByLibrary.simpleMessage(
       "Android에서 \'VPN 없이 연결 차단\'이 켜져 있으면 제외된 앱도 네트워크를 사용할 수 없습니다.",
     ),
@@ -1648,7 +1645,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vpnExclusionsProfile": MessageLookupByLibrary.simpleMessage("프로필 규칙"),
     "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
-      "두 번째 확인란은 프로필 상태입니다. 선택됨 — PROCESS-NAME 규칙이 DIRECT로 보냄, 비어 있음 — 규칙이 프록시로 보냄, 대시 — 규칙 없음. 전역 모드에서는 이 표시가 무시됩니다.",
+      "두 번째 확인란은 프로필 상태입니다. 선택됨 — PROCESS-NAME 규칙이 DIRECT로 보냄, 비어 있음 — 규칙이 프록시로 보냄, 대시 — 규칙 없음. 전역 모드에서도 DIRECT 앱은 VPN 밖에 남습니다.",
+    ),
+    "vpnExclusionsWhitelistMode": MessageLookupByLibrary.simpleMessage(
+      "화이트리스트는 앱을 직접 선택합니다. 프로필 표시는 여기에서 숨겨지며 선택에 영향을 주지 않습니다.",
     ),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV 구성"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("화이트리스트 모드"),

@@ -296,6 +296,23 @@ class SetupAction extends _$SetupAction {
     await setRunning(true);
   }
 
+  /// The VpnService takes the app lists only when it establishes the tunnel,
+  /// so a change to them is handed to a new establishment. The Core keeps
+  /// running: only its listeners are refreshed and the tunnel is re-created.
+  Future<void> reapplyVpn() async {
+    if (!ref.read(isStartProvider) ||
+        ref.read(suspendProvider) ||
+        !ref.read(initProvider)) {
+      return;
+    }
+    final running = ref.read(runningVpnOptionsProvider)?.effective;
+    final next = (await ref.read(vpnOptionsProvider.future)).effective;
+    if (running == null || running == next) {
+      return;
+    }
+    await _listenerScheduler.run(() => _setListening(true));
+  }
+
   void _rollbackRunning(_RunRequest request) {
     if (!_isCurrent(request)) {
       return;

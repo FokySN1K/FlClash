@@ -1663,9 +1663,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnExclusionsDesc": MessageLookupByLibrary.simpleMessage(
       "除外したアプリはトンネルに入りません。VPN がオフのときと同じように通信します。",
     ),
-    "vpnExclusionsGlobalMode": MessageLookupByLibrary.simpleMessage(
-      "グローバルモードはプロファイルのルールを無視します。手動設定のみ有効です。",
-    ),
     "vpnExclusionsLockdown": MessageLookupByLibrary.simpleMessage(
       "Android で「VPN なしで接続をブロック」が有効な場合、除外したアプリも通信できません。",
     ),
@@ -1675,7 +1672,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vpnExclusionsProfile": MessageLookupByLibrary.simpleMessage("プロファイルのルール"),
     "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
-      "2 つ目のチェックはプロファイルの状態です。チェック — PROCESS-NAME ルールが DIRECT を指定、空 — ルールがプロキシを指定、ダッシュ — ルールなし。グローバルモードではこれらの表示は無効です。",
+      "2 つ目のチェックはプロファイルの状態です。チェック — PROCESS-NAME ルールが DIRECT を指定、空 — ルールがプロキシを指定、ダッシュ — ルールなし。グローバルモードでも DIRECT のアプリは VPN の外に置かれます。",
+    ),
+    "vpnExclusionsWhitelistMode": MessageLookupByLibrary.simpleMessage(
+      "ホワイトリストは独自にアプリを選びます。プロファイルの表示はここでは隠され、選択には影響しません。",
     ),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV設定"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("ホワイトリストモード"),

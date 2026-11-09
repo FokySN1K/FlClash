@@ -231,7 +231,8 @@ Future<List<String>> vpnRouteAddress(Ref ref) {
 
 /// The process rules of the applied profile, published by the setup. The
 /// access view shows what they say about an app next to the manual marks, and
-/// Global mode stops counting them.
+/// the tunnel keeps the apps they send DIRECT out of the VPN in every mode,
+/// the whitelist aside.
 @Riverpod(keepAlive: true)
 class ProfileProcessRules extends _$ProfileProcessRules {
   @override
@@ -249,16 +250,18 @@ class ProfileProcessRules extends _$ProfileProcessRules {
 /// profile itself sends DIRECT unless the profile rules are ignored. A pattern
 /// rule names its apps only through the installed list; without it an exact
 /// name still counts. Global mode routes everything through the selected
-/// proxy, so the profile rules stop counting there; a manual mark always wins,
-/// and a manual inclusion cancels a profile exclusion.
+/// proxy, so there the rule is the only thing that can keep an app out. The
+/// whitelist picks its apps on its own, so the profile adds none. A manual
+/// mark always wins, and a manual inclusion cancels a profile exclusion.
 List<String> _excludedPackages(
   VpnProps vpnSetting,
   ProcessRules processRules,
   Iterable<String> packageNames,
-  Mode mode,
 ) {
   final excluded = {...vpnSetting.excludePackages};
-  if (mode != Mode.global && !vpnSetting.ignoreProfileProcessRules) {
+  final accepts =
+      vpnSetting.accessControlProps.mode == AccessControlMode.acceptSelected;
+  if (!accepts && !vpnSetting.ignoreProfileProcessRules) {
     final names = packageNames.toList();
     if (names.isEmpty) {
       for (final entry in processRules.entries) {
@@ -290,7 +293,7 @@ Future<VpnOptions> vpnOptions(Ref ref) async {
   );
   final clashConfig = ref.watch(
     patchClashConfigProvider.select(
-      (state) => (tun: state.tun, mixedPort: state.mixedPort, mode: state.mode),
+      (state) => (tun: state.tun, mixedPort: state.mixedPort),
     ),
   );
   final vpnSetting = ref.watch(vpnSettingProvider);
@@ -314,7 +317,6 @@ Future<VpnOptions> vpnOptions(Ref ref) async {
       vpnSetting,
       processRules,
       packages.map((item) => item.packageName),
-      clashConfig.mode,
     ),
     allowBypass: vpnSetting.allowBypass,
     bypassDomain: networkSetting.bypassDomain,

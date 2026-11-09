@@ -993,9 +993,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter the rule content",
     ),
     "installNow": MessageLookupByLibrary.simpleMessage("Install"),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
     ),
@@ -1928,9 +1929,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnExclusionsDesc": MessageLookupByLibrary.simpleMessage(
       "Excluded apps never enter the tunnel: their traffic goes out as if the VPN were off.",
     ),
-    "vpnExclusionsGlobalMode": MessageLookupByLibrary.simpleMessage(
-      "Global mode ignores the profile rules: only your own marks apply.",
-    ),
     "vpnExclusionsLockdown": MessageLookupByLibrary.simpleMessage(
       "If Android\'s \"Block connections without VPN\" is on, an excluded app still cannot use the network.",
     ),
@@ -1942,7 +1940,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Profile rule",
     ),
     "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
-      "The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. Global mode ignores these marks.",
+      "The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. In Global mode only the DIRECT marks keep the app out of the VPN.",
+    ),
+    "vpnExclusionsWhitelistMode": MessageLookupByLibrary.simpleMessage(
+      "The whitelist picks its apps on its own: the profile\'s marks are hidden here and do not affect the list.",
     ),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage(
       "WebDAV configuration",

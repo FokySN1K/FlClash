@@ -1510,9 +1510,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnExclusionsDesc": MessageLookupByLibrary.simpleMessage(
       "被排除的应用不会进入隧道：它们的网络流量就像 VPN 未开启一样。",
     ),
-    "vpnExclusionsGlobalMode": MessageLookupByLibrary.simpleMessage(
-      "全局模式忽略配置文件规则：只有您自己的标记生效。",
-    ),
     "vpnExclusionsLockdown": MessageLookupByLibrary.simpleMessage(
       "如果 Android 开启了“无 VPN 时阻止连接”，被排除的应用仍然无法联网。",
     ),
@@ -1522,7 +1519,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vpnExclusionsProfile": MessageLookupByLibrary.simpleMessage("配置规则"),
     "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
-      "第二个复选框显示配置文件：勾选表示其 PROCESS-NAME 规则将应用发送到 DIRECT，未勾选表示规则将其发送到代理，横线表示配置未提及。全局模式会忽略这些标记。",
+      "第二个复选框显示配置文件：勾选表示其 PROCESS-NAME 规则将应用发送到 DIRECT，未勾选表示规则将其发送到代理，横线表示配置未提及。全局模式下只有 DIRECT 标记会让应用留在 VPN 之外。",
+    ),
+    "vpnExclusionsWhitelistMode": MessageLookupByLibrary.simpleMessage(
+      "白名单自行选择应用：配置文件标记在此处隐藏，不影响选择。",
     ),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV配置"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("白名单模式"),

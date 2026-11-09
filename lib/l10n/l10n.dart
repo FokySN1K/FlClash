@@ -8038,8 +8038,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -8228,21 +8227,21 @@ class AppLocalizations {
     );
   }
 
-  /// `The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. Global mode ignores these marks.`
+  /// `The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. In Global mode only the DIRECT marks keep the app out of the VPN.`
   String get vpnExclusionsProfileHint {
     return Intl.message(
-      'The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. Global mode ignores these marks.',
+      'The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. In Global mode only the DIRECT marks keep the app out of the VPN.',
       name: 'vpnExclusionsProfileHint',
       desc: '',
       args: [],
     );
   }
 
-  /// `Global mode ignores the profile rules: only your own marks apply.`
-  String get vpnExclusionsGlobalMode {
+  /// `The whitelist picks its apps on its own: the profile's marks are hidden here and do not affect the list.`
+  String get vpnExclusionsWhitelistMode {
     return Intl.message(
-      'Global mode ignores the profile rules: only your own marks apply.',
-      name: 'vpnExclusionsGlobalMode',
+      'The whitelist picks its apps on its own: the profile\'s marks are hidden here and do not affect the list.',
+      name: 'vpnExclusionsWhitelistMode',
       desc: '',
       args: [],
     );

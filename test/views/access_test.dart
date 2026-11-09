@@ -573,18 +573,109 @@ void main() {
       await teardownView(tester);
     });
 
-    testWidgets('global mode blanks the profile column', (tester) async {
+    testWidgets('the whitelist hides the profile column', (tester) async {
+      seedAccessControl(
+        const AccessControlProps(
+          enable: true,
+          mode: AccessControlMode.acceptSelected,
+          sort: AccessSortType.name,
+        ),
+      );
+      container
+          .read(profileProcessRulesProvider.notifier)
+          .update(ProcessRules.names({'com.example.chat': 'DIRECT'}));
+      await pumpAccessView(tester);
+
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('com.example.chat')),
+          matching: find.byType(Checkbox),
+        ),
+        findsOneWidget,
+      );
+      final labels = tester
+          .widgetList<PackageListItem>(find.byType(PackageListItem))
+          .map((item) => item.package.label)
+          .toList();
+      expect(labels, ['Browser', 'Chat']);
+
+      await teardownView(tester);
+    });
+
+    testWidgets('the settings sub menu hides the profile switch in '
+        'the whitelist', (tester) async {
+      seedAccessControl(
+        const AccessControlProps(
+          enable: true,
+          mode: AccessControlMode.acceptSelected,
+        ),
+      );
+      await pumpAccessView(tester);
+      final l10n = AppLocalizations.current;
+      Finder inMenu(Finder finder) =>
+          find.descendant(of: find.byType(CommonPopupMenu), matching: finder);
+
+      await openBarMenu(tester);
+      await tester.tap(inMenu(find.text(l10n.settings)).last);
+      await tester.pumpAndSettle();
+
+      expect(inMenu(find.text(l10n.ignoreProfileProcessRules)), findsNothing);
+      expect(inMenu(find.text(l10n.profile)), findsNothing);
+
+      await teardownView(tester);
+    });
+
+    testWidgets('global mode keeps the profile column and its marks', (
+      tester,
+    ) async {
       container
           .read(patchClashConfigProvider.notifier)
           .update((state) => state.copyWith(mode: Mode.global));
-      seedAccessControl(const AccessControlProps(enable: true));
+      seedAccessControl(
+        const AccessControlProps(enable: true, sort: AccessSortType.name),
+      );
       container
           .read(profileProcessRulesProvider.notifier)
-          .update(ProcessRules.names({'com.example.browser': 'DIRECT'}));
+          .update(ProcessRules.names({'com.example.chat': 'DIRECT'}));
       await pumpAccessView(tester);
 
-      expect(boxValue(tester, profileBox('com.example.browser')), isNull);
-      expect(boxValue(tester, manualBox('com.example.browser')), isNull);
+      expect(boxValue(tester, profileBox('com.example.chat')), isTrue);
+      expect(boxValue(tester, manualBox('com.example.chat')), isNull);
+      final labels = tester
+          .widgetList<PackageListItem>(find.byType(PackageListItem))
+          .map((item) => item.package.label)
+          .toList();
+      expect(labels, ['Chat', 'Browser']);
+
+      await teardownView(tester);
+    });
+
+    testWidgets('the legend names the whitelist instead of the profile', (
+      tester,
+    ) async {
+      seedAccessControl(
+        const AccessControlProps(
+          enable: true,
+          mode: AccessControlMode.acceptSelected,
+        ),
+      );
+      await pumpAccessView(tester);
+      final l10n = AppLocalizations.current;
+      Finder legend(String text) => find.byWidgetPredicate(
+        (widget) =>
+            widget is SelectableText &&
+            (widget.textSpan?.toPlainText() ?? '').contains(text),
+      );
+
+      await openBarMenu(tester);
+      await tester.tap(find.text(l10n.tip));
+      await tester.pumpAndSettle();
+
+      expect(legend(l10n.vpnExclusionsWhitelistMode), findsOneWidget);
+      expect(legend(l10n.vpnExclusionsProfileHint), findsNothing);
+
+      await tester.tap(find.text(l10n.cancel));
+      await tester.pumpAndSettle();
 
       await teardownView(tester);
     });

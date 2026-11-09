@@ -1061,9 +1061,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Saisissez le contenu de la règle",
     ),
     "installNow": MessageLookupByLibrary.simpleMessage("Installer"),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Ce système masque la liste des apps installées tant que l’autorisation n’est pas accordée. Accordez-la pour configurer le proxy par app.",
     ),
@@ -2088,9 +2089,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnExclusionsDesc": MessageLookupByLibrary.simpleMessage(
       "Les applications exclues n\'entrent jamais dans le tunnel : leur trafic sort comme si le VPN était désactivé.",
     ),
-    "vpnExclusionsGlobalMode": MessageLookupByLibrary.simpleMessage(
-      "Le mode global ignore les règles du profil : seules vos marques s\'appliquent.",
-    ),
     "vpnExclusionsLockdown": MessageLookupByLibrary.simpleMessage(
       "Si « Bloquer les connexions sans VPN » est activé sur Android, une application exclue ne pourra pas se connecter non plus.",
     ),
@@ -2102,7 +2100,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Règle du profil",
     ),
     "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
-      "La seconde case montre le profil : cochée, sa règle PROCESS-NAME envoie l\'application en DIRECT ; vide, la règle l\'envoie via un proxy ; un tiret, le profil ne dit rien. Le mode global ignore ces marques.",
+      "La seconde case montre le profil : cochée, sa règle PROCESS-NAME envoie l\'application en DIRECT ; vide, la règle l\'envoie via un proxy ; un tiret, le profil ne dit rien. En mode global, seules les marques DIRECT excluent l\'application du VPN.",
+    ),
+    "vpnExclusionsWhitelistMode": MessageLookupByLibrary.simpleMessage(
+      "La liste blanche choisit ses applications elle-même : les marques du profil sont masquées ici et n\'affectent pas la liste.",
     ),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage(
       "Configuration WebDAV",

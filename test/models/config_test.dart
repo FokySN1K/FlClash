@@ -381,7 +381,11 @@ void main() {
       expect(props.ipv6, false);
       expect(props.allowBypass, true);
       expect(props.dnsHijacking, false);
-      expect(props.accessControlProps.enable, false);
+      expect(props.accessControlProps.enable, true);
+    });
+
+    test('the class default leaves access control off for the tunnel', () {
+      expect(const AccessControlProps().enable, false);
     });
 
     test('fromJson handles null', () {

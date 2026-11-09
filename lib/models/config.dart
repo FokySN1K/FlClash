@@ -85,7 +85,13 @@ const defaultAuthenticationProps = AuthenticationProps();
 const defaultNetworkProps = NetworkProps();
 const defaultProxiesStyleProps = ProxiesStyleProps();
 const defaultWindowProps = WindowProps();
-const defaultAccessControlProps = AccessControlProps();
+
+/// A new configuration starts with access control on: the default
+/// blacklist mode and an empty list carry every app, so nothing changes until
+/// a mark is made, while the screen itself says on. The class default stays
+/// off: the tunnel options spell "no access control" out with it, and a
+/// configuration that saved the switch off keeps it off.
+const defaultAccessControlProps = AccessControlProps(enable: true);
 const defaultThemeProps = ThemeProps(primaryColor: defaultPrimaryColor);
 
 HotKeyAction _defaultHotKeyAction(HotAction action, PhysicalKeyboardKey key) {

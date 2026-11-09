@@ -120,7 +120,7 @@ void main() {
     expect(await excludedPackages(), ['com.example.chat']);
   });
 
-  test('global mode stops counting the profile rules', () async {
+  test('global mode keeps the profile DIRECT apps out too', () async {
     container
         .read(patchClashConfigProvider.notifier)
         .update((state) => state.copyWith(mode: Mode.global));
@@ -128,7 +128,45 @@ void main() {
         .read(profileProcessRulesProvider.notifier)
         .update(ProcessRules.names({'com.example.direct': 'DIRECT'}));
 
+    expect(await excludedPackages(), ['com.example.direct']);
+  });
+
+  test('the whitelist picks its apps on its own', () async {
+    container
+        .read(vpnSettingProvider.notifier)
+        .update(
+          (state) => state.copyWith(
+            accessControlProps: const AccessControlProps(
+              enable: true,
+              mode: AccessControlMode.acceptSelected,
+            ),
+            includePackages: const ['com.example.allowed'],
+          ),
+        );
+    container
+        .read(profileProcessRulesProvider.notifier)
+        .update(ProcessRules.names({'com.example.direct': 'DIRECT'}));
+
     expect(await excludedPackages(), isEmpty);
+  });
+
+  test('the whitelist keeps a manual exclusion', () async {
+    container
+        .read(vpnSettingProvider.notifier)
+        .update(
+          (state) => state.copyWith(
+            accessControlProps: const AccessControlProps(
+              enable: true,
+              mode: AccessControlMode.acceptSelected,
+            ),
+            excludePackages: const ['com.example.chat'],
+          ),
+        );
+    container
+        .read(profileProcessRulesProvider.notifier)
+        .update(ProcessRules.names({'com.example.direct': 'DIRECT'}));
+
+    expect(await excludedPackages(), ['com.example.chat']);
   });
 
   test('a manual inclusion cancels a profile exclusion', () async {
@@ -145,20 +183,26 @@ void main() {
     expect(await excludedPackages(), isEmpty);
   });
 
-  test('a manual exclusion wins in every mode', () async {
-    container
-        .read(patchClashConfigProvider.notifier)
-        .update((state) => state.copyWith(mode: Mode.global));
-    container
-        .read(vpnSettingProvider.notifier)
-        .update(
-          (state) =>
-              state.copyWith(excludePackages: const ['com.example.chat']),
-        );
-    container
-        .read(profileProcessRulesProvider.notifier)
-        .update(ProcessRules.names({'com.example.direct': 'DIRECT'}));
+  test(
+    'a manual exclusion stands beside the profile rule in global mode',
+    () async {
+      container
+          .read(patchClashConfigProvider.notifier)
+          .update((state) => state.copyWith(mode: Mode.global));
+      container
+          .read(vpnSettingProvider.notifier)
+          .update(
+            (state) =>
+                state.copyWith(excludePackages: const ['com.example.chat']),
+          );
+      container
+          .read(profileProcessRulesProvider.notifier)
+          .update(ProcessRules.names({'com.example.direct': 'DIRECT'}));
 
-    expect(await excludedPackages(), ['com.example.chat']);
-  });
+      expect(await excludedPackages(), [
+        'com.example.chat',
+        'com.example.direct',
+      ]);
+    },
+  );
 }

@@ -15,10 +15,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 class _RestartRecordingSetupAction extends SetupAction {
   int restarts = 0;
+  int reapplies = 0;
 
   @override
   Future<void> restartVpn() async {
     restarts++;
+  }
+
+  @override
+  Future<void> reapplyVpn() async {
+    reapplies++;
   }
 }
 
@@ -176,6 +182,79 @@ void main() {
     await settle(tester);
 
     expect(tip(), findsNothing);
+    await drainTimers(tester);
+  });
+
+  testWidgets('a changed app list re-creates the tunnel on its own', (
+    tester,
+  ) async {
+    await pumpVpnManager(tester);
+    startService();
+
+    updateVpn(
+      (state) => state.copyWith(
+        accessControlProps: state.accessControlProps.copyWith(
+          rejectList: const ['com.example.chat'],
+        ),
+      ),
+    );
+    await settle(tester);
+    expect(tip(), findsNothing);
+    expect(setupAction.reapplies, 0);
+
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump();
+    expect(setupAction.reapplies, 1);
+
+    await drainTimers(tester);
+  });
+
+  testWidgets('a profile rule that moves an app out re-creates the '
+      'tunnel on its own', (tester) async {
+    await pumpVpnManager(tester);
+    startService();
+
+    container
+        .read(profileProcessRulesProvider.notifier)
+        .update(ProcessRules.names({'com.example.direct': 'DIRECT'}));
+    await settle(tester);
+    expect(tip(), findsNothing);
+
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump();
+    expect(setupAction.reapplies, 1);
+
+    await drainTimers(tester);
+  });
+
+  testWidgets('the tunnel waits for the marks to come to rest', (tester) async {
+    await pumpVpnManager(tester);
+    startService();
+
+    updateVpn(
+      (state) => state.copyWith(
+        accessControlProps: state.accessControlProps.copyWith(
+          rejectList: const ['com.example.chat'],
+        ),
+      ),
+    );
+    await settle(tester);
+    await tester.pump(const Duration(seconds: 1));
+    updateVpn(
+      (state) => state.copyWith(
+        accessControlProps: state.accessControlProps.copyWith(
+          rejectList: const ['com.example.chat', 'com.example.browser'],
+        ),
+      ),
+    );
+    await settle(tester);
+    await tester.pump(const Duration(seconds: 1));
+    expect(setupAction.reapplies, 0);
+
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump();
+    expect(setupAction.reapplies, 1);
+
     await drainTimers(tester);
   });
 
