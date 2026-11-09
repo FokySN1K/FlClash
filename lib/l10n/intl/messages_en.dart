@@ -200,38 +200,41 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m71(count, label) =>
       "${Intl.plural(count, one: '1 proxy group', other: '${label} proxy groups')}";
 
-  static String m72(count, label) =>
+  static String m72(fingerprint, reason) =>
+      "X25519MLKEM768 could not be added to the ${fingerprint} fingerprint, REALITY keeps it as recorded: ${reason}";
+
+  static String m73(count, label) =>
       "${Intl.plural(count, one: '1 rule', other: '${label} rules')}";
 
-  static String m73(appName) => "${appName} (Safe mode)";
+  static String m74(appName) => "${appName} (Safe mode)";
 
-  static String m74(count) =>
+  static String m75(count) =>
       "${Intl.plural(count, one: '1 second', other: '${count} seconds')}";
 
-  static String m75(count) => "${count} in effect";
-
-  static String m76(count) =>
-      "${Intl.plural(count, one: '1 issue', other: '${count} issues')}";
+  static String m76(count) => "${count} in effect";
 
   static String m77(count) =>
+      "${Intl.plural(count, one: '1 issue', other: '${count} issues')}";
+
+  static String m78(count) =>
       "${Intl.plural(count, one: '1 setting', other: '${count} settings')}";
 
-  static String m78(link) => "No proxy could be read from ${link}";
+  static String m79(link) => "No proxy could be read from ${link}";
 
-  static String m79(label) => "${label} must be a single item";
+  static String m80(label) => "${label} must be a single item";
 
-  static String m80(value) => "Peak ${value}";
+  static String m81(value) => "Peak ${value}";
 
-  static String m81(value) => "Total ${value}";
+  static String m82(value) => "Total ${value}";
 
-  static String m82(transport) => "${transport} Headers";
+  static String m83(transport) => "${transport} Headers";
 
-  static String m83(label) => "${label} must be a URL";
+  static String m84(label) => "${label} must be a URL";
 
-  static String m84(count) =>
+  static String m85(count) =>
       "${Intl.plural(count, one: '1 year ago', other: '${count} years ago')}";
 
-  static String m85(count) => "${Intl.plural(count, other: '${count}y ago')}";
+  static String m86(count) => "${Intl.plural(count, other: '${count}y ago')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -812,7 +815,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "expireTime": MessageLookupByLibrary.simpleMessage("Expiration time"),
     "exportFile": MessageLookupByLibrary.simpleMessage("Export file"),
     "exportLogs": MessageLookupByLibrary.simpleMessage("Export logs"),
-    "shareLogs": MessageLookupByLibrary.simpleMessage("Share logs"),
     "exportSuccess": MessageLookupByLibrary.simpleMessage("Export successful"),
     "extend": MessageLookupByLibrary.simpleMessage("Extend"),
     "extendMode": MessageLookupByLibrary.simpleMessage("Extend mode"),
@@ -946,6 +948,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "ignoreBatteryOptimization": MessageLookupByLibrary.simpleMessage(
       "Ignore battery optimization",
     ),
+    "ignoreProfileProcessRules": MessageLookupByLibrary.simpleMessage(
+      "Ignore PROCESS-NAME from profile",
+    ),
+    "ignoreProfileProcessRulesDesc": MessageLookupByLibrary.simpleMessage(
+      "PROCESS-NAME rules from the profile no longer exclude apps from the VPN: only your own marks apply.",
+    ),
     "import": MessageLookupByLibrary.simpleMessage("Import"),
     "importConfigInvalid": MessageLookupByLibrary.simpleMessage(
       "This file is not a config that can be imported",
@@ -982,9 +990,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter the rule content",
     ),
     "installNow": MessageLookupByLibrary.simpleMessage("Install"),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
     ),
@@ -1417,9 +1426,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "quickActions": MessageLookupByLibrary.simpleMessage("Quick actions"),
     "quickEdit": MessageLookupByLibrary.simpleMessage("Quick edit"),
-    "realityHelloFallback": MessageLookupByLibrary.simpleMessage(
-      "X25519MLKEM768 could not be added to the {fingerprint} fingerprint, REALITY keeps it as recorded: {reason}",
-    ),
+    "realityHelloFallback": m72,
     "recentRequests": MessageLookupByLibrary.simpleMessage("Recent requests"),
     "recommendedIcons": MessageLookupByLibrary.simpleMessage("Suggested"),
     "recordType": MessageLookupByLibrary.simpleMessage("Record type"),
@@ -1637,12 +1644,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "The rule must start with a supported type, such as DOMAIN,example.com,DIRECT",
     ),
     "rules": MessageLookupByLibrary.simpleMessage("Rules"),
-    "rulesCount": m72,
+    "rulesCount": m73,
     "runTime": MessageLookupByLibrary.simpleMessage("Run time"),
     "running": MessageLookupByLibrary.simpleMessage("Running"),
     "runtimeConfig": MessageLookupByLibrary.simpleMessage("Runtime config"),
     "safeMode": MessageLookupByLibrary.simpleMessage("Safe mode"),
-    "safeModeAppTitle": m73,
+    "safeModeAppTitle": m74,
     "saturation": MessageLookupByLibrary.simpleMessage("Saturation"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "saveChanges": MessageLookupByLibrary.simpleMessage("Save the changes?"),
@@ -1655,9 +1662,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "seconds": MessageLookupByLibrary.simpleMessage("seconds"),
-    "secondsCount": m74,
+    "secondsCount": m75,
     "secretKey": MessageLookupByLibrary.simpleMessage("Key"),
-    "sectionsInEffect": m75,
+    "sectionsInEffect": m76,
     "select": MessageLookupByLibrary.simpleMessage("Select"),
     "selectAll": MessageLookupByLibrary.simpleMessage("Select all"),
     "selectRuleSet": MessageLookupByLibrary.simpleMessage(
@@ -1690,7 +1697,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Scan the code with your phone\'s camera and paste the link on the page that opens. Both devices need to be on the same network.",
     ),
     "server": MessageLookupByLibrary.simpleMessage("Server"),
-    "serviceAbnormalCount": m76,
+    "serviceAbnormalCount": m77,
     "serviceAllAvailable": MessageLookupByLibrary.simpleMessage(
       "All available",
     ),
@@ -1720,11 +1727,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "settingEntries": MessageLookupByLibrary.simpleMessage("settings"),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
-    "settingsCount": m77,
-    "shareLinkUnreadable": m78,
+    "settingsCount": m78,
+    "shareLinkUnreadable": m79,
     "shareLinksInvalid": MessageLookupByLibrary.simpleMessage(
       "No proxy could be read from the links",
     ),
+    "shareLogs": MessageLookupByLibrary.simpleMessage("Share logs"),
     "shareQrcodeTip": MessageLookupByLibrary.simpleMessage(
       "Scan with FlClash on another device to import this profile.",
     ),
@@ -1748,7 +1756,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "singleShareLinkOnly": MessageLookupByLibrary.simpleMessage(
       "Enter one link here; edit several from the quick edit of the list",
     ),
-    "singleValueTip": m79,
+    "singleValueTip": m80,
     "size": MessageLookupByLibrary.simpleMessage("Size"),
     "skipCertVerify": MessageLookupByLibrary.simpleMessage(
       "Skip certificate verification",
@@ -1857,11 +1865,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("Uploaded"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("TProxy port"),
     "traffic": MessageLookupByLibrary.simpleMessage("Traffic"),
-    "trafficPeak": m80,
-    "trafficTotal": m81,
+    "trafficPeak": m81,
+    "trafficTotal": m82,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("Traffic usage"),
     "transport": MessageLookupByLibrary.simpleMessage("Transport"),
-    "transportHeaders": m82,
+    "transportHeaders": m83,
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(
       "TUN could not be authorized, so it was turned off.",
@@ -1894,7 +1902,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("Upload"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Upload bandwidth"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m83,
+    "urlTip": m84,
     "useHosts": MessageLookupByLibrary.simpleMessage("Use hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("Use system hosts"),
     "usedShort": MessageLookupByLibrary.simpleMessage("used"),
@@ -1914,6 +1922,26 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnEnableDesc": MessageLookupByLibrary.simpleMessage(
       "VPN routes all system traffic through VpnService automatically.",
     ),
+    "vpnExclusions": MessageLookupByLibrary.simpleMessage("App exclusions"),
+    "vpnExclusionsDesc": MessageLookupByLibrary.simpleMessage(
+      "Excluded apps never enter the tunnel: their traffic goes out as if the VPN were off.",
+    ),
+    "vpnExclusionsGlobalMode": MessageLookupByLibrary.simpleMessage(
+      "Global mode ignores the profile rules: only your own marks apply.",
+    ),
+    "vpnExclusionsLockdown": MessageLookupByLibrary.simpleMessage(
+      "If Android\'s \"Block connections without VPN\" is on, an excluded app still cannot use the network.",
+    ),
+    "vpnExclusionsManual": MessageLookupByLibrary.simpleMessage("Your choice"),
+    "vpnExclusionsManualHint": MessageLookupByLibrary.simpleMessage(
+      "The first check box is your own choice: empty — against the exclusion, the app stays inside; checked — keep the app out of the VPN; a dash — no choice. Your choice beats the profile\'s rule.",
+    ),
+    "vpnExclusionsProfile": MessageLookupByLibrary.simpleMessage(
+      "Profile rule",
+    ),
+    "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
+      "The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. Global mode ignores these marks.",
+    ),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage(
       "WebDAV configuration",
     ),
@@ -1922,8 +1950,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "Write to system also sets the system clock; Android ignores it.",
     ),
-    "yearsAgo": m84,
-    "yearsAgoShort": m85,
+    "yearsAgo": m85,
+    "yearsAgoShort": m86,
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Simplified Chinese"),
   };

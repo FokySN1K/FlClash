@@ -7,6 +7,7 @@ extension on GeneralOverrideKey {
     GeneralOverrideKey.tcpConcurrent => l.tcpConcurrent,
     GeneralOverrideKey.ipv6 => 'IPv6',
     GeneralOverrideKey.geodataLoader => l.geodataLoader,
+    GeneralOverrideKey.findProcessMode => l.findProcessMode,
   };
 }
 
@@ -88,6 +89,14 @@ class _GeneralOverrideSpec
             geodataLoader: value
                 ? GeodataLoader.memconservative
                 : GeodataLoader.standard,
+          ),
+        ),
+        GeneralOverrideKey.findProcessMode => ToggleOverrideField(
+          (config) => config.findProcessMode == FindProcessMode.always,
+          (config, value) => config.copyWith(
+            findProcessMode: value
+                ? FindProcessMode.always
+                : FindProcessMode.off,
           ),
         ),
       };

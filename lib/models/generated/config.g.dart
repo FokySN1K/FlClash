@@ -230,6 +230,18 @@ _VpnProps _$VpnPropsFromJson(Map<String, dynamic> json) => _VpnProps(
       : AccessControlProps.fromJson(
           json['accessControlProps'] as Map<String, dynamic>,
         ),
+  excludePackages:
+      (json['excludePackages'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      const [],
+  includePackages:
+      (json['includePackages'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      const [],
+  ignoreProfileProcessRules:
+      json['ignoreProfileProcessRules'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$VpnPropsToJson(_VpnProps instance) => <String, dynamic>{
@@ -239,6 +251,9 @@ Map<String, dynamic> _$VpnPropsToJson(_VpnProps instance) => <String, dynamic>{
   'allowBypass': instance.allowBypass,
   'dnsHijacking': instance.dnsHijacking,
   'accessControlProps': instance.accessControlProps,
+  'excludePackages': instance.excludePackages,
+  'includePackages': instance.includePackages,
+  'ignoreProfileProcessRules': instance.ignoreProfileProcessRules,
 };
 
 _AuthenticationProps _$AuthenticationPropsFromJson(Map<String, dynamic> json) =>

@@ -178,34 +178,37 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m71(count, label) =>
       "${Intl.plural(count, other: 'プロキシグループ ${label} 件')}";
 
-  static String m72(count, label) =>
+  static String m72(fingerprint, reason) =>
+      "${fingerprint} 指紋に X25519MLKEM768 を追加できなかったため、REALITY はそのまま使用します: ${reason}";
+
+  static String m73(count, label) =>
       "${Intl.plural(count, other: 'ルール ${label} 件')}";
 
-  static String m73(appName) => "${appName}（セーフモード）";
+  static String m74(appName) => "${appName}（セーフモード）";
 
-  static String m74(count) => "${count} 秒";
+  static String m75(count) => "${count} 秒";
 
-  static String m75(count) => "${count} 件が有効";
+  static String m76(count) => "${count} 件が有効";
 
-  static String m76(count) => "${count} 件に問題";
+  static String m77(count) => "${count} 件に問題";
 
-  static String m77(count) => "設定 ${count} 件";
+  static String m78(count) => "設定 ${count} 件";
 
-  static String m78(link) => "${link} からプロキシを読み取れませんでした";
+  static String m79(link) => "${link} からプロキシを読み取れませんでした";
 
-  static String m79(label) => "${label}は1項目のみ指定できます";
+  static String m80(label) => "${label}は1項目のみ指定できます";
 
-  static String m80(value) => "ピーク ${value}";
+  static String m81(value) => "ピーク ${value}";
 
-  static String m81(value) => "累計 ${value}";
+  static String m82(value) => "累計 ${value}";
 
-  static String m82(transport) => "${transport} リクエストヘッダー";
+  static String m83(transport) => "${transport} リクエストヘッダー";
 
-  static String m83(label) => "${label}はURLである必要があります";
-
-  static String m84(count) => "${count} 年前";
+  static String m84(label) => "${label}はURLである必要があります";
 
   static String m85(count) => "${count} 年前";
+
+  static String m86(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -686,7 +689,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "expireTime": MessageLookupByLibrary.simpleMessage("有効期限"),
     "exportFile": MessageLookupByLibrary.simpleMessage("ファイルをエクスポート"),
     "exportLogs": MessageLookupByLibrary.simpleMessage("ログをエクスポート"),
-    "shareLogs": MessageLookupByLibrary.simpleMessage("ログを共有"),
     "exportSuccess": MessageLookupByLibrary.simpleMessage("エクスポートが完了しました"),
     "extend": MessageLookupByLibrary.simpleMessage("拡張"),
     "extendMode": MessageLookupByLibrary.simpleMessage("拡張モード"),
@@ -801,6 +803,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "iconUrl": MessageLookupByLibrary.simpleMessage("アイコンURL"),
     "ignoreBatteryOptimization": MessageLookupByLibrary.simpleMessage(
       "電池の最適化を無視",
+    ),
+    "ignoreProfileProcessRules": MessageLookupByLibrary.simpleMessage(
+      "プロファイルの PROCESS-NAME を無視",
+    ),
+    "ignoreProfileProcessRulesDesc": MessageLookupByLibrary.simpleMessage(
+      "プロファイルの PROCESS-NAME ルールはアプリをトンネルから除外しなくなり、手動のチェックだけが適用されます。",
     ),
     "import": MessageLookupByLibrary.simpleMessage("インポート"),
     "importConfigInvalid": MessageLookupByLibrary.simpleMessage(
@@ -1216,9 +1224,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "quickActions": MessageLookupByLibrary.simpleMessage("クイック操作"),
     "quickEdit": MessageLookupByLibrary.simpleMessage("クイック編集"),
-    "realityHelloFallback": MessageLookupByLibrary.simpleMessage(
-      "{fingerprint} 指紋に X25519MLKEM768 を追加できなかったため、REALITY はそのまま使用します: {reason}",
-    ),
+    "realityHelloFallback": m72,
     "recentRequests": MessageLookupByLibrary.simpleMessage("最近のリクエスト"),
     "recommendedIcons": MessageLookupByLibrary.simpleMessage("おすすめ"),
     "recordType": MessageLookupByLibrary.simpleMessage("レコードタイプ"),
@@ -1406,12 +1412,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "ルールは対応する種類で始めてください。例：DOMAIN,example.com,DIRECT",
     ),
     "rules": MessageLookupByLibrary.simpleMessage("ルール"),
-    "rulesCount": m72,
+    "rulesCount": m73,
     "runTime": MessageLookupByLibrary.simpleMessage("稼働時間"),
     "running": MessageLookupByLibrary.simpleMessage("実行中"),
     "runtimeConfig": MessageLookupByLibrary.simpleMessage("ランタイム設定"),
     "safeMode": MessageLookupByLibrary.simpleMessage("セーフモード"),
-    "safeModeAppTitle": m73,
+    "safeModeAppTitle": m74,
     "saturation": MessageLookupByLibrary.simpleMessage("彩度"),
     "save": MessageLookupByLibrary.simpleMessage("保存"),
     "saveChanges": MessageLookupByLibrary.simpleMessage("変更を保存しますか？"),
@@ -1422,9 +1428,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "scrollToSelected": MessageLookupByLibrary.simpleMessage("選択項目へスクロール"),
     "search": MessageLookupByLibrary.simpleMessage("検索"),
     "seconds": MessageLookupByLibrary.simpleMessage("秒"),
-    "secondsCount": m74,
+    "secondsCount": m75,
     "secretKey": MessageLookupByLibrary.simpleMessage("キー"),
-    "sectionsInEffect": m75,
+    "sectionsInEffect": m76,
     "select": MessageLookupByLibrary.simpleMessage("選択"),
     "selectAll": MessageLookupByLibrary.simpleMessage("すべて選択"),
     "selectRuleSet": MessageLookupByLibrary.simpleMessage("ルールセットを選択してください"),
@@ -1455,7 +1461,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "スマートフォンのカメラでコードをスキャンし、開いたページにリンクを貼り付けてください。両方のデバイスを同じネットワークに接続する必要があります。",
     ),
     "server": MessageLookupByLibrary.simpleMessage("サーバー"),
-    "serviceAbnormalCount": m76,
+    "serviceAbnormalCount": m77,
     "serviceAllAvailable": MessageLookupByLibrary.simpleMessage("すべて利用可能"),
     "serviceAvailable": MessageLookupByLibrary.simpleMessage("利用可能"),
     "serviceBlocked": MessageLookupByLibrary.simpleMessage("ブロック済み"),
@@ -1477,11 +1483,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "serviceUnsupportedRegion": MessageLookupByLibrary.simpleMessage("対象外の地域"),
     "settingEntries": MessageLookupByLibrary.simpleMessage("設定項目"),
     "settings": MessageLookupByLibrary.simpleMessage("設定"),
-    "settingsCount": m77,
-    "shareLinkUnreadable": m78,
+    "settingsCount": m78,
+    "shareLinkUnreadable": m79,
     "shareLinksInvalid": MessageLookupByLibrary.simpleMessage(
       "リンクからプロキシを読み取れませんでした",
     ),
+    "shareLogs": MessageLookupByLibrary.simpleMessage("ログを共有"),
     "shareQrcodeTip": MessageLookupByLibrary.simpleMessage(
       "別のデバイスの FlClash でスキャンすると、このプロファイルをインポートできます。",
     ),
@@ -1505,7 +1512,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "singleShareLinkOnly": MessageLookupByLibrary.simpleMessage(
       "ここにはリンクを 1 つだけ入力してください。複数の場合は一覧のクイック編集を使ってください",
     ),
-    "singleValueTip": m79,
+    "singleValueTip": m80,
     "size": MessageLookupByLibrary.simpleMessage("サイズ"),
     "skipCertVerify": MessageLookupByLibrary.simpleMessage("証明書の検証をスキップ"),
     "skipDomain": MessageLookupByLibrary.simpleMessage("スキップするドメイン"),
@@ -1598,11 +1605,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("アップロード量"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("TProxyポート"),
     "traffic": MessageLookupByLibrary.simpleMessage("通信量"),
-    "trafficPeak": m80,
-    "trafficTotal": m81,
+    "trafficPeak": m81,
+    "trafficTotal": m82,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("トラフィック統計"),
     "transport": MessageLookupByLibrary.simpleMessage("トランスポート"),
-    "transportHeaders": m82,
+    "transportHeaders": m83,
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(
       "TUN の権限を取得できなかったため、オフにしました。",
@@ -1631,7 +1638,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("アップロード帯域幅"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m83,
+    "urlTip": m84,
     "useHosts": MessageLookupByLibrary.simpleMessage("Hostsを使用"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("システムのHostsを使用"),
     "usedShort": MessageLookupByLibrary.simpleMessage("使用済み"),
@@ -1649,14 +1656,32 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnEnableDesc": MessageLookupByLibrary.simpleMessage(
       "VPN は VpnService でシステムの全トラフィックを自動的にルーティングします。",
     ),
+    "vpnExclusions": MessageLookupByLibrary.simpleMessage("アプリの除外"),
+    "vpnExclusionsDesc": MessageLookupByLibrary.simpleMessage(
+      "除外したアプリはトンネルに入りません。VPN がオフのときと同じように通信します。",
+    ),
+    "vpnExclusionsGlobalMode": MessageLookupByLibrary.simpleMessage(
+      "グローバルモードはプロファイルのルールを無視します。手動設定のみ有効です。",
+    ),
+    "vpnExclusionsLockdown": MessageLookupByLibrary.simpleMessage(
+      "Android で「VPN なしで接続をブロック」が有効な場合、除外したアプリも通信できません。",
+    ),
+    "vpnExclusionsManual": MessageLookupByLibrary.simpleMessage("手動設定"),
+    "vpnExclusionsManualHint": MessageLookupByLibrary.simpleMessage(
+      "1 つ目のチェックは手動設定です。空 — 除外に反対（アプリは VPN 内に残る）、チェック — アプリを VPN の外に出す、ダッシュ — 未設定。手動設定はプロファイルのルールより優先されます。",
+    ),
+    "vpnExclusionsProfile": MessageLookupByLibrary.simpleMessage("プロファイルのルール"),
+    "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
+      "2 つ目のチェックはプロファイルの状態です。チェック — PROCESS-NAME ルールが DIRECT を指定、空 — ルールがプロキシを指定、ダッシュ — ルールなし。グローバルモードではこれらの表示は無効です。",
+    ),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV設定"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("ホワイトリストモード"),
     "writeToSystem": MessageLookupByLibrary.simpleMessage("システムに書き込む"),
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "システムに書き込むを有効にするとシステムクロックも設定します。Android では無視されます。",
     ),
-    "yearsAgo": m84,
-    "yearsAgoShort": m85,
+    "yearsAgo": m85,
+    "yearsAgoShort": m86,
     "yes": MessageLookupByLibrary.simpleMessage("はい"),
     "zhCN": MessageLookupByLibrary.simpleMessage("簡体字中国語"),
   };

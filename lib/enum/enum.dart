@@ -419,7 +419,8 @@ enum GeneralOverrideKey with OverrideKey {
   unifiedDelay('unified-delay'),
   tcpConcurrent('tcp-concurrent'),
   ipv6('ipv6'),
-  geodataLoader('geodata-loader');
+  geodataLoader('geodata-loader'),
+  findProcessMode('find-process-mode');
 
   const GeneralOverrideKey(this.path);
 
@@ -883,7 +884,7 @@ enum Language { yaml, javaScript, json }
 
 enum ScrollPositionCacheKey { proxiesTabList }
 
-enum QueryTag { proxies, access }
+enum QueryTag { proxies, access, exclusions }
 
 enum LoadingTag {
   profiles,

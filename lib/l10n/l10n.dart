@@ -2936,6 +2936,11 @@ class AppLocalizations {
     return Intl.message('Export logs', name: 'exportLogs', desc: '', args: []);
   }
 
+  /// `Share logs`
+  String get shareLogs {
+    return Intl.message('Share logs', name: 'shareLogs', desc: '', args: []);
+  }
+
   /// `Export successful`
   String get exportSuccess {
     return Intl.message(
@@ -8033,8 +8038,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -8173,9 +8177,104 @@ class AppLocalizations {
     );
   }
 
-  /// `Share logs`
-  String get shareLogs {
-    return Intl.message('Share logs', name: 'shareLogs', desc: '', args: []);
+  /// `App exclusions`
+  String get vpnExclusions {
+    return Intl.message(
+      'App exclusions',
+      name: 'vpnExclusions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Excluded apps never enter the tunnel: their traffic goes out as if the VPN were off.`
+  String get vpnExclusionsDesc {
+    return Intl.message(
+      'Excluded apps never enter the tunnel: their traffic goes out as if the VPN were off.',
+      name: 'vpnExclusionsDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your choice`
+  String get vpnExclusionsManual {
+    return Intl.message(
+      'Your choice',
+      name: 'vpnExclusionsManual',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile rule`
+  String get vpnExclusionsProfile {
+    return Intl.message(
+      'Profile rule',
+      name: 'vpnExclusionsProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The first check box is your own choice: empty — against the exclusion, the app stays inside; checked — keep the app out of the VPN; a dash — no choice. Your choice beats the profile's rule.`
+  String get vpnExclusionsManualHint {
+    return Intl.message(
+      'The first check box is your own choice: empty — against the exclusion, the app stays inside; checked — keep the app out of the VPN; a dash — no choice. Your choice beats the profile\'s rule.',
+      name: 'vpnExclusionsManualHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. Global mode ignores these marks.`
+  String get vpnExclusionsProfileHint {
+    return Intl.message(
+      'The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. Global mode ignores these marks.',
+      name: 'vpnExclusionsProfileHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Global mode ignores the profile rules: only your own marks apply.`
+  String get vpnExclusionsGlobalMode {
+    return Intl.message(
+      'Global mode ignores the profile rules: only your own marks apply.',
+      name: 'vpnExclusionsGlobalMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If Android's "Block connections without VPN" is on, an excluded app still cannot use the network.`
+  String get vpnExclusionsLockdown {
+    return Intl.message(
+      'If Android\'s "Block connections without VPN" is on, an excluded app still cannot use the network.',
+      name: 'vpnExclusionsLockdown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ignore PROCESS-NAME from profile`
+  String get ignoreProfileProcessRules {
+    return Intl.message(
+      'Ignore PROCESS-NAME from profile',
+      name: 'ignoreProfileProcessRules',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PROCESS-NAME rules from the profile no longer exclude apps from the VPN: only your own marks apply.`
+  String get ignoreProfileProcessRulesDesc {
+    return Intl.message(
+      'PROCESS-NAME rules from the profile no longer exclude apps from the VPN: only your own marks apply.',
+      name: 'ignoreProfileProcessRulesDesc',
+      desc: '',
+      args: [],
+    );
   }
 }
 

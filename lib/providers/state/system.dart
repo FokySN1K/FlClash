@@ -229,6 +229,44 @@ Future<List<String>> vpnRouteAddress(Ref ref) {
   return routes.vpnRouteAddress(bypassPrivateRoute: bypassPrivateRoute);
 }
 
+/// The targets the applied profile's own `PROCESS-NAME` rules give the apps,
+/// published by the setup. The exclusion view shows it next to the manual
+/// marks, and Global mode stops counting it.
+@Riverpod(keepAlive: true)
+class ProfileProcessRules extends _$ProfileProcessRules {
+  @override
+  Map<String, String> build() => const {};
+
+  void update(Map<String, String> value) {
+    if (const MapEquality<String, String>().equals(state, value)) {
+      return;
+    }
+    state = value;
+  }
+}
+
+/// The apps the tunnel leaves alone: the manual exclusions, plus the apps the
+/// profile itself sends DIRECT unless the profile rules are ignored. Global
+/// mode routes everything through the selected proxy, so the profile rules stop
+/// counting there; a manual mark always wins, and a manual inclusion cancels a
+/// profile exclusion.
+List<String> _excludedPackages(
+  VpnProps vpnSetting,
+  Map<String, String> processRules,
+  Mode mode,
+) {
+  final excluded = {...vpnSetting.excludePackages};
+  if (mode != Mode.global && !vpnSetting.ignoreProfileProcessRules) {
+    for (final entry in processRules.entries) {
+      if (entry.value == RuleTarget.DIRECT.value) {
+        excluded.add(entry.key);
+      }
+    }
+  }
+  excluded.removeAll(vpnSetting.includePackages);
+  return excluded.toList()..sort();
+}
+
 @Riverpod(keepAlive: true)
 Future<VpnOptions> vpnOptions(Ref ref) async {
   final networkSetting = ref.watch(
@@ -241,10 +279,11 @@ Future<VpnOptions> vpnOptions(Ref ref) async {
   );
   final clashConfig = ref.watch(
     patchClashConfigProvider.select(
-      (state) => (tun: state.tun, mixedPort: state.mixedPort),
+      (state) => (tun: state.tun, mixedPort: state.mixedPort, mode: state.mode),
     ),
   );
   final vpnSetting = ref.watch(vpnSettingProvider);
+  final processRules = ref.watch(profileProcessRulesProvider);
   final safeMode = ref.watch(safeModeProvider);
   final routeAddress = ref.watch(vpnRouteAddressProvider.future);
   final tun = clashConfig.tun;
@@ -259,6 +298,11 @@ Future<VpnOptions> vpnOptions(Ref ref) async {
     ipv6: vpnSetting.ipv6,
     dnsHijacking: vpnSetting.dnsHijacking,
     accessControlProps: vpnSetting.accessControlProps,
+    excludePackages: _excludedPackages(
+      vpnSetting,
+      processRules,
+      clashConfig.mode,
+    ),
     allowBypass: vpnSetting.allowBypass,
     bypassDomain: networkSetting.bypassDomain,
     routeAddress: await routeAddress,

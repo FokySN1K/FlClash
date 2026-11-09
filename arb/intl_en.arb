@@ -977,5 +977,15 @@
   "alreadyInLocalProxies": "{name} is already in local proxies",
   "suspiciousNode": "Suspicious node",
   "groupRecovering": "The group is re-checking its nodes",
-  "realityHelloFallback": "X25519MLKEM768 could not be added to the {fingerprint} fingerprint, REALITY keeps it as recorded: {reason}"
+  "realityHelloFallback": "X25519MLKEM768 could not be added to the {fingerprint} fingerprint, REALITY keeps it as recorded: {reason}",
+  "vpnExclusions": "App exclusions",
+  "vpnExclusionsDesc": "Excluded apps never enter the tunnel: their traffic goes out as if the VPN were off.",
+  "vpnExclusionsManual": "Your choice",
+  "vpnExclusionsProfile": "Profile rule",
+  "vpnExclusionsManualHint": "The first check box is your own choice: empty — against the exclusion, the app stays inside; checked — keep the app out of the VPN; a dash — no choice. Your choice beats the profile's rule.",
+  "vpnExclusionsProfileHint": "The second check box shows the profile: checked means its PROCESS-NAME rule sends the app DIRECT, empty means the rule sends it through a proxy, a dash means the profile says nothing. Global mode ignores these marks.",
+  "vpnExclusionsGlobalMode": "Global mode ignores the profile rules: only your own marks apply.",
+  "vpnExclusionsLockdown": "If Android's \"Block connections without VPN\" is on, an excluded app still cannot use the network.",
+  "ignoreProfileProcessRules": "Ignore PROCESS-NAME from profile",
+  "ignoreProfileProcessRulesDesc": "PROCESS-NAME rules from the profile no longer exclude apps from the VPN: only your own marks apply."
 }

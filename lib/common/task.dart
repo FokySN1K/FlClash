@@ -83,7 +83,14 @@ ClashConfig _buildClashConfig(Map<String, dynamic> configMap) {
 
 typedef ConfigCounts = ({int groups, int proxies, int rules});
 
-typedef RealProfile = ({String yaml, String md5, ConfigCounts counts});
+typedef RealProfile = ({
+  String yaml,
+  String md5,
+  ConfigCounts counts,
+
+  /// Where the profile's own `PROCESS-NAME` rules send the apps, by package.
+  Map<String, String> processRules,
+});
 
 /// Counts what the Core was handed, not what the profile file declares.
 ConfigCounts configCountsOf(Map<Object?, Object?> config) {
@@ -106,6 +113,59 @@ String? lastMatchTarget(List<String> rules) {
     }
   }
   return null;
+}
+
+/// The targets a profile's own `PROCESS-NAME` rules give the apps, first match
+/// wins as the Core applies them. A classical rule-set hands its `PROCESS-NAME`
+/// lines to the Core with the RULE-SET's own target, so they count the same
+/// way. FlClash reads it to exclude the apps the profile sends DIRECT from the
+/// tunnel itself: a rule inside the Core only picks the exit, while the app
+/// still sees the VPN interfaces.
+Map<String, String> processNameTargets(
+  List<String> rules, [
+  Object? ruleProviders,
+]) {
+  final targets = <String, String>{};
+  void add(String? package, String? target) {
+    final name = package?.trim();
+    final value = target?.trim();
+    if (name == null || name.isEmpty || value == null || value.isEmpty) {
+      return;
+    }
+    targets.putIfAbsent(name, () => value.toUpperCase());
+  }
+
+  final providers = ruleProviders is Map ? ruleProviders : const {};
+  for (final value in rules) {
+    final rule = Rule.parse(value);
+    if (rule.ruleAction == RuleAction.PROCESS_NAME) {
+      add(rule.content, rule.ruleTarget);
+      continue;
+    }
+    if (rule.ruleAction != RuleAction.RULE_SET) {
+      continue;
+    }
+    final provider = providers[rule.ruleProvider];
+    if (provider is! Map ||
+        provider['type'] != 'inline' ||
+        provider['behavior'] != 'classical') {
+      continue;
+    }
+    final payload = provider['payload'];
+    if (payload is! List) {
+      continue;
+    }
+    for (final line in payload) {
+      if (line is! String) {
+        continue;
+      }
+      final inner = Rule.parse(line);
+      if (inner.ruleAction == RuleAction.PROCESS_NAME) {
+        add(inner.content, rule.ruleTarget);
+      }
+    }
+  }
+  return targets;
 }
 
 Future<RealProfile> makeRealProfileTask(MakeRealProfileState data) async {
@@ -185,6 +245,8 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
       rawConfig['interface-name'] = realPatchConfig.interfaceName;
   }
   rawConfig['external-ui-url'] = '';
+  // find-process-mode is not forced: a picked override key writes it
+  // above, and otherwise the profile's own process configuration wins.
   rawConfig.addAll(realPatchConfig.generalOverrideJson);
   rawConfig['log-level'] = realPatchConfig.logLevel.name;
   rawConfig['port'] = 0;
@@ -198,7 +260,6 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
   rawConfig['socks-port'] = realPatchConfig.socksPort;
   rawConfig['redir-port'] = realPatchConfig.redirPort;
   rawConfig['tproxy-port'] = realPatchConfig.tproxyPort;
-  rawConfig['find-process-mode'] = realPatchConfig.findProcessMode.name;
   rawConfig['allow-lan'] = realPatchConfig.allowLan;
   // The app owns local inbound authentication; a profile-provided
   // skip-auth-prefixes could silently exempt loopback and defeat it.
@@ -371,7 +432,12 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
   }
   rawConfig['rules'] = rules;
   final yaml = await _encodeYaml(Map<String, dynamic>.from(rawConfig));
-  return (yaml: yaml, md5: yaml.toMd5(), counts: configCountsOf(rawConfig));
+  return (
+    yaml: yaml,
+    md5: yaml.toMd5(),
+    counts: configCountsOf(rawConfig),
+    processRules: processNameTargets(rules, rawConfig['rule-providers']),
+  );
 }
 
 typedef ShakingStoreArgs = ({

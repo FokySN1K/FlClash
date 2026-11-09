@@ -166,6 +166,20 @@ class DNSHijackingItem extends ConsumerWidget {
   }
 }
 
+class IgnoreProfileProcessRulesItem extends ConsumerWidget {
+  const IgnoreProfileProcessRulesItem({super.key});
+
+  @override
+  Widget build(BuildContext context, ref) {
+    return _vpnToggle(
+      title: (l) => l.ignoreProfileProcessRules,
+      select: (state) => state.ignoreProfileProcessRules,
+      update: (state, value) =>
+          state.copyWith(ignoreProfileProcessRules: value),
+    );
+  }
+}
+
 class TunStackItem extends ConsumerWidget {
   const TunStackItem({super.key});
 
@@ -495,12 +509,14 @@ class VpnSections extends ConsumerWidget {
             AllowBypassItem(),
             Ipv6Item(),
             DNSHijackingItem(),
+            IgnoreProfileProcessRulesItem(),
           ],
           footer: [
             if (authenticationEnable)
               appLocalizations.authenticationSystemProxyDesc,
             appLocalizations.bypassDomainDesc,
             appLocalizations.ipv6InboundDesc,
+            appLocalizations.ignoreProfileProcessRulesDesc,
           ].join('\n'),
         ),
       ],

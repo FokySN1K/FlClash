@@ -895,7 +895,7 @@ as int,
 /// @nodoc
 mixin _$UpdateParams {
 
-@JsonKey(toJson: _tunCoreJson) Tun get tun;@JsonKey(name: 'mixed-port') int get mixedPort;@JsonKey(name: 'allow-lan') bool get allowLan;@JsonKey(name: 'find-process-mode') FindProcessMode get findProcessMode; Mode get mode;@JsonKey(name: 'log-level') LogLevel get logLevel; bool? get ipv6;@JsonKey(name: 'tcp-concurrent') bool? get tcpConcurrent;@JsonKey(name: 'external-controller') ExternalControllerStatus get externalController; String get secret;@JsonKey(name: 'unified-delay') bool? get unifiedDelay; List<String> get authentication;@JsonKey(name: 'geo-auto-update') bool get geoAutoUpdate;@JsonKey(name: 'geo-update-interval') int get geoUpdateInterval;@JsonKey(name: 'geox-url') Map<String, String> get geoXUrl;@JsonKey(name: 'skip-cert-verify') bool get skipCertVerify;
+@JsonKey(toJson: _tunCoreJson) Tun get tun;@JsonKey(name: 'mixed-port') int get mixedPort;@JsonKey(name: 'allow-lan') bool get allowLan;@JsonKey(name: 'find-process-mode', includeIfNull: false) FindProcessMode? get findProcessMode; Mode get mode;@JsonKey(name: 'log-level') LogLevel get logLevel; bool? get ipv6;@JsonKey(name: 'tcp-concurrent') bool? get tcpConcurrent;@JsonKey(name: 'external-controller') ExternalControllerStatus get externalController; String get secret;@JsonKey(name: 'unified-delay') bool? get unifiedDelay; List<String> get authentication;@JsonKey(name: 'geo-auto-update') bool get geoAutoUpdate;@JsonKey(name: 'geo-update-interval') int get geoUpdateInterval;@JsonKey(name: 'geox-url') Map<String, String> get geoXUrl;@JsonKey(name: 'skip-cert-verify') bool get skipCertVerify;
 /// Create a copy of UpdateParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -933,7 +933,7 @@ abstract mixin class $UpdateParamsCopyWith<$Res>  {
   factory $UpdateParamsCopyWith(UpdateParams value, $Res Function(UpdateParams) _then) = _$UpdateParamsCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(toJson: _tunCoreJson) Tun tun,@JsonKey(name: 'mixed-port') int mixedPort,@JsonKey(name: 'allow-lan') bool allowLan,@JsonKey(name: 'find-process-mode') FindProcessMode findProcessMode, Mode mode,@JsonKey(name: 'log-level') LogLevel logLevel, bool? ipv6,@JsonKey(name: 'tcp-concurrent') bool? tcpConcurrent,@JsonKey(name: 'external-controller') ExternalControllerStatus externalController, String secret,@JsonKey(name: 'unified-delay') bool? unifiedDelay, List<String> authentication,@JsonKey(name: 'geo-auto-update') bool geoAutoUpdate,@JsonKey(name: 'geo-update-interval') int geoUpdateInterval,@JsonKey(name: 'geox-url') Map<String, String> geoXUrl,@JsonKey(name: 'skip-cert-verify') bool skipCertVerify
+@JsonKey(toJson: _tunCoreJson) Tun tun,@JsonKey(name: 'mixed-port') int mixedPort,@JsonKey(name: 'allow-lan') bool allowLan,@JsonKey(name: 'find-process-mode', includeIfNull: false) FindProcessMode? findProcessMode, Mode mode,@JsonKey(name: 'log-level') LogLevel logLevel, bool? ipv6,@JsonKey(name: 'tcp-concurrent') bool? tcpConcurrent,@JsonKey(name: 'external-controller') ExternalControllerStatus externalController, String secret,@JsonKey(name: 'unified-delay') bool? unifiedDelay, List<String> authentication,@JsonKey(name: 'geo-auto-update') bool geoAutoUpdate,@JsonKey(name: 'geo-update-interval') int geoUpdateInterval,@JsonKey(name: 'geox-url') Map<String, String> geoXUrl,@JsonKey(name: 'skip-cert-verify') bool skipCertVerify
 });
 
 
@@ -950,13 +950,13 @@ class _$UpdateParamsCopyWithImpl<$Res>
 
 /// Create a copy of UpdateParams
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? tun = null,Object? mixedPort = null,Object? allowLan = null,Object? findProcessMode = null,Object? mode = null,Object? logLevel = null,Object? ipv6 = freezed,Object? tcpConcurrent = freezed,Object? externalController = null,Object? secret = null,Object? unifiedDelay = freezed,Object? authentication = null,Object? geoAutoUpdate = null,Object? geoUpdateInterval = null,Object? geoXUrl = null,Object? skipCertVerify = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? tun = null,Object? mixedPort = null,Object? allowLan = null,Object? findProcessMode = freezed,Object? mode = null,Object? logLevel = null,Object? ipv6 = freezed,Object? tcpConcurrent = freezed,Object? externalController = null,Object? secret = null,Object? unifiedDelay = freezed,Object? authentication = null,Object? geoAutoUpdate = null,Object? geoUpdateInterval = null,Object? geoXUrl = null,Object? skipCertVerify = null,}) {
   return _then(UpdateParams(
 tun: null == tun ? _self.tun : tun // ignore: cast_nullable_to_non_nullable
 as Tun,mixedPort: null == mixedPort ? _self.mixedPort : mixedPort // ignore: cast_nullable_to_non_nullable
 as int,allowLan: null == allowLan ? _self.allowLan : allowLan // ignore: cast_nullable_to_non_nullable
-as bool,findProcessMode: null == findProcessMode ? _self.findProcessMode : findProcessMode // ignore: cast_nullable_to_non_nullable
-as FindProcessMode,mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
+as bool,findProcessMode: freezed == findProcessMode ? _self.findProcessMode : findProcessMode // ignore: cast_nullable_to_non_nullable
+as FindProcessMode?,mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
 as Mode,logLevel: null == logLevel ? _self.logLevel : logLevel // ignore: cast_nullable_to_non_nullable
 as LogLevel,ipv6: freezed == ipv6 ? _self.ipv6 : ipv6 // ignore: cast_nullable_to_non_nullable
 as bool?,tcpConcurrent: freezed == tcpConcurrent ? _self.tcpConcurrent : tcpConcurrent // ignore: cast_nullable_to_non_nullable
@@ -1062,7 +1062,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(toJson: _tunCoreJson)  Tun tun, @JsonKey(name: 'mixed-port')  int mixedPort, @JsonKey(name: 'allow-lan')  bool allowLan, @JsonKey(name: 'find-process-mode')  FindProcessMode findProcessMode,  Mode mode, @JsonKey(name: 'log-level')  LogLevel logLevel,  bool? ipv6, @JsonKey(name: 'tcp-concurrent')  bool? tcpConcurrent, @JsonKey(name: 'external-controller')  ExternalControllerStatus externalController,  String secret, @JsonKey(name: 'unified-delay')  bool? unifiedDelay,  List<String> authentication, @JsonKey(name: 'geo-auto-update')  bool geoAutoUpdate, @JsonKey(name: 'geo-update-interval')  int geoUpdateInterval, @JsonKey(name: 'geox-url')  Map<String, String> geoXUrl, @JsonKey(name: 'skip-cert-verify')  bool skipCertVerify)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(toJson: _tunCoreJson)  Tun tun, @JsonKey(name: 'mixed-port')  int mixedPort, @JsonKey(name: 'allow-lan')  bool allowLan, @JsonKey(name: 'find-process-mode', includeIfNull: false)  FindProcessMode? findProcessMode,  Mode mode, @JsonKey(name: 'log-level')  LogLevel logLevel,  bool? ipv6, @JsonKey(name: 'tcp-concurrent')  bool? tcpConcurrent, @JsonKey(name: 'external-controller')  ExternalControllerStatus externalController,  String secret, @JsonKey(name: 'unified-delay')  bool? unifiedDelay,  List<String> authentication, @JsonKey(name: 'geo-auto-update')  bool geoAutoUpdate, @JsonKey(name: 'geo-update-interval')  int geoUpdateInterval, @JsonKey(name: 'geox-url')  Map<String, String> geoXUrl, @JsonKey(name: 'skip-cert-verify')  bool skipCertVerify)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UpdateParams() when $default != null:
 return $default(_that.tun,_that.mixedPort,_that.allowLan,_that.findProcessMode,_that.mode,_that.logLevel,_that.ipv6,_that.tcpConcurrent,_that.externalController,_that.secret,_that.unifiedDelay,_that.authentication,_that.geoAutoUpdate,_that.geoUpdateInterval,_that.geoXUrl,_that.skipCertVerify);case _:
@@ -1083,7 +1083,7 @@ return $default(_that.tun,_that.mixedPort,_that.allowLan,_that.findProcessMode,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(toJson: _tunCoreJson)  Tun tun, @JsonKey(name: 'mixed-port')  int mixedPort, @JsonKey(name: 'allow-lan')  bool allowLan, @JsonKey(name: 'find-process-mode')  FindProcessMode findProcessMode,  Mode mode, @JsonKey(name: 'log-level')  LogLevel logLevel,  bool? ipv6, @JsonKey(name: 'tcp-concurrent')  bool? tcpConcurrent, @JsonKey(name: 'external-controller')  ExternalControllerStatus externalController,  String secret, @JsonKey(name: 'unified-delay')  bool? unifiedDelay,  List<String> authentication, @JsonKey(name: 'geo-auto-update')  bool geoAutoUpdate, @JsonKey(name: 'geo-update-interval')  int geoUpdateInterval, @JsonKey(name: 'geox-url')  Map<String, String> geoXUrl, @JsonKey(name: 'skip-cert-verify')  bool skipCertVerify)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(toJson: _tunCoreJson)  Tun tun, @JsonKey(name: 'mixed-port')  int mixedPort, @JsonKey(name: 'allow-lan')  bool allowLan, @JsonKey(name: 'find-process-mode', includeIfNull: false)  FindProcessMode? findProcessMode,  Mode mode, @JsonKey(name: 'log-level')  LogLevel logLevel,  bool? ipv6, @JsonKey(name: 'tcp-concurrent')  bool? tcpConcurrent, @JsonKey(name: 'external-controller')  ExternalControllerStatus externalController,  String secret, @JsonKey(name: 'unified-delay')  bool? unifiedDelay,  List<String> authentication, @JsonKey(name: 'geo-auto-update')  bool geoAutoUpdate, @JsonKey(name: 'geo-update-interval')  int geoUpdateInterval, @JsonKey(name: 'geox-url')  Map<String, String> geoXUrl, @JsonKey(name: 'skip-cert-verify')  bool skipCertVerify)  $default,) {final _that = this;
 switch (_that) {
 case _UpdateParams():
 return $default(_that.tun,_that.mixedPort,_that.allowLan,_that.findProcessMode,_that.mode,_that.logLevel,_that.ipv6,_that.tcpConcurrent,_that.externalController,_that.secret,_that.unifiedDelay,_that.authentication,_that.geoAutoUpdate,_that.geoUpdateInterval,_that.geoXUrl,_that.skipCertVerify);case _:
@@ -1103,7 +1103,7 @@ return $default(_that.tun,_that.mixedPort,_that.allowLan,_that.findProcessMode,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(toJson: _tunCoreJson)  Tun tun, @JsonKey(name: 'mixed-port')  int mixedPort, @JsonKey(name: 'allow-lan')  bool allowLan, @JsonKey(name: 'find-process-mode')  FindProcessMode findProcessMode,  Mode mode, @JsonKey(name: 'log-level')  LogLevel logLevel,  bool? ipv6, @JsonKey(name: 'tcp-concurrent')  bool? tcpConcurrent, @JsonKey(name: 'external-controller')  ExternalControllerStatus externalController,  String secret, @JsonKey(name: 'unified-delay')  bool? unifiedDelay,  List<String> authentication, @JsonKey(name: 'geo-auto-update')  bool geoAutoUpdate, @JsonKey(name: 'geo-update-interval')  int geoUpdateInterval, @JsonKey(name: 'geox-url')  Map<String, String> geoXUrl, @JsonKey(name: 'skip-cert-verify')  bool skipCertVerify)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(toJson: _tunCoreJson)  Tun tun, @JsonKey(name: 'mixed-port')  int mixedPort, @JsonKey(name: 'allow-lan')  bool allowLan, @JsonKey(name: 'find-process-mode', includeIfNull: false)  FindProcessMode? findProcessMode,  Mode mode, @JsonKey(name: 'log-level')  LogLevel logLevel,  bool? ipv6, @JsonKey(name: 'tcp-concurrent')  bool? tcpConcurrent, @JsonKey(name: 'external-controller')  ExternalControllerStatus externalController,  String secret, @JsonKey(name: 'unified-delay')  bool? unifiedDelay,  List<String> authentication, @JsonKey(name: 'geo-auto-update')  bool geoAutoUpdate, @JsonKey(name: 'geo-update-interval')  int geoUpdateInterval, @JsonKey(name: 'geox-url')  Map<String, String> geoXUrl, @JsonKey(name: 'skip-cert-verify')  bool skipCertVerify)?  $default,) {final _that = this;
 switch (_that) {
 case _UpdateParams() when $default != null:
 return $default(_that.tun,_that.mixedPort,_that.allowLan,_that.findProcessMode,_that.mode,_that.logLevel,_that.ipv6,_that.tcpConcurrent,_that.externalController,_that.secret,_that.unifiedDelay,_that.authentication,_that.geoAutoUpdate,_that.geoUpdateInterval,_that.geoXUrl,_that.skipCertVerify);case _:
@@ -1118,13 +1118,13 @@ return $default(_that.tun,_that.mixedPort,_that.allowLan,_that.findProcessMode,_
 @JsonSerializable()
 
 class _UpdateParams implements UpdateParams {
-  const _UpdateParams({@JsonKey(toJson: _tunCoreJson) required this.tun, @JsonKey(name: 'mixed-port') required this.mixedPort, @JsonKey(name: 'allow-lan') required this.allowLan, @JsonKey(name: 'find-process-mode') required this.findProcessMode, required this.mode, @JsonKey(name: 'log-level') required this.logLevel, this.ipv6, @JsonKey(name: 'tcp-concurrent') this.tcpConcurrent, @JsonKey(name: 'external-controller') required this.externalController, this.secret = '', @JsonKey(name: 'unified-delay') this.unifiedDelay,  List<String> authentication = const [], @JsonKey(name: 'geo-auto-update') this.geoAutoUpdate = false, @JsonKey(name: 'geo-update-interval') this.geoUpdateInterval = 24, @JsonKey(name: 'geox-url')  Map<String, String> geoXUrl = const {}, @JsonKey(name: 'skip-cert-verify') this.skipCertVerify = false}): _authentication = authentication,_geoXUrl = geoXUrl;
+  const _UpdateParams({@JsonKey(toJson: _tunCoreJson) required this.tun, @JsonKey(name: 'mixed-port') required this.mixedPort, @JsonKey(name: 'allow-lan') required this.allowLan, @JsonKey(name: 'find-process-mode', includeIfNull: false) this.findProcessMode, required this.mode, @JsonKey(name: 'log-level') required this.logLevel, this.ipv6, @JsonKey(name: 'tcp-concurrent') this.tcpConcurrent, @JsonKey(name: 'external-controller') required this.externalController, this.secret = '', @JsonKey(name: 'unified-delay') this.unifiedDelay,  List<String> authentication = const [], @JsonKey(name: 'geo-auto-update') this.geoAutoUpdate = false, @JsonKey(name: 'geo-update-interval') this.geoUpdateInterval = 24, @JsonKey(name: 'geox-url')  Map<String, String> geoXUrl = const {}, @JsonKey(name: 'skip-cert-verify') this.skipCertVerify = false}): _authentication = authentication,_geoXUrl = geoXUrl;
   factory _UpdateParams.fromJson(Map<String, dynamic> json) => _$UpdateParamsFromJson(json);
 
 @override@JsonKey(toJson: _tunCoreJson) final  Tun tun;
 @override@JsonKey(name: 'mixed-port') final  int mixedPort;
 @override@JsonKey(name: 'allow-lan') final  bool allowLan;
-@override@JsonKey(name: 'find-process-mode') final  FindProcessMode findProcessMode;
+@override@JsonKey(name: 'find-process-mode', includeIfNull: false) final  FindProcessMode? findProcessMode;
 @override final  Mode mode;
 @override@JsonKey(name: 'log-level') final  LogLevel logLevel;
 @override final  bool? ipv6;
@@ -1185,7 +1185,7 @@ abstract mixin class _$UpdateParamsCopyWith<$Res> implements $UpdateParamsCopyWi
   factory _$UpdateParamsCopyWith(_UpdateParams value, $Res Function(_UpdateParams) _then) = __$UpdateParamsCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(toJson: _tunCoreJson) Tun tun,@JsonKey(name: 'mixed-port') int mixedPort,@JsonKey(name: 'allow-lan') bool allowLan,@JsonKey(name: 'find-process-mode') FindProcessMode findProcessMode, Mode mode,@JsonKey(name: 'log-level') LogLevel logLevel, bool? ipv6,@JsonKey(name: 'tcp-concurrent') bool? tcpConcurrent,@JsonKey(name: 'external-controller') ExternalControllerStatus externalController, String secret,@JsonKey(name: 'unified-delay') bool? unifiedDelay, List<String> authentication,@JsonKey(name: 'geo-auto-update') bool geoAutoUpdate,@JsonKey(name: 'geo-update-interval') int geoUpdateInterval,@JsonKey(name: 'geox-url') Map<String, String> geoXUrl,@JsonKey(name: 'skip-cert-verify') bool skipCertVerify
+@JsonKey(toJson: _tunCoreJson) Tun tun,@JsonKey(name: 'mixed-port') int mixedPort,@JsonKey(name: 'allow-lan') bool allowLan,@JsonKey(name: 'find-process-mode', includeIfNull: false) FindProcessMode? findProcessMode, Mode mode,@JsonKey(name: 'log-level') LogLevel logLevel, bool? ipv6,@JsonKey(name: 'tcp-concurrent') bool? tcpConcurrent,@JsonKey(name: 'external-controller') ExternalControllerStatus externalController, String secret,@JsonKey(name: 'unified-delay') bool? unifiedDelay, List<String> authentication,@JsonKey(name: 'geo-auto-update') bool geoAutoUpdate,@JsonKey(name: 'geo-update-interval') int geoUpdateInterval,@JsonKey(name: 'geox-url') Map<String, String> geoXUrl,@JsonKey(name: 'skip-cert-verify') bool skipCertVerify
 });
 
 
@@ -1202,13 +1202,13 @@ class __$UpdateParamsCopyWithImpl<$Res>
 
 /// Create a copy of UpdateParams
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? tun = null,Object? mixedPort = null,Object? allowLan = null,Object? findProcessMode = null,Object? mode = null,Object? logLevel = null,Object? ipv6 = freezed,Object? tcpConcurrent = freezed,Object? externalController = null,Object? secret = null,Object? unifiedDelay = freezed,Object? authentication = null,Object? geoAutoUpdate = null,Object? geoUpdateInterval = null,Object? geoXUrl = null,Object? skipCertVerify = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? tun = null,Object? mixedPort = null,Object? allowLan = null,Object? findProcessMode = freezed,Object? mode = null,Object? logLevel = null,Object? ipv6 = freezed,Object? tcpConcurrent = freezed,Object? externalController = null,Object? secret = null,Object? unifiedDelay = freezed,Object? authentication = null,Object? geoAutoUpdate = null,Object? geoUpdateInterval = null,Object? geoXUrl = null,Object? skipCertVerify = null,}) {
   return _then(_UpdateParams(
 tun: null == tun ? _self.tun : tun // ignore: cast_nullable_to_non_nullable
 as Tun,mixedPort: null == mixedPort ? _self.mixedPort : mixedPort // ignore: cast_nullable_to_non_nullable
 as int,allowLan: null == allowLan ? _self.allowLan : allowLan // ignore: cast_nullable_to_non_nullable
-as bool,findProcessMode: null == findProcessMode ? _self.findProcessMode : findProcessMode // ignore: cast_nullable_to_non_nullable
-as FindProcessMode,mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
+as bool,findProcessMode: freezed == findProcessMode ? _self.findProcessMode : findProcessMode // ignore: cast_nullable_to_non_nullable
+as FindProcessMode?,mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
 as Mode,logLevel: null == logLevel ? _self.logLevel : logLevel // ignore: cast_nullable_to_non_nullable
 as LogLevel,ipv6: freezed == ipv6 ? _self.ipv6 : ipv6 // ignore: cast_nullable_to_non_nullable
 as bool?,tcpConcurrent: freezed == tcpConcurrent ? _self.tcpConcurrent : tcpConcurrent // ignore: cast_nullable_to_non_nullable
@@ -1240,7 +1240,7 @@ $TunCopyWith<$Res> get tun {
 /// @nodoc
 mixin _$VpnOptions {
 
- bool get enable; int get port; bool get ipv6; bool get dnsHijacking; AccessControlProps get accessControlProps; bool get allowBypass; bool get systemProxy; List<String> get bypassDomain; String get stack; List<String> get routeAddress; int get mtu; String get congestionController;
+ bool get enable; int get port; bool get ipv6; bool get dnsHijacking; AccessControlProps get accessControlProps; bool get allowBypass; bool get systemProxy; List<String> get bypassDomain; String get stack; List<String> get excludePackages; List<String> get routeAddress; int get mtu; String get congestionController;
 /// Create a copy of VpnOptions
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1254,20 +1254,20 @@ $VpnOptionsCopyWith<VpnOptions> get copyWith => _$VpnOptionsCopyWithImpl<VpnOpti
 @override
 bool operator ==(Object other) {
   final _this = this as VpnOptions;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is VpnOptions&&(identical(other.enable, _this.enable) || other.enable == _this.enable)&&(identical(other.port, _this.port) || other.port == _this.port)&&(identical(other.ipv6, _this.ipv6) || other.ipv6 == _this.ipv6)&&(identical(other.dnsHijacking, _this.dnsHijacking) || other.dnsHijacking == _this.dnsHijacking)&&(identical(other.accessControlProps, _this.accessControlProps) || other.accessControlProps == _this.accessControlProps)&&(identical(other.allowBypass, _this.allowBypass) || other.allowBypass == _this.allowBypass)&&(identical(other.systemProxy, _this.systemProxy) || other.systemProxy == _this.systemProxy)&&const DeepCollectionEquality().equals(other.bypassDomain, _this.bypassDomain)&&(identical(other.stack, _this.stack) || other.stack == _this.stack)&&const DeepCollectionEquality().equals(other.routeAddress, _this.routeAddress)&&(identical(other.mtu, _this.mtu) || other.mtu == _this.mtu)&&(identical(other.congestionController, _this.congestionController) || other.congestionController == _this.congestionController));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VpnOptions&&(identical(other.enable, _this.enable) || other.enable == _this.enable)&&(identical(other.port, _this.port) || other.port == _this.port)&&(identical(other.ipv6, _this.ipv6) || other.ipv6 == _this.ipv6)&&(identical(other.dnsHijacking, _this.dnsHijacking) || other.dnsHijacking == _this.dnsHijacking)&&(identical(other.accessControlProps, _this.accessControlProps) || other.accessControlProps == _this.accessControlProps)&&(identical(other.allowBypass, _this.allowBypass) || other.allowBypass == _this.allowBypass)&&(identical(other.systemProxy, _this.systemProxy) || other.systemProxy == _this.systemProxy)&&const DeepCollectionEquality().equals(other.bypassDomain, _this.bypassDomain)&&(identical(other.stack, _this.stack) || other.stack == _this.stack)&&const DeepCollectionEquality().equals(other.excludePackages, _this.excludePackages)&&const DeepCollectionEquality().equals(other.routeAddress, _this.routeAddress)&&(identical(other.mtu, _this.mtu) || other.mtu == _this.mtu)&&(identical(other.congestionController, _this.congestionController) || other.congestionController == _this.congestionController));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as VpnOptions;
-  return Object.hash(runtimeType,_this.enable,_this.port,_this.ipv6,_this.dnsHijacking,_this.accessControlProps,_this.allowBypass,_this.systemProxy,const DeepCollectionEquality().hash(_this.bypassDomain),_this.stack,const DeepCollectionEquality().hash(_this.routeAddress),_this.mtu,_this.congestionController);
+  return Object.hash(runtimeType,_this.enable,_this.port,_this.ipv6,_this.dnsHijacking,_this.accessControlProps,_this.allowBypass,_this.systemProxy,const DeepCollectionEquality().hash(_this.bypassDomain),_this.stack,const DeepCollectionEquality().hash(_this.excludePackages),const DeepCollectionEquality().hash(_this.routeAddress),_this.mtu,_this.congestionController);
 }
 
 @override
 String toString() {
   final _this = this as VpnOptions;
-  return 'VpnOptions(enable: ${_this.enable}, port: ${_this.port}, ipv6: ${_this.ipv6}, dnsHijacking: ${_this.dnsHijacking}, accessControlProps: ${_this.accessControlProps}, allowBypass: ${_this.allowBypass}, systemProxy: ${_this.systemProxy}, bypassDomain: ${_this.bypassDomain}, stack: ${_this.stack}, routeAddress: ${_this.routeAddress}, mtu: ${_this.mtu}, congestionController: ${_this.congestionController})';
+  return 'VpnOptions(enable: ${_this.enable}, port: ${_this.port}, ipv6: ${_this.ipv6}, dnsHijacking: ${_this.dnsHijacking}, accessControlProps: ${_this.accessControlProps}, allowBypass: ${_this.allowBypass}, systemProxy: ${_this.systemProxy}, bypassDomain: ${_this.bypassDomain}, stack: ${_this.stack}, excludePackages: ${_this.excludePackages}, routeAddress: ${_this.routeAddress}, mtu: ${_this.mtu}, congestionController: ${_this.congestionController})';
 }
 
 
@@ -1278,7 +1278,7 @@ abstract mixin class $VpnOptionsCopyWith<$Res>  {
   factory $VpnOptionsCopyWith(VpnOptions value, $Res Function(VpnOptions) _then) = _$VpnOptionsCopyWithImpl;
 @useResult
 $Res call({
- bool enable, int port, bool ipv6, bool dnsHijacking, AccessControlProps accessControlProps, bool allowBypass, bool systemProxy, List<String> bypassDomain, String stack, List<String> routeAddress, int mtu, String congestionController
+ bool enable, int port, bool ipv6, bool dnsHijacking, AccessControlProps accessControlProps, bool allowBypass, bool systemProxy, List<String> bypassDomain, String stack, List<String> excludePackages, List<String> routeAddress, int mtu, String congestionController
 });
 
 
@@ -1295,7 +1295,7 @@ class _$VpnOptionsCopyWithImpl<$Res>
 
 /// Create a copy of VpnOptions
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? port = null,Object? ipv6 = null,Object? dnsHijacking = null,Object? accessControlProps = null,Object? allowBypass = null,Object? systemProxy = null,Object? bypassDomain = null,Object? stack = null,Object? routeAddress = null,Object? mtu = null,Object? congestionController = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? port = null,Object? ipv6 = null,Object? dnsHijacking = null,Object? accessControlProps = null,Object? allowBypass = null,Object? systemProxy = null,Object? bypassDomain = null,Object? stack = null,Object? excludePackages = null,Object? routeAddress = null,Object? mtu = null,Object? congestionController = null,}) {
   return _then(VpnOptions(
 enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
 as bool,port: null == port ? _self.port : port // ignore: cast_nullable_to_non_nullable
@@ -1306,7 +1306,8 @@ as AccessControlProps,allowBypass: null == allowBypass ? _self.allowBypass : all
 as bool,systemProxy: null == systemProxy ? _self.systemProxy : systemProxy // ignore: cast_nullable_to_non_nullable
 as bool,bypassDomain: null == bypassDomain ? _self.bypassDomain : bypassDomain // ignore: cast_nullable_to_non_nullable
 as List<String>,stack: null == stack ? _self.stack : stack // ignore: cast_nullable_to_non_nullable
-as String,routeAddress: null == routeAddress ? _self.routeAddress : routeAddress // ignore: cast_nullable_to_non_nullable
+as String,excludePackages: null == excludePackages ? _self.excludePackages : excludePackages // ignore: cast_nullable_to_non_nullable
+as List<String>,routeAddress: null == routeAddress ? _self.routeAddress : routeAddress // ignore: cast_nullable_to_non_nullable
 as List<String>,mtu: null == mtu ? _self.mtu : mtu // ignore: cast_nullable_to_non_nullable
 as int,congestionController: null == congestionController ? _self.congestionController : congestionController // ignore: cast_nullable_to_non_nullable
 as String,
@@ -1403,10 +1404,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  int port,  bool ipv6,  bool dnsHijacking,  AccessControlProps accessControlProps,  bool allowBypass,  bool systemProxy,  List<String> bypassDomain,  String stack,  List<String> routeAddress,  int mtu,  String congestionController)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  int port,  bool ipv6,  bool dnsHijacking,  AccessControlProps accessControlProps,  bool allowBypass,  bool systemProxy,  List<String> bypassDomain,  String stack,  List<String> excludePackages,  List<String> routeAddress,  int mtu,  String congestionController)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _VpnOptions() when $default != null:
-return $default(_that.enable,_that.port,_that.ipv6,_that.dnsHijacking,_that.accessControlProps,_that.allowBypass,_that.systemProxy,_that.bypassDomain,_that.stack,_that.routeAddress,_that.mtu,_that.congestionController);case _:
+return $default(_that.enable,_that.port,_that.ipv6,_that.dnsHijacking,_that.accessControlProps,_that.allowBypass,_that.systemProxy,_that.bypassDomain,_that.stack,_that.excludePackages,_that.routeAddress,_that.mtu,_that.congestionController);case _:
   return orElse();
 
 }
@@ -1424,10 +1425,10 @@ return $default(_that.enable,_that.port,_that.ipv6,_that.dnsHijacking,_that.acce
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  int port,  bool ipv6,  bool dnsHijacking,  AccessControlProps accessControlProps,  bool allowBypass,  bool systemProxy,  List<String> bypassDomain,  String stack,  List<String> routeAddress,  int mtu,  String congestionController)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  int port,  bool ipv6,  bool dnsHijacking,  AccessControlProps accessControlProps,  bool allowBypass,  bool systemProxy,  List<String> bypassDomain,  String stack,  List<String> excludePackages,  List<String> routeAddress,  int mtu,  String congestionController)  $default,) {final _that = this;
 switch (_that) {
 case _VpnOptions():
-return $default(_that.enable,_that.port,_that.ipv6,_that.dnsHijacking,_that.accessControlProps,_that.allowBypass,_that.systemProxy,_that.bypassDomain,_that.stack,_that.routeAddress,_that.mtu,_that.congestionController);case _:
+return $default(_that.enable,_that.port,_that.ipv6,_that.dnsHijacking,_that.accessControlProps,_that.allowBypass,_that.systemProxy,_that.bypassDomain,_that.stack,_that.excludePackages,_that.routeAddress,_that.mtu,_that.congestionController);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1444,10 +1445,10 @@ return $default(_that.enable,_that.port,_that.ipv6,_that.dnsHijacking,_that.acce
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  int port,  bool ipv6,  bool dnsHijacking,  AccessControlProps accessControlProps,  bool allowBypass,  bool systemProxy,  List<String> bypassDomain,  String stack,  List<String> routeAddress,  int mtu,  String congestionController)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  int port,  bool ipv6,  bool dnsHijacking,  AccessControlProps accessControlProps,  bool allowBypass,  bool systemProxy,  List<String> bypassDomain,  String stack,  List<String> excludePackages,  List<String> routeAddress,  int mtu,  String congestionController)?  $default,) {final _that = this;
 switch (_that) {
 case _VpnOptions() when $default != null:
-return $default(_that.enable,_that.port,_that.ipv6,_that.dnsHijacking,_that.accessControlProps,_that.allowBypass,_that.systemProxy,_that.bypassDomain,_that.stack,_that.routeAddress,_that.mtu,_that.congestionController);case _:
+return $default(_that.enable,_that.port,_that.ipv6,_that.dnsHijacking,_that.accessControlProps,_that.allowBypass,_that.systemProxy,_that.bypassDomain,_that.stack,_that.excludePackages,_that.routeAddress,_that.mtu,_that.congestionController);case _:
   return null;
 
 }
@@ -1459,7 +1460,7 @@ return $default(_that.enable,_that.port,_that.ipv6,_that.dnsHijacking,_that.acce
 @JsonSerializable()
 
 class _VpnOptions implements VpnOptions {
-  const _VpnOptions({required this.enable, required this.port, required this.ipv6, required this.dnsHijacking, required this.accessControlProps, required this.allowBypass, required this.systemProxy, required  List<String> bypassDomain, required this.stack,  List<String> routeAddress = const [], this.mtu = 0, this.congestionController = ''}): _bypassDomain = bypassDomain,_routeAddress = routeAddress;
+  const _VpnOptions({required this.enable, required this.port, required this.ipv6, required this.dnsHijacking, required this.accessControlProps, required this.allowBypass, required this.systemProxy, required  List<String> bypassDomain, required this.stack,  List<String> excludePackages = const [],  List<String> routeAddress = const [], this.mtu = 0, this.congestionController = ''}): _bypassDomain = bypassDomain,_excludePackages = excludePackages,_routeAddress = routeAddress;
   factory _VpnOptions.fromJson(Map<String, dynamic> json) => _$VpnOptionsFromJson(json);
 
 @override final  bool enable;
@@ -1477,6 +1478,13 @@ class _VpnOptions implements VpnOptions {
 }
 
 @override final  String stack;
+ final  List<String> _excludePackages;
+@override@JsonKey() List<String> get excludePackages {
+  if (_excludePackages is EqualUnmodifiableListView) return _excludePackages;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_excludePackages);
+}
+
  final  List<String> _routeAddress;
 @override@JsonKey() List<String> get routeAddress {
   if (_routeAddress is EqualUnmodifiableListView) return _routeAddress;
@@ -1500,18 +1508,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _VpnOptions&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.port, port) || other.port == port)&&(identical(other.ipv6, ipv6) || other.ipv6 == ipv6)&&(identical(other.dnsHijacking, dnsHijacking) || other.dnsHijacking == dnsHijacking)&&(identical(other.accessControlProps, accessControlProps) || other.accessControlProps == accessControlProps)&&(identical(other.allowBypass, allowBypass) || other.allowBypass == allowBypass)&&(identical(other.systemProxy, systemProxy) || other.systemProxy == systemProxy)&&const DeepCollectionEquality().equals(other.bypassDomain, _bypassDomain)&&(identical(other.stack, stack) || other.stack == stack)&&const DeepCollectionEquality().equals(other.routeAddress, _routeAddress)&&(identical(other.mtu, mtu) || other.mtu == mtu)&&(identical(other.congestionController, congestionController) || other.congestionController == congestionController));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _VpnOptions&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.port, port) || other.port == port)&&(identical(other.ipv6, ipv6) || other.ipv6 == ipv6)&&(identical(other.dnsHijacking, dnsHijacking) || other.dnsHijacking == dnsHijacking)&&(identical(other.accessControlProps, accessControlProps) || other.accessControlProps == accessControlProps)&&(identical(other.allowBypass, allowBypass) || other.allowBypass == allowBypass)&&(identical(other.systemProxy, systemProxy) || other.systemProxy == systemProxy)&&const DeepCollectionEquality().equals(other.bypassDomain, _bypassDomain)&&(identical(other.stack, stack) || other.stack == stack)&&const DeepCollectionEquality().equals(other.excludePackages, _excludePackages)&&const DeepCollectionEquality().equals(other.routeAddress, _routeAddress)&&(identical(other.mtu, mtu) || other.mtu == mtu)&&(identical(other.congestionController, congestionController) || other.congestionController == congestionController));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,enable,port,ipv6,dnsHijacking,accessControlProps,allowBypass,systemProxy,const DeepCollectionEquality().hash(_bypassDomain),stack,const DeepCollectionEquality().hash(_routeAddress),mtu,congestionController);
+    return Object.hash(runtimeType,enable,port,ipv6,dnsHijacking,accessControlProps,allowBypass,systemProxy,const DeepCollectionEquality().hash(_bypassDomain),stack,const DeepCollectionEquality().hash(_excludePackages),const DeepCollectionEquality().hash(_routeAddress),mtu,congestionController);
 }
 
 @override
 String toString() {
-    return 'VpnOptions(enable: $enable, port: $port, ipv6: $ipv6, dnsHijacking: $dnsHijacking, accessControlProps: $accessControlProps, allowBypass: $allowBypass, systemProxy: $systemProxy, bypassDomain: $bypassDomain, stack: $stack, routeAddress: $routeAddress, mtu: $mtu, congestionController: $congestionController)';
+    return 'VpnOptions(enable: $enable, port: $port, ipv6: $ipv6, dnsHijacking: $dnsHijacking, accessControlProps: $accessControlProps, allowBypass: $allowBypass, systemProxy: $systemProxy, bypassDomain: $bypassDomain, stack: $stack, excludePackages: $excludePackages, routeAddress: $routeAddress, mtu: $mtu, congestionController: $congestionController)';
 }
 
 
@@ -1522,7 +1530,7 @@ abstract mixin class _$VpnOptionsCopyWith<$Res> implements $VpnOptionsCopyWith<$
   factory _$VpnOptionsCopyWith(_VpnOptions value, $Res Function(_VpnOptions) _then) = __$VpnOptionsCopyWithImpl;
 @override @useResult
 $Res call({
- bool enable, int port, bool ipv6, bool dnsHijacking, AccessControlProps accessControlProps, bool allowBypass, bool systemProxy, List<String> bypassDomain, String stack, List<String> routeAddress, int mtu, String congestionController
+ bool enable, int port, bool ipv6, bool dnsHijacking, AccessControlProps accessControlProps, bool allowBypass, bool systemProxy, List<String> bypassDomain, String stack, List<String> excludePackages, List<String> routeAddress, int mtu, String congestionController
 });
 
 
@@ -1539,7 +1547,7 @@ class __$VpnOptionsCopyWithImpl<$Res>
 
 /// Create a copy of VpnOptions
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? enable = null,Object? port = null,Object? ipv6 = null,Object? dnsHijacking = null,Object? accessControlProps = null,Object? allowBypass = null,Object? systemProxy = null,Object? bypassDomain = null,Object? stack = null,Object? routeAddress = null,Object? mtu = null,Object? congestionController = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? enable = null,Object? port = null,Object? ipv6 = null,Object? dnsHijacking = null,Object? accessControlProps = null,Object? allowBypass = null,Object? systemProxy = null,Object? bypassDomain = null,Object? stack = null,Object? excludePackages = null,Object? routeAddress = null,Object? mtu = null,Object? congestionController = null,}) {
   return _then(_VpnOptions(
 enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
 as bool,port: null == port ? _self.port : port // ignore: cast_nullable_to_non_nullable
@@ -1550,7 +1558,8 @@ as AccessControlProps,allowBypass: null == allowBypass ? _self.allowBypass : all
 as bool,systemProxy: null == systemProxy ? _self.systemProxy : systemProxy // ignore: cast_nullable_to_non_nullable
 as bool,bypassDomain: null == bypassDomain ? _self._bypassDomain : bypassDomain // ignore: cast_nullable_to_non_nullable
 as List<String>,stack: null == stack ? _self.stack : stack // ignore: cast_nullable_to_non_nullable
-as String,routeAddress: null == routeAddress ? _self._routeAddress : routeAddress // ignore: cast_nullable_to_non_nullable
+as String,excludePackages: null == excludePackages ? _self._excludePackages : excludePackages // ignore: cast_nullable_to_non_nullable
+as List<String>,routeAddress: null == routeAddress ? _self._routeAddress : routeAddress // ignore: cast_nullable_to_non_nullable
 as List<String>,mtu: null == mtu ? _self.mtu : mtu // ignore: cast_nullable_to_non_nullable
 as int,congestionController: null == congestionController ? _self.congestionController : congestionController // ignore: cast_nullable_to_non_nullable
 as String,

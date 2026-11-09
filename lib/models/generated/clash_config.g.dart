@@ -1027,4 +1027,5 @@ const _$GeneralOverrideKeyEnumMap = {
   GeneralOverrideKey.tcpConcurrent: 'tcp-concurrent',
   GeneralOverrideKey.ipv6: 'ipv6',
   GeneralOverrideKey.geodataLoader: 'geodata-loader',
+  GeneralOverrideKey.findProcessMode: 'find-process-mode',
 };

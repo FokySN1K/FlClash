@@ -977,5 +977,15 @@
   "alreadyInLocalProxies": "{name} est déjà dans les proxys locaux",
   "suspiciousNode": "Nœud suspect",
   "groupRecovering": "Le groupe revérifie ses nœuds",
-  "realityHelloFallback": "Impossible d’ajouter X25519MLKEM768 à l’empreinte {fingerprint}, REALITY la conserve telle quelle : {reason}"
+  "realityHelloFallback": "Impossible d’ajouter X25519MLKEM768 à l’empreinte {fingerprint}, REALITY la conserve telle quelle : {reason}",
+  "vpnExclusions": "Exclusions d'applications",
+  "vpnExclusionsDesc": "Les applications exclues n'entrent jamais dans le tunnel : leur trafic sort comme si le VPN était désactivé.",
+  "vpnExclusionsManual": "Votre choix",
+  "vpnExclusionsProfile": "Règle du profil",
+  "vpnExclusionsManualHint": "La première case est votre choix : vide — contre l'exclusion, l'application reste dans le tunnel ; cochée — garde l'application hors du VPN ; un tiret — aucun choix. Votre choix prime sur la règle du profil.",
+  "vpnExclusionsProfileHint": "La seconde case montre le profil : cochée, sa règle PROCESS-NAME envoie l'application en DIRECT ; vide, la règle l'envoie via un proxy ; un tiret, le profil ne dit rien. Le mode global ignore ces marques.",
+  "vpnExclusionsGlobalMode": "Le mode global ignore les règles du profil : seules vos marques s'appliquent.",
+  "vpnExclusionsLockdown": "Si « Bloquer les connexions sans VPN » est activé sur Android, une application exclue ne pourra pas se connecter non plus.",
+  "ignoreProfileProcessRules": "Ignorer PROCESS-NAME du profil",
+  "ignoreProfileProcessRulesDesc": "Les règles PROCESS-NAME du profil n'excluent plus les applications du tunnel : seules vos marques comptent."
 }

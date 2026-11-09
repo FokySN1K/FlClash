@@ -2211,7 +2211,10 @@ extension PatchClashConfigExt on PatchClashConfig {
       tun: tun,
       authentication: authentication,
       allowLan: allowLan,
-      findProcessMode: findProcessMode,
+      findProcessMode: _picked(
+        GeneralOverrideKey.findProcessMode,
+        findProcessMode,
+      ),
       mode: mode,
       logLevel: logLevel,
       ipv6: _picked(GeneralOverrideKey.ipv6, ipv6),

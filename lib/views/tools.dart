@@ -10,6 +10,7 @@ import 'package:fl_clash/views/about.dart';
 import 'package:fl_clash/views/access.dart';
 import 'package:fl_clash/views/backup_and_restore.dart';
 import 'package:fl_clash/views/config/general.dart';
+import 'package:fl_clash/views/exclusions.dart';
 import 'package:fl_clash/views/hotkey.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
@@ -60,12 +61,14 @@ class _ToolViewState extends ConsumerState<ToolsView> {
         const _BackupItem(),
         if (system.isDesktop) const _HotkeyItem(),
         if (system.isAndroid) const _AccessItem(),
+        if (system.isAndroid) const _ExclusionsItem(),
         const _AdvancedConfigItem(),
         const _CustomResourcesItem(),
         const _GeneralItem(),
       ],
       footer: [
         if (system.isAndroid) appLocalizations.accessControlDesc,
+        if (system.isAndroid) appLocalizations.vpnExclusionsDesc,
         appLocalizations.advancedConfigDesc,
         appLocalizations.customProfileResourcesDesc,
       ].join('\n'),
@@ -189,6 +192,19 @@ class _AccessItem extends StatelessWidget {
       leading: const GlyphIcon(AppGlyphs.appsList),
       title: Text(context.appLocalizations.accessControl),
       widget: const AccessView(),
+    );
+  }
+}
+
+class _ExclusionsItem extends StatelessWidget {
+  const _ExclusionsItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      leading: const GlyphIcon(AppGlyphs.appsList),
+      title: Text(context.appLocalizations.vpnExclusions),
+      widget: const ExclusionsView(),
     );
   }
 }

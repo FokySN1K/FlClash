@@ -977,5 +977,15 @@
   "alreadyInLocalProxies": "{name}은(는) 이미 로컬 프록시에 있습니다",
   "suspiciousNode": "의심스러운 노드",
   "groupRecovering": "그룹이 노드를 다시 확인하는 중입니다",
-  "realityHelloFallback": "{fingerprint} 지문에 X25519MLKEM768을 추가하지 못해 REALITY가 그대로 사용합니다: {reason}"
+  "realityHelloFallback": "{fingerprint} 지문에 X25519MLKEM768을 추가하지 못해 REALITY가 그대로 사용합니다: {reason}",
+  "vpnExclusions": "앱 제외",
+  "vpnExclusionsDesc": "제외된 앱은 터널에 들어가지 않습니다. VPN이 꺼진 것처럼 네트워크를 사용합니다.",
+  "vpnExclusionsManual": "수동 선택",
+  "vpnExclusionsProfile": "프로필 규칙",
+  "vpnExclusionsManualHint": "첫 번째 확인란은 수동 선택입니다. 비어 있음 — 제외에 반대(앱이 VPN 안에 남음), 선택됨 — 앱을 VPN 밖으로 유지, 대시 — 선택 없음. 수동 선택이 프로필 규칙보다 우선합니다.",
+  "vpnExclusionsProfileHint": "두 번째 확인란은 프로필 상태입니다. 선택됨 — PROCESS-NAME 규칙이 DIRECT로 보냄, 비어 있음 — 규칙이 프록시로 보냄, 대시 — 규칙 없음. 전역 모드에서는 이 표시가 무시됩니다.",
+  "vpnExclusionsGlobalMode": "전역 모드는 프로필 규칙을 무시하며 수동 선택만 적용됩니다.",
+  "vpnExclusionsLockdown": "Android에서 'VPN 없이 연결 차단'이 켜져 있으면 제외된 앱도 네트워크를 사용할 수 없습니다.",
+  "ignoreProfileProcessRules": "프로필의 PROCESS-NAME 무시",
+  "ignoreProfileProcessRulesDesc": "프로필의 PROCESS-NAME 규칙은 앱을 터널에서 제외하지 않으며, 직접 표시한 항목만 적용됩니다."
 }

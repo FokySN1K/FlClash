@@ -67,6 +67,11 @@ final _toggleCases = <_ToggleCase>[
     (c) => c.read(vpnSettingProvider).dnsHijacking,
   ),
   _ToggleCase(
+    'ignore profile process rules',
+    const IgnoreProfileProcessRulesItem(),
+    (c) => c.read(vpnSettingProvider).ignoreProfileProcessRules,
+  ),
+  _ToggleCase(
     'bypass private route',
     const BypassPrivateRouteItem(),
     (c) => c.read(networkSettingProvider).bypassPrivateRoute,

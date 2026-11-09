@@ -977,5 +977,15 @@
   "alreadyInLocalProxies": "{name} はすでにローカルプロキシにあります",
   "suspiciousNode": "疑わしいノード",
   "groupRecovering": "グループがノードを再確認しています",
-  "realityHelloFallback": "{fingerprint} 指紋に X25519MLKEM768 を追加できなかったため、REALITY はそのまま使用します: {reason}"
+  "realityHelloFallback": "{fingerprint} 指紋に X25519MLKEM768 を追加できなかったため、REALITY はそのまま使用します: {reason}",
+  "vpnExclusions": "アプリの除外",
+  "vpnExclusionsDesc": "除外したアプリはトンネルに入りません。VPN がオフのときと同じように通信します。",
+  "vpnExclusionsManual": "手動設定",
+  "vpnExclusionsProfile": "プロファイルのルール",
+  "vpnExclusionsManualHint": "1 つ目のチェックは手動設定です。空 — 除外に反対（アプリは VPN 内に残る）、チェック — アプリを VPN の外に出す、ダッシュ — 未設定。手動設定はプロファイルのルールより優先されます。",
+  "vpnExclusionsProfileHint": "2 つ目のチェックはプロファイルの状態です。チェック — PROCESS-NAME ルールが DIRECT を指定、空 — ルールがプロキシを指定、ダッシュ — ルールなし。グローバルモードではこれらの表示は無効です。",
+  "vpnExclusionsGlobalMode": "グローバルモードはプロファイルのルールを無視します。手動設定のみ有効です。",
+  "vpnExclusionsLockdown": "Android で「VPN なしで接続をブロック」が有効な場合、除外したアプリも通信できません。",
+  "ignoreProfileProcessRules": "プロファイルの PROCESS-NAME を無視",
+  "ignoreProfileProcessRulesDesc": "プロファイルの PROCESS-NAME ルールはアプリをトンネルから除外しなくなり、手動のチェックだけが適用されます。"
 }

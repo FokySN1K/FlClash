@@ -209,38 +209,41 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m71(count, label) =>
       "${Intl.plural(count, one: '1 groupe de proxys', other: '${label} groupes de proxys')}";
 
-  static String m72(count, label) =>
+  static String m72(fingerprint, reason) =>
+      "Impossible d’ajouter X25519MLKEM768 à l’empreinte ${fingerprint}, REALITY la conserve telle quelle : ${reason}";
+
+  static String m73(count, label) =>
       "${Intl.plural(count, one: '1 règle', other: '${label} règles')}";
 
-  static String m73(appName) => "${appName} (mode sans échec)";
+  static String m74(appName) => "${appName} (mode sans échec)";
 
-  static String m74(count) =>
+  static String m75(count) =>
       "${Intl.plural(count, one: '1 seconde', other: '${count} secondes')}";
 
-  static String m75(count) => "${count} actifs";
-
-  static String m76(count) =>
-      "${Intl.plural(count, one: '1 problème', other: '${count} problèmes')}";
+  static String m76(count) => "${count} actifs";
 
   static String m77(count) =>
+      "${Intl.plural(count, one: '1 problème', other: '${count} problèmes')}";
+
+  static String m78(count) =>
       "${Intl.plural(count, one: '1 réglage', other: '${count} réglages')}";
 
-  static String m78(link) => "Aucun proxy n’a pu être lu dans ${link}";
+  static String m79(link) => "Aucun proxy n’a pu être lu dans ${link}";
 
-  static String m79(label) => "${label} doit être un seul élément";
+  static String m80(label) => "${label} doit être un seul élément";
 
-  static String m80(value) => "Pic ${value}";
+  static String m81(value) => "Pic ${value}";
 
-  static String m81(value) => "Total ${value}";
+  static String m82(value) => "Total ${value}";
 
-  static String m82(transport) => "En-têtes ${transport}";
+  static String m83(transport) => "En-têtes ${transport}";
 
-  static String m83(label) => "${label} doit être une URL";
-
-  static String m84(count) =>
-      "${Intl.plural(count, one: 'il y a 1 an', other: 'il y a ${count} ans')}";
+  static String m84(label) => "${label} doit être une URL";
 
   static String m85(count) =>
+      "${Intl.plural(count, one: 'il y a 1 an', other: 'il y a ${count} ans')}";
+
+  static String m86(count) =>
       "${Intl.plural(count, other: 'il y a ${count} a')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -866,7 +869,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "expireTime": MessageLookupByLibrary.simpleMessage("Date d’expiration"),
     "exportFile": MessageLookupByLibrary.simpleMessage("Exporter le fichier"),
     "exportLogs": MessageLookupByLibrary.simpleMessage("Exporter les journaux"),
-    "shareLogs": MessageLookupByLibrary.simpleMessage("Partager les journaux"),
     "exportSuccess": MessageLookupByLibrary.simpleMessage(
       "Exportation réussie",
     ),
@@ -1008,6 +1010,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "ignoreBatteryOptimization": MessageLookupByLibrary.simpleMessage(
       "Ignorer l’optimisation de la batterie",
     ),
+    "ignoreProfileProcessRules": MessageLookupByLibrary.simpleMessage(
+      "Ignorer PROCESS-NAME du profil",
+    ),
+    "ignoreProfileProcessRulesDesc": MessageLookupByLibrary.simpleMessage(
+      "Les règles PROCESS-NAME du profil n\'excluent plus les applications du tunnel : seules vos marques comptent.",
+    ),
     "import": MessageLookupByLibrary.simpleMessage("Importer"),
     "importConfigInvalid": MessageLookupByLibrary.simpleMessage(
       "Ce fichier n’est pas une configuration importable",
@@ -1050,9 +1058,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Saisissez le contenu de la règle",
     ),
     "installNow": MessageLookupByLibrary.simpleMessage("Installer"),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Ce système masque la liste des apps installées tant que l’autorisation n’est pas accordée. Accordez-la pour configurer le proxy par app.",
     ),
@@ -1531,9 +1540,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "quickActions": MessageLookupByLibrary.simpleMessage("Actions rapides"),
     "quickEdit": MessageLookupByLibrary.simpleMessage("Modification rapide"),
-    "realityHelloFallback": MessageLookupByLibrary.simpleMessage(
-      "Impossible d’ajouter X25519MLKEM768 à l’empreinte {fingerprint}, REALITY la conserve telle quelle : {reason}",
-    ),
+    "realityHelloFallback": m72,
     "recentRequests": MessageLookupByLibrary.simpleMessage("Requêtes récentes"),
     "recommendedIcons": MessageLookupByLibrary.simpleMessage("Suggestions"),
     "recordType": MessageLookupByLibrary.simpleMessage("Type d’enregistrement"),
@@ -1765,14 +1772,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "La règle doit commencer par un type pris en charge, par exemple DOMAIN,example.com,DIRECT",
     ),
     "rules": MessageLookupByLibrary.simpleMessage("Règles"),
-    "rulesCount": m72,
+    "rulesCount": m73,
     "runTime": MessageLookupByLibrary.simpleMessage("Durée d’exécution"),
     "running": MessageLookupByLibrary.simpleMessage("En cours d’exécution"),
     "runtimeConfig": MessageLookupByLibrary.simpleMessage(
       "Configuration d’exécution",
     ),
     "safeMode": MessageLookupByLibrary.simpleMessage("Mode sans échec"),
-    "safeModeAppTitle": m73,
+    "safeModeAppTitle": m74,
     "saturation": MessageLookupByLibrary.simpleMessage("Saturation"),
     "save": MessageLookupByLibrary.simpleMessage("Enregistrer"),
     "saveChanges": MessageLookupByLibrary.simpleMessage(
@@ -1787,9 +1794,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "search": MessageLookupByLibrary.simpleMessage("Rechercher"),
     "seconds": MessageLookupByLibrary.simpleMessage("secondes"),
-    "secondsCount": m74,
+    "secondsCount": m75,
     "secretKey": MessageLookupByLibrary.simpleMessage("Clé"),
-    "sectionsInEffect": m75,
+    "sectionsInEffect": m76,
     "select": MessageLookupByLibrary.simpleMessage("Sélectionner"),
     "selectAll": MessageLookupByLibrary.simpleMessage("Tout sélectionner"),
     "selectRuleSet": MessageLookupByLibrary.simpleMessage(
@@ -1824,7 +1831,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Scannez le code avec l\'appareil photo du téléphone, puis collez le lien dans la page qui s\'ouvre. Les deux appareils doivent être sur le même réseau.",
     ),
     "server": MessageLookupByLibrary.simpleMessage("Serveur"),
-    "serviceAbnormalCount": m76,
+    "serviceAbnormalCount": m77,
     "serviceAllAvailable": MessageLookupByLibrary.simpleMessage(
       "Tout est disponible",
     ),
@@ -1858,11 +1865,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "settingEntries": MessageLookupByLibrary.simpleMessage("réglages"),
     "settings": MessageLookupByLibrary.simpleMessage("Paramètres"),
-    "settingsCount": m77,
-    "shareLinkUnreadable": m78,
+    "settingsCount": m78,
+    "shareLinkUnreadable": m79,
     "shareLinksInvalid": MessageLookupByLibrary.simpleMessage(
       "Aucun proxy n’a pu être lu dans les liens",
     ),
+    "shareLogs": MessageLookupByLibrary.simpleMessage("Partager les journaux"),
     "shareQrcodeTip": MessageLookupByLibrary.simpleMessage(
       "Scannez avec FlClash sur un autre appareil pour importer ce profil.",
     ),
@@ -1890,7 +1898,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "singleShareLinkOnly": MessageLookupByLibrary.simpleMessage(
       "Saisissez un seul lien ici ; pour en modifier plusieurs, utilisez la modification rapide de la liste",
     ),
-    "singleValueTip": m79,
+    "singleValueTip": m80,
     "size": MessageLookupByLibrary.simpleMessage("Taille"),
     "skipCertVerify": MessageLookupByLibrary.simpleMessage(
       "Ignorer la vérification du certificat",
@@ -2007,11 +2015,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalUpload": MessageLookupByLibrary.simpleMessage("Envoyé"),
     "tproxyPort": MessageLookupByLibrary.simpleMessage("Port TProxy"),
     "traffic": MessageLookupByLibrary.simpleMessage("Trafic"),
-    "trafficPeak": m80,
-    "trafficTotal": m81,
+    "trafficPeak": m81,
+    "trafficTotal": m82,
     "trafficUsage": MessageLookupByLibrary.simpleMessage("Trafic utilisé"),
     "transport": MessageLookupByLibrary.simpleMessage("Transport"),
-    "transportHeaders": m82,
+    "transportHeaders": m83,
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(
       "TUN n’a pas pu être autorisé et a donc été désactivé.",
@@ -2050,7 +2058,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Bande passante d’envoi",
     ),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
-    "urlTip": m83,
+    "urlTip": m84,
     "useHosts": MessageLookupByLibrary.simpleMessage("Utiliser hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Utiliser les hosts du système",
@@ -2072,6 +2080,28 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnEnableDesc": MessageLookupByLibrary.simpleMessage(
       "Le VPN fait passer automatiquement tout le trafic du système par VpnService.",
     ),
+    "vpnExclusions": MessageLookupByLibrary.simpleMessage(
+      "Exclusions d\'applications",
+    ),
+    "vpnExclusionsDesc": MessageLookupByLibrary.simpleMessage(
+      "Les applications exclues n\'entrent jamais dans le tunnel : leur trafic sort comme si le VPN était désactivé.",
+    ),
+    "vpnExclusionsGlobalMode": MessageLookupByLibrary.simpleMessage(
+      "Le mode global ignore les règles du profil : seules vos marques s\'appliquent.",
+    ),
+    "vpnExclusionsLockdown": MessageLookupByLibrary.simpleMessage(
+      "Si « Bloquer les connexions sans VPN » est activé sur Android, une application exclue ne pourra pas se connecter non plus.",
+    ),
+    "vpnExclusionsManual": MessageLookupByLibrary.simpleMessage("Votre choix"),
+    "vpnExclusionsManualHint": MessageLookupByLibrary.simpleMessage(
+      "La première case est votre choix : vide — contre l\'exclusion, l\'application reste dans le tunnel ; cochée — garde l\'application hors du VPN ; un tiret — aucun choix. Votre choix prime sur la règle du profil.",
+    ),
+    "vpnExclusionsProfile": MessageLookupByLibrary.simpleMessage(
+      "Règle du profil",
+    ),
+    "vpnExclusionsProfileHint": MessageLookupByLibrary.simpleMessage(
+      "La seconde case montre le profil : cochée, sa règle PROCESS-NAME envoie l\'application en DIRECT ; vide, la règle l\'envoie via un proxy ; un tiret, le profil ne dit rien. Le mode global ignore ces marques.",
+    ),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage(
       "Configuration WebDAV",
     ),
@@ -2082,8 +2112,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "Écrire dans le système règle aussi l’horloge système ; Android l’ignore.",
     ),
-    "yearsAgo": m84,
-    "yearsAgoShort": m85,
+    "yearsAgo": m85,
+    "yearsAgoShort": m86,
     "yes": MessageLookupByLibrary.simpleMessage("Oui"),
     "zhCN": MessageLookupByLibrary.simpleMessage("Chinois simplifié"),
   };

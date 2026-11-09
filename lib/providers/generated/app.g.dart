@@ -133,7 +133,7 @@ final class LogsProvider extends $NotifierProvider<Logs, FixedList<Log>> {
   }
 }
 
-String _$logsHash() => r'aefb14ef2c0a3c7a4e27f2ac4188a5b2943e60b5';
+String _$logsHash() => r'e4a9e7de3fdee965cef9701f91c37f4f701fe1f2';
 
 abstract class _$Logs extends $Notifier<FixedList<Log>> {
   FixedList<Log> build();
@@ -1524,7 +1524,7 @@ final class PendingDelayTestsProvider
   }
 }
 
-String _$pendingDelayTestsHash() => r'e1e306c07e3ee017fe87ffd2f93884418b6caa03';
+String _$pendingDelayTestsHash() => r'02f2efb461dbc2217b339f0759d80d7a341db235';
 
 abstract class _$PendingDelayTests
     extends $Notifier<Map<String, DelayTestPhase>> {
@@ -1550,11 +1550,21 @@ abstract class _$PendingDelayTests
   }
 }
 
+/// The groups a check is running on, whether the page asked for it or the Core
+/// decided to run one on its own. A group on this list keeps its cards where
+/// they are until the check is over.
+
 @ProviderFor(DelayTestingGroups)
 final delayTestingGroupsProvider = DelayTestingGroupsProvider._();
 
+/// The groups a check is running on, whether the page asked for it or the Core
+/// decided to run one on its own. A group on this list keeps its cards where
+/// they are until the check is over.
 final class DelayTestingGroupsProvider
     extends $NotifierProvider<DelayTestingGroups, Set<String>> {
+  /// The groups a check is running on, whether the page asked for it or the Core
+  /// decided to run one on its own. A group on this list keeps its cards where
+  /// they are until the check is over.
   DelayTestingGroupsProvider._()
     : super(
         from: null,
@@ -1583,7 +1593,11 @@ final class DelayTestingGroupsProvider
 }
 
 String _$delayTestingGroupsHash() =>
-    r'3a56d623f940786303d78590b18440bcd007fab4';
+    r'1ee8bbcaaade7ebd9857f7ea00bf7a0d909e7c65';
+
+/// The groups a check is running on, whether the page asked for it or the Core
+/// decided to run one on its own. A group on this list keeps its cards where
+/// they are until the check is over.
 
 abstract class _$DelayTestingGroups extends $Notifier<Set<String>> {
   Set<String> build();
@@ -2031,7 +2045,7 @@ final class ReleaseDownloadProvider
   }
 }
 
-String _$releaseDownloadHash() => r'e8266dc86dd7077f98469bdcce0c76b75448990c';
+String _$releaseDownloadHash() => r'd76ad5268a81dcb306d49469267a572a10a2412e';
 
 /// The dialog that starts a download and the rows that report it share one
 /// transfer; a second caller joins the attempt in flight.

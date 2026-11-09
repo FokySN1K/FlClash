@@ -478,6 +478,73 @@ final class VpnRouteAddressProvider
 
 String _$vpnRouteAddressHash() => r'bae2530b73b71ecff16aadfc395e60996d739d41';
 
+/// The targets the applied profile's own `PROCESS-NAME` rules give the apps,
+/// published by the setup. The exclusion view shows it next to the manual
+/// marks, and Global mode stops counting it.
+
+@ProviderFor(ProfileProcessRules)
+final profileProcessRulesProvider = ProfileProcessRulesProvider._();
+
+/// The targets the applied profile's own `PROCESS-NAME` rules give the apps,
+/// published by the setup. The exclusion view shows it next to the manual
+/// marks, and Global mode stops counting it.
+final class ProfileProcessRulesProvider
+    extends $NotifierProvider<ProfileProcessRules, Map<String, String>> {
+  /// The targets the applied profile's own `PROCESS-NAME` rules give the apps,
+  /// published by the setup. The exclusion view shows it next to the manual
+  /// marks, and Global mode stops counting it.
+  ProfileProcessRulesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'profileProcessRulesProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$profileProcessRulesHash();
+
+  @$internal
+  @override
+  ProfileProcessRules create() => ProfileProcessRules();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Map<String, String> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Map<String, String>>(value),
+    );
+  }
+}
+
+String _$profileProcessRulesHash() =>
+    r'e35b2a5e4125d3e1638f0f16e3d301b25b097eb8';
+
+/// The targets the applied profile's own `PROCESS-NAME` rules give the apps,
+/// published by the setup. The exclusion view shows it next to the manual
+/// marks, and Global mode stops counting it.
+
+abstract class _$ProfileProcessRules extends $Notifier<Map<String, String>> {
+  Map<String, String> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<Map<String, String>, Map<String, String>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Map<String, String>, Map<String, String>>,
+              Map<String, String>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(vpnOptions)
 final vpnOptionsProvider = VpnOptionsProvider._();
 
@@ -514,7 +581,7 @@ final class VpnOptionsProvider
   }
 }
 
-String _$vpnOptionsHash() => r'c00e87278b32dd8977ed136aace10dccfe05508d';
+String _$vpnOptionsHash() => r'04b4dff2553c943b9b52f4ab3a7d8211bb37e8dd';
 
 @ProviderFor(AccessControlState)
 final accessControlStateProvider = AccessControlStateProvider._();
@@ -2422,7 +2489,7 @@ final class DelayTestPhaseProvider
   }
 }
 
-String _$delayTestPhaseHash() => r'a188c697e243a5bade88af075a4b24b39b80ff85';
+String _$delayTestPhaseHash() => r'37076e90b566933a670eb3a9ad7089625ea620aa';
 
 final class DelayTestPhaseFamily extends $Family
     with

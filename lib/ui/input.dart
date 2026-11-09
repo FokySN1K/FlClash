@@ -12,10 +12,15 @@ class CommonCheckBox extends StatelessWidget {
   final ValueChanged<bool?>? onChanged;
   final bool isCircle;
 
+  /// A tri-state box shows a dash for null: the exclusion view reads it as
+  /// "no manual choice", where a plain box only knows checked and empty.
+  final bool tristate;
+
   const CommonCheckBox({
     required this.value,
     required this.onChanged,
     this.isCircle = false,
+    this.tristate = false,
     super.key,
   });
 
@@ -25,6 +30,7 @@ class CommonCheckBox extends StatelessWidget {
       materialTapTargetSize: MaterialTapTargetSize.padded,
       visualDensity: VisualDensity.standard,
       shape: isCircle ? AppShape.circle : null,
+      tristate: tristate,
       value: value,
       onChanged: onChanged,
     );

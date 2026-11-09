@@ -355,6 +355,18 @@ abstract class VpnProps with _$VpnProps {
     @Default(true) bool allowBypass,
     @Default(false) bool dnsHijacking,
     @Default(defaultAccessControlProps) AccessControlProps accessControlProps,
+
+    /// Manual exclusions: an app here never enters the tunnel, even when the
+    /// profile would keep it inside.
+    @Default([]) List<String> excludePackages,
+
+    /// Manual inclusions: an app here stays inside the tunnel, even when the
+    /// profile's own rule sends it DIRECT.
+    @Default([]) List<String> includePackages,
+
+    /// When set, the profile's own `PROCESS-NAME` rules no longer take apps
+    /// out of the tunnel: only the manual marks above do.
+    @Default(false) bool ignoreProfileProcessRules,
   }) = _VpnProps;
 
   factory VpnProps.fromJson(Map<String, Object?>? json) =>

@@ -24,6 +24,10 @@ data class VpnOptions(
     val bypassDomain: List<String>,
     val stack: String,
     val routeAddress: List<String>,
+
+    // Gson leaves a field an older payload does not carry null, however the
+    // type reads, so the list is nullable and read through orEmpty().
+    val excludePackages: List<String>? = null,
     val mtu: Int = 0,
     val congestionController: String? = null,
 )

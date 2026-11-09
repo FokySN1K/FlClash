@@ -48,8 +48,8 @@ abstract class UpdateParams with _$UpdateParams {
     @JsonKey(toJson: _tunCoreJson) required Tun tun,
     @JsonKey(name: 'mixed-port') required int mixedPort,
     @JsonKey(name: 'allow-lan') required bool allowLan,
-    @JsonKey(name: 'find-process-mode')
-    required FindProcessMode findProcessMode,
+    @JsonKey(name: 'find-process-mode', includeIfNull: false)
+    FindProcessMode? findProcessMode,
     required Mode mode,
     @JsonKey(name: 'log-level') required LogLevel logLevel,
     bool? ipv6,
@@ -83,6 +83,7 @@ abstract class VpnOptions with _$VpnOptions {
     required bool systemProxy,
     required List<String> bypassDomain,
     required String stack,
+    @Default([]) List<String> excludePackages,
     @Default([]) List<String> routeAddress,
     @Default(0) int mtu,
     @Default('') String congestionController,

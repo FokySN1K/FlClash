@@ -228,18 +228,29 @@ class VpnService : SystemVpnService(), ManagedService {
         }
     }
 
+    // Excluded apps never enter the tunnel: a rule inside the Core only picks an
+    // exit, while an app that judges the VPN by its interfaces has to see them
+    // untouched. A manual exclusion wins over the profile's rule, and the access
+    // control list only narrows the same set: accept mode keeps an excluded app
+    // out of the allowed list, reject mode adds it to the disallowed one.
     private fun Builder.configureAccessControl(options: VpnOptions) {
         val accessControl = options.accessControlProps
-        if (!accessControl.enable) return
+        val excluded = options.excludePackages.orEmpty().toSet() - packageName
+        if (!accessControl.enable) {
+            excluded.forEach { name ->
+                addApplication(name, ::addDisallowedApplication)
+            }
+            return
+        }
         when (accessControl.mode) {
             AccessControlMode.ACCEPT_SELECTED -> {
-                (accessControl.acceptList + packageName).forEach { name ->
+                (accessControl.acceptList + packageName - excluded).forEach { name ->
                     addApplication(name, ::addAllowedApplication)
                 }
             }
 
             AccessControlMode.REJECT_SELECTED -> {
-                (accessControl.rejectList - packageName).forEach { name ->
+                (accessControl.rejectList + excluded).forEach { name ->
                     addApplication(name, ::addDisallowedApplication)
                 }
             }

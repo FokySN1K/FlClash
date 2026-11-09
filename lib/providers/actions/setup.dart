@@ -13,6 +13,7 @@ typedef BuiltProfile = ({
   String yaml,
   String md5,
   ConfigCounts counts,
+  Map<String, String> processRules,
   SetupBase? base,
 });
 
@@ -477,7 +478,13 @@ class SetupAction extends _$SetupAction {
   }) async {
     final profileId = setupState.profileId;
     if (profileId == null) {
-      return (yaml: '', md5: '', counts: configCountsOf(const {}), base: null);
+      return (
+        yaml: '',
+        md5: '',
+        counts: configCountsOf(const {}),
+        processRules: const <String, String>{},
+        base: null,
+      );
     }
     final defaultUA = globalState.packageInfo.ua;
     final networkSetting = ref.read(
@@ -545,7 +552,13 @@ class SetupAction extends _$SetupAction {
       ),
     );
     if (profileBase == null) {
-      return (yaml: res.yaml, md5: res.md5, counts: res.counts, base: null);
+      return (
+        yaml: res.yaml,
+        md5: res.md5,
+        counts: res.counts,
+        processRules: res.processRules,
+        base: null,
+      );
     }
     final (:base, :path) = profileBase;
     return (
@@ -556,6 +569,7 @@ class SetupAction extends _$SetupAction {
         proxies: res.counts.proxies + base.proxies,
         rules: res.counts.rules + base.rules,
       ),
+      processRules: res.processRules,
       base: SetupBase(path: path, overlay: res.yaml),
     );
   }
@@ -739,6 +753,13 @@ class SetupAction extends _$SetupAction {
       setupState = state;
       return getProfile(setupState: state, patchConfig: realPatchConfig);
     }, title: 'build profile');
+    // The exclusion view reads what the profile itself sends DIRECT even when
+    // the push below is skipped: a rebuilt overlay with the same md5 still
+    // describes what the Core runs.
+    final processRules = realProfile?.processRules;
+    if (processRules != null) {
+      ref.read(profileProcessRulesProvider.notifier).update(processRules);
+    }
     final profileFailed = realProfile == null;
     final setupParams = _setupParams.copyWith(base: realProfile?.base);
     final inputs = switch (setupState) {

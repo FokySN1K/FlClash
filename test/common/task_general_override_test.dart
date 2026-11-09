@@ -9,6 +9,7 @@ const _profile = <String, dynamic>{
   'tcp-concurrent': false,
   'ipv6': true,
   'geodata-loader': 'standard',
+  'find-process-mode': 'strict',
 };
 
 Future<YamlMap> _configOf(PatchClashConfig patchConfig) async {
@@ -54,6 +55,26 @@ void main() {
     expect(config['geodata-loader'], 'memconservative');
     expect(config['unified-delay'], false);
     expect(config['ipv6'], true);
+  });
+
+  test('lets the profile decide the process mode by default', () async {
+    final config = await _configOf(
+      const PatchClashConfig(findProcessMode: FindProcessMode.always),
+    );
+
+    expect(config['find-process-mode'], 'strict',
+        reason: 'the profile wins until the override key is picked');
+  });
+
+  test('picked process mode replaces the profile value', () async {
+    final config = await _configOf(
+      const PatchClashConfig(
+        findProcessMode: FindProcessMode.always,
+        generalOverrideKeys: {GeneralOverrideKey.findProcessMode},
+      ),
+    );
+
+    expect(config['find-process-mode'], 'always');
   });
 
   test('keeps the test URL out of the profile', () async {

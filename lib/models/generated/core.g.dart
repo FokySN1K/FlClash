@@ -59,7 +59,7 @@ _UpdateParams _$UpdateParamsFromJson(Map<String, dynamic> json) =>
       tun: Tun.fromJson(json['tun'] as Map<String, dynamic>),
       mixedPort: (json['mixed-port'] as num).toInt(),
       allowLan: json['allow-lan'] as bool,
-      findProcessMode: $enumDecode(
+      findProcessMode: $enumDecodeNullable(
         _$FindProcessModeEnumMap,
         json['find-process-mode'],
       ),
@@ -93,7 +93,7 @@ Map<String, dynamic> _$UpdateParamsToJson(_UpdateParams instance) =>
       'tun': _tunCoreJson(instance.tun),
       'mixed-port': instance.mixedPort,
       'allow-lan': instance.allowLan,
-      'find-process-mode': _$FindProcessModeEnumMap[instance.findProcessMode]!,
+      'find-process-mode': ?_$FindProcessModeEnumMap[instance.findProcessMode],
       'mode': _$ModeEnumMap[instance.mode]!,
       'log-level': _$LogLevelEnumMap[instance.logLevel]!,
       'ipv6': instance.ipv6,
@@ -147,6 +147,11 @@ _VpnOptions _$VpnOptionsFromJson(Map<String, dynamic> json) => _VpnOptions(
       .map((e) => e as String)
       .toList(),
   stack: json['stack'] as String,
+  excludePackages:
+      (json['excludePackages'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      const [],
   routeAddress:
       (json['routeAddress'] as List<dynamic>?)
           ?.map((e) => e as String)
@@ -167,6 +172,7 @@ Map<String, dynamic> _$VpnOptionsToJson(_VpnOptions instance) =>
       'systemProxy': instance.systemProxy,
       'bypassDomain': instance.bypassDomain,
       'stack': instance.stack,
+      'excludePackages': instance.excludePackages,
       'routeAddress': instance.routeAddress,
       'mtu': instance.mtu,
       'congestionController': instance.congestionController,
@@ -284,6 +290,7 @@ const _$CoreEventTypeEnumMap = {
   CoreEventType.dialerLoop: 'dialerLoop',
   CoreEventType.checkStart: 'checkStart',
   CoreEventType.checkEnd: 'checkEnd',
+  CoreEventType.helloFallback: 'helloFallback',
 };
 
 _Delay _$DelayFromJson(Map<String, dynamic> json) => _Delay(
