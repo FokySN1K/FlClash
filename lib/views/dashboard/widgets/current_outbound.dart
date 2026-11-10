@@ -72,11 +72,15 @@ class _CurrentOutboundCardState extends ConsumerState<CurrentOutboundCard>
     );
     final isStart = ref.watch(isStartProvider);
     final suspended = isStart && ref.watch(suspendProvider);
+    // The node line names the exit of the proxied route: with the tunnel down
+    // the probe is pinned to DIRECT, so the line would name a node the traffic
+    // never visits.
+    final proxied = isStart && !suspended;
     final entry = ref.watch(
       outboundIpProbeProvider.select((state) => state.entryOf(routedOutbound)),
     );
     final ipInfo = entry.value;
-    final exit = entry.stamp?.hits.exitInfo;
+    final exit = proxied ? entry.stamp?.hits.exitInfo : null;
     final phase = shownPhase(entry);
     final failed = phase == ProbePhase.failed && ipInfo == null;
     final qualityState = ipInfo == null
@@ -189,7 +193,7 @@ class _CurrentOutboundCardState extends ConsumerState<CurrentOutboundCard>
                       _Cells(
                         quality: quality,
                         loading: loading,
-                        active: isStart && !suspended,
+                        active: proxied,
                         gap: metrics.cellGap,
                       ),
                     ],

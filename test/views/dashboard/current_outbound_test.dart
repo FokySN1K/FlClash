@@ -97,6 +97,8 @@ Widget _app(
   Future<IpQuality> Function(Ref ref, String ip) quality, {
   DashboardDensity density = DashboardDensity.standard,
   List<RouteHit> hits = const [],
+  bool running = false,
+  bool suspended = false,
 }) {
   final stamp = hits.isEmpty
       ? null
@@ -104,14 +106,15 @@ Widget _app(
           coreEpoch: 1,
           routeVersion: 1,
           hostEpoch: 1,
-          proxied: true,
+          proxied: running,
           hits: hits,
         );
   return TestApp(
     locale: const Locale('en'),
     overrides: [
       profilesProvider.overrideWithValue(const [_profile]),
-      suspendProvider.overrideWithValue(false),
+      suspendProvider.overrideWithValue(suspended),
+      if (running) runTimeProvider.overrideWithBuild((_, _) => 1),
       outboundIpProbeProvider.overrideWithBuild(
         (_, _) => RoutedProbeState({
           routedOutbound: ProbeEntry(
@@ -491,13 +494,18 @@ void main() {
       host: 'www.google.com',
       exit: '"HK 01" Vless 1.2.3.4:443',
     );
+    const direct = RouteHit(
+      host: 'www.google.com',
+      exit: '"DIRECT" Direct 203.0.113.9:0',
+    );
+    const directLabel = 'DIRECT · Direct · 203.0.113.9:0';
     const label = 'HK 01 · Vless · 1.2.3.4:443';
 
     testWidgets('names the node, its protocol and its endpoint', (
       tester,
     ) async {
       await tester.pumpWidget(
-        _app((_, _) async => _residential, hits: const [hit]),
+        _app((_, _) async => _residential, hits: const [hit], running: true),
       );
       await tester.pump();
 
@@ -508,7 +516,7 @@ void main() {
     testWidgets('opens the VPN sheet from the line', (tester) async {
       _useTallView(tester);
       await tester.pumpWidget(
-        _app((_, _) async => _residential, hits: const [hit]),
+        _app((_, _) async => _residential, hits: const [hit], running: true),
       );
       await tester.pump();
 
@@ -526,12 +534,48 @@ void main() {
       expect(find.textContaining('HK 01'), findsNothing);
     });
 
+    testWidgets('stays away while the tunnel carries nothing', (tester) async {
+      await tester.pumpWidget(
+        _app((_, _) async => _residential, hits: const [direct]),
+      );
+      await tester.pump();
+
+      expect(find.text(directLabel), findsNothing);
+      expect(find.byGlyph(AppGlyphs.vpn), findsNothing);
+    });
+
+    testWidgets('stays away while the tunnel is suspended', (tester) async {
+      await tester.pumpWidget(
+        _app(
+          (_, _) async => _residential,
+          hits: const [direct],
+          running: true,
+          suspended: true,
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text(directLabel), findsNothing);
+    });
+
+    testWidgets('names a builtin the proxied route really leaves by', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _app((_, _) async => _residential, hits: const [direct], running: true),
+      );
+      await tester.pump();
+
+      expect(find.text(directLabel), findsOneWidget);
+    });
+
     testWidgets('fits a phone and keeps its node', (tester) async {
       await tester.pumpWidget(
         _app(
           (_, _) async => _residential,
           density: DashboardDensity.mobile,
           hits: const [hit],
+          running: true,
         ),
       );
       await tester.pump();
