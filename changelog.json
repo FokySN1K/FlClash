@@ -2,6 +2,34 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.43",
+      "tag": "v1.0.43",
+      "date": "2026-11-10",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "797eada",
+              "scope": "core",
+              "text": "Fake IP is kept only for proxied domains when the profile asks for it."
+            },
+            {
+              "id": "b99a86a",
+              "scope": "proxies",
+              "text": "A node's sheet shows its health and delay history, and the route map shows the IP quality behind each target."
+            },
+            {
+              "id": "1412de0",
+              "scope": "core",
+              "text": "The core can now tell the app how healthy a node is and which targets the rules use."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.42",
       "tag": "v1.0.42",
       "date": "2026-11-10",

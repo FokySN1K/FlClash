@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.43 (2026-11-10)
+
+**Features**
+
+- **core** Fake IP is kept only for proxied domains when the profile asks for it. (797eada)
+- **proxies** A node's sheet shows its health and delay history, and the route map shows the IP quality behind each target. (b99a86a)
+- **core** The core can now tell the app how healthy a node is and which targets the rules use. (1412de0)
+
 ## v1.0.42 (2026-11-10)
 
 **Bug Fixes**
