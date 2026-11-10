@@ -72,6 +72,13 @@ mixin CoreInterface {
 
   Future<RouteCheck?> checkRoutes(CheckRoutesParams params);
 
+  /// The outbounds the applied rules send traffic to, in rule order.
+  Future<List<RouteTarget>> routeTargets();
+
+  /// One node's last check for the group's target, its history and the
+  /// transports it offers.
+  Future<ProxyDetails> proxyDetails(ProxyDetailsParams params);
+
   Future<bool> startListener();
 
   Future<bool> stopListener();
@@ -442,6 +449,35 @@ abstract class CoreHandlerInterface with CoreInterface {
       timeout: coreGuardFor(probeTimeoutDuration.inMilliseconds),
     );
     return data == null ? null : RouteCheck.fromJson(data);
+  }
+
+  @override
+  Future<List<RouteTarget>> routeTargets() async {
+    final data = await _invokeMethod<List<dynamic>>(
+      method: CoreMethod.routeTargets,
+    );
+    return data
+            ?.whereType<Map>()
+            .map(
+              (item) => RouteTarget.fromJson(Map<String, Object?>.from(item)),
+            )
+            .toList() ??
+        const [];
+  }
+
+  @override
+  Future<ProxyDetails> proxyDetails(ProxyDetailsParams params) async {
+    final data = await _invokeMethod<Map<String, dynamic>>(
+      method: CoreMethod.proxyDetails,
+      arguments: params.toJson(),
+    );
+    if (data == null) {
+      throw CoreMethodException(
+        code: 'no_response',
+        message: 'Core did not answer ${CoreMethod.proxyDetails.name}',
+      );
+    }
+    return ProxyDetails.fromJson(data);
   }
 
   @override

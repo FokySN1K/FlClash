@@ -55,6 +55,8 @@ enum CoreMethod {
   updateDns,
   watchRoute,
   checkRoutes,
+  routeTargets,
+  proxyDetails,
 }
 
 class CoreMethodCall {

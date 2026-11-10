@@ -240,6 +240,155 @@ extension RouteHitsExt on Iterable<RouteHit> {
   }
 }
 
+/// One outbound the applied rules send traffic to, with the number of rules
+/// that name it. [isDefault] marks the outbound unmatched traffic leaves by.
+@immutable
+class RouteTarget {
+  const RouteTarget({
+    required this.name,
+    this.rules = 0,
+    this.isDefault = false,
+  });
+
+  factory RouteTarget.fromJson(Map<String, Object?> json) => RouteTarget(
+    name: json['name'] as String? ?? '',
+    rules: (json['rules'] as num?)?.toInt() ?? 0,
+    isDefault: json['default'] == true,
+  );
+
+  final String name;
+
+  /// How many of the rules name this outbound; zero when the mode sends
+  /// everything to it without asking them.
+  final int rules;
+
+  final bool isDefault;
+
+  @override
+  bool operator ==(Object other) =>
+      other is RouteTarget &&
+      other.name == name &&
+      other.rules == rules &&
+      other.isDefault == isDefault;
+
+  @override
+  int get hashCode => Object.hash(name, rules, isDefault);
+
+  @override
+  String toString() => 'RouteTarget($name, rules: $rules, default: $isDefault)';
+}
+
+/// One entry of a node's check history: when the check ran and what it
+/// measured. A zero [delay] is a check that failed.
+@immutable
+class DelaySample {
+  const DelaySample({required this.time, required this.delay});
+
+  factory DelaySample.fromJson(Map<String, Object?> json) => DelaySample(
+    time: (json['time'] as num?)?.toInt() ?? 0,
+    delay: (json['delay'] as num?)?.toInt() ?? 0,
+  );
+
+  /// Unix milliseconds of the check.
+  final int time;
+
+  /// What the check measured in milliseconds; zero when it failed.
+  final int delay;
+
+  DateTime get checkedAt => DateTime.fromMillisecondsSinceEpoch(time);
+
+  @override
+  bool operator ==(Object other) =>
+      other is DelaySample && other.time == time && other.delay == delay;
+
+  @override
+  int get hashCode => Object.hash(time, delay);
+
+  @override
+  String toString() => 'DelaySample($time, $delay)';
+}
+
+/// The node to describe and the target its group tests against.
+@immutable
+class ProxyDetailsParams {
+  const ProxyDetailsParams({required this.proxyName, this.testUrl = ''});
+
+  factory ProxyDetailsParams.fromJson(Map<String, Object?> json) =>
+      ProxyDetailsParams(
+        proxyName: json['proxy-name'] as String? ?? '',
+        testUrl: json['test-url'] as String? ?? '',
+      );
+
+  final String proxyName;
+  final String testUrl;
+
+  Map<String, Object?> toJson() => {
+    'proxy-name': proxyName,
+    'test-url': testUrl,
+  };
+
+  @override
+  bool operator ==(Object other) =>
+      other is ProxyDetailsParams &&
+      other.proxyName == proxyName &&
+      other.testUrl == testUrl;
+
+  @override
+  int get hashCode => Object.hash(proxyName, testUrl);
+}
+
+/// What a card has no room for: the verdict of the last check for the group's
+/// target, the checks before it, and the transports the node offers.
+@immutable
+class ProxyDetails {
+  const ProxyDetails({
+    this.alive = false,
+    this.history = const [],
+    this.udp = false,
+    this.uot = false,
+    this.xudp = false,
+    this.tfo = false,
+    this.mptcp = false,
+    this.smux = false,
+  });
+
+  factory ProxyDetails.fromJson(Map<String, Object?> json) => ProxyDetails(
+    alive: json['alive'] == true,
+    history: [
+      for (final item in (json['history'] as List?) ?? const [])
+        if (item is Map) DelaySample.fromJson(Map<String, Object?>.from(item)),
+    ],
+    udp: json['udp'] == true,
+    uot: json['uot'] == true,
+    xudp: json['xudp'] == true,
+    tfo: json['tfo'] == true,
+    mptcp: json['mptcp'] == true,
+    smux: json['smux'] == true,
+  );
+
+  final bool alive;
+  final List<DelaySample> history;
+  final bool udp;
+  final bool uot;
+  final bool xudp;
+  final bool tfo;
+  final bool mptcp;
+  final bool smux;
+
+  /// The last check the history holds; null until the node is checked.
+  DelaySample? get last => history.isEmpty ? null : history.last;
+
+  /// The transports the node offers, named the way the Core spells them.
+  List<String> get transports => [
+    if (udp) 'UDP',
+    if (uot) 'UOT',
+    if (xudp) 'XUDP',
+    if (tfo) 'TFO',
+    if (mptcp) 'MPTCP',
+    if (smux) 'SMUX',
+  ];
+}
+
 @freezed
 abstract class CheckRoutesParams with _$CheckRoutesParams {
   const factory CheckRoutesParams({@Default([]) List<List<RouteHit>> routes}) =

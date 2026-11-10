@@ -207,6 +207,8 @@ var methodHandlers = map[CoreMethod]methodHandler{
 	testGroupDelayMethod:           withArguments(handleTestGroupDelay),
 	watchRouteMethod:               watchRouteHandler,
 	checkRoutesMethod:              withArguments(handleCheckRoutes),
+	routeTargetsMethod:             withoutArguments(handleRouteTargets),
+	proxyDetailsMethod:             withFallible(handleProxyDetails),
 	probeMethod:                    withArguments(handleProbe),
 	outboundIpMethod:               withArguments(handleOutboundIp),
 	serviceCheckMethod:             withArguments(handleServiceCheck),

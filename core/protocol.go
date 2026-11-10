@@ -67,6 +67,8 @@ const (
 	clearEffectMethod              CoreMethod = "clearEffect"
 	watchRouteMethod               CoreMethod = "watchRoute"
 	checkRoutesMethod              CoreMethod = "checkRoutes"
+	routeTargetsMethod             CoreMethod = "routeTargets"
+	proxyDetailsMethod             CoreMethod = "proxyDetails"
 )
 
 type MessageType string

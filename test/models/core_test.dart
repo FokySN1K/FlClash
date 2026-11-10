@@ -258,4 +258,38 @@ void main() {
       expect(event.data, 'test log');
     });
   });
+
+  group('ProxyDetails', () {
+    test('fromJson reads the checks and the transports', () {
+      final details = ProxyDetails.fromJson({
+        'alive': true,
+        'history': [
+          {'time': 1700000000000, 'delay': 42},
+          {'time': 1700000060000, 'delay': 0},
+        ],
+        'udp': true,
+        'uot': true,
+        'xudp': false,
+        'tfo': true,
+        'mptcp': false,
+        'smux': true,
+      });
+
+      expect(details.alive, isTrue);
+      expect(details.history.map((sample) => sample.delay), [42, 0]);
+      expect(
+        details.last!.checkedAt,
+        DateTime.fromMillisecondsSinceEpoch(1700000060000),
+      );
+      expect(details.transports, ['UDP', 'UOT', 'TFO', 'SMUX']);
+    });
+
+    test('a node the Core never checked has no last sample', () {
+      final details = ProxyDetails.fromJson(const {'alive': false});
+
+      expect(details.history, isEmpty);
+      expect(details.last, isNull);
+      expect(details.transports, isEmpty);
+    });
+  });
 }

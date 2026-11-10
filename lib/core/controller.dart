@@ -215,6 +215,14 @@ class CoreController {
     return _interface.checkRoutes(params);
   }
 
+  Future<List<RouteTarget>> routeTargets() {
+    return _interface.routeTargets();
+  }
+
+  Future<ProxyDetails> proxyDetails(ProxyDetailsParams params) {
+    return _interface.proxyDetails(params);
+  }
+
   Future<List<TrackerInfo>> getConnections() async {
     return _interface.getConnections();
   }

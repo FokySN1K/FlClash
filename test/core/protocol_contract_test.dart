@@ -124,6 +124,18 @@ class _RecordingCoreHandler extends CoreHandlerInterface {
         'route-version': 3,
         'held': [true, false],
       },
+      CoreMethod.proxyDetails => {
+        'alive': true,
+        'history': [
+          {'time': 1700000000000, 'delay': 42},
+        ],
+        'udp': true,
+        'uot': false,
+        'xudp': true,
+        'tfo': false,
+        'mptcp': false,
+        'smux': true,
+      },
       _ => '',
     };
     return result as T?;
@@ -265,6 +277,22 @@ void main() {
 
     expect(handler.calls[CoreMethod.validateFilters], ['hk`jp', '(hk']);
     expect(errors, ['', 'missing closing )']);
+  });
+
+  test('proxyDetails sends the node and its target', () async {
+    final handler = _RecordingCoreHandler();
+
+    final details = await handler.proxyDetails(
+      const ProxyDetailsParams(proxyName: 'DIRECT', testUrl: 'https://test'),
+    );
+
+    expect(handler.calls[CoreMethod.proxyDetails], {
+      'proxy-name': 'DIRECT',
+      'test-url': 'https://test',
+    });
+    expect(details.alive, isTrue);
+    expect(details.last?.delay, 42);
+    expect(details.transports, ['UDP', 'XUDP', 'SMUX']);
   });
 
   test('dumpRuleSet sends the rule set path', () async {

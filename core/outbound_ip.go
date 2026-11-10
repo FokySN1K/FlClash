@@ -41,7 +41,9 @@ type OutboundIpResult struct {
 
 // handleOutboundIp takes the first usable answer and cancels the losers so they
 // stop occupying probe slots. Url is the source that was asked, not where it
-// redirected, and Body is raw: Dart owns the sources and their parsers.
+// redirected, and Body is raw: Dart owns the sources and their parsers. A
+// lookup that names no proxy leaves by the default target, not by whichever
+// rule matches the source's own address.
 func handleOutboundIp(params *OutboundIpParams) *OutboundIpResult {
 	epoch, version := routeStamp()
 	hits := &hitRecorder{}
@@ -57,6 +59,15 @@ func handleOutboundIp(params *OutboundIpParams) *OutboundIpResult {
 	defer cancel()
 	defer claimOutboundIp(epoch, cancel)()
 
+	// The host asks once per target; an unpinned lookup answers for the
+	// default route, never for the source it happens to reach first.
+	proxyName := params.ProxyName
+	if proxyName == "" {
+		if name := defaultRouteName(); leavesByAddress(name) {
+			proxyName = name
+		}
+	}
+
 	answers := make(chan *OutboundIpResult, len(params.Urls))
 	next := 0
 	inFlight := 0
@@ -68,7 +79,7 @@ func handleOutboundIp(params *OutboundIpParams) *OutboundIpResult {
 		next++
 		inFlight++
 		go func() {
-			answers <- probeOutboundIpSource(ctx, url, params.ProxyName, timeout, hits)
+			answers <- probeOutboundIpSource(ctx, url, proxyName, timeout, hits)
 		}()
 	}
 
