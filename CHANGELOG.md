@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.41 (2026-11-10)
+
+**Features**
+
+- **core** Measure a lazy pool before the first dial (41d9853)
+
 ## v1.0.40 (2026-11-09)
 
 **Bug Fixes**
