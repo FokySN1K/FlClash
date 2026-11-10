@@ -7,6 +7,8 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'route_map.dart';
+
 /// What the VPN card stands for: whether the tunnel is up, the profile behind
 /// it, the address its traffic leaves by and the takeover it shares a screen
 /// with.
@@ -69,6 +71,7 @@ class _VpnInfoSheet extends ConsumerWidget {
             ],
           ),
           const RoutedConnectionSection(),
+          const RouteMapSection(),
           generateSection(
             title: appLocalizations.network,
             items: [

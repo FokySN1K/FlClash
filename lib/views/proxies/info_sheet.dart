@@ -121,13 +121,16 @@ class _ProxyInfoSheet extends ConsumerWidget {
             ],
           ),
           ProxyConnectionSection(name: proxy.name),
+          ProxyHealthSection(
+            proxy: proxy,
+            groupName: groupName,
+            testUrl: testUrl,
+          ),
           generateSection(
             title: appLocalizations.network,
-            items: [
-              _DelayRow(proxy: proxy, groupName: groupName, testUrl: testUrl),
-              OutboundIpRow(target: proxy.name),
-            ],
+            items: [OutboundIpRow(target: proxy.name)],
           ),
+          OutboundIpQualitySection(target: proxy.name),
           generateSection(
             title: appLocalizations.other,
             items: [
@@ -167,66 +170,5 @@ class _ProxyInfoSheet extends ConsumerWidget {
       return;
     }
     context.showNotifier(context.appLocalizations.copySuccess);
-  }
-}
-
-/// A node's delay, with a test that reads as one on a card.
-class _DelayRow extends ConsumerWidget {
-  const _DelayRow({
-    required this.proxy,
-    required this.groupName,
-    required this.testUrl,
-  });
-
-  final Proxy proxy;
-  final String groupName;
-  final String? testUrl;
-
-  void _test(WidgetRef ref) {
-    ref.read(proxiesActionProvider.notifier).proxyDelayTest(proxy, testUrl);
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final appLocalizations = context.appLocalizations;
-    final delay = ref.watch(
-      delayProvider(proxyName: proxy.name, testUrl: testUrl),
-    );
-    final testing =
-        ref.watch(
-          delayTestPhaseProvider(
-            proxyName: proxy.name,
-            testUrl: testUrl,
-            groupName: groupName,
-          ),
-        ) !=
-        null;
-    return DetailRow(
-      title: appLocalizations.delay,
-      value: Row(
-        mainAxisSize: MainAxisSize.min,
-        spacing: 2,
-        children: [
-          if (testing)
-            const CommonCircleLoading(size: 14)
-          else if (delay == null)
-            Text(appLocalizations.noInfo)
-          else
-            Text(
-              delay > 0
-                  ? '$delay ms'
-                  : delayFailureText(delay, appLocalizations),
-              style: TextStyle(color: context.colorScheme.delayColor(delay)),
-            ),
-          IconButton(
-            tooltip: appLocalizations.delayTest,
-            onPressed: () => _test(ref),
-            iconSize: 18,
-            visualDensity: VisualDensity.compact,
-            icon: const GlyphIcon(AppGlyphs.bolt),
-          ),
-        ],
-      ),
-    );
   }
 }

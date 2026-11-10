@@ -480,19 +480,22 @@ String _$vpnRouteAddressHash() => r'bae2530b73b71ecff16aadfc395e60996d739d41';
 
 /// The process rules of the applied profile, published by the setup. The
 /// access view shows what they say about an app next to the manual marks, and
-/// Global mode stops counting them.
+/// the tunnel keeps the apps they send DIRECT out of the VPN in every mode,
+/// the whitelist aside.
 
 @ProviderFor(ProfileProcessRules)
 final profileProcessRulesProvider = ProfileProcessRulesProvider._();
 
 /// The process rules of the applied profile, published by the setup. The
 /// access view shows what they say about an app next to the manual marks, and
-/// Global mode stops counting them.
+/// the tunnel keeps the apps they send DIRECT out of the VPN in every mode,
+/// the whitelist aside.
 final class ProfileProcessRulesProvider
     extends $NotifierProvider<ProfileProcessRules, ProcessRules> {
   /// The process rules of the applied profile, published by the setup. The
   /// access view shows what they say about an app next to the manual marks, and
-  /// Global mode stops counting them.
+  /// the tunnel keeps the apps they send DIRECT out of the VPN in every mode,
+  /// the whitelist aside.
   ProfileProcessRulesProvider._()
     : super(
         from: null,
@@ -525,7 +528,8 @@ String _$profileProcessRulesHash() =>
 
 /// The process rules of the applied profile, published by the setup. The
 /// access view shows what they say about an app next to the manual marks, and
-/// Global mode stops counting them.
+/// the tunnel keeps the apps they send DIRECT out of the VPN in every mode,
+/// the whitelist aside.
 
 abstract class _$ProfileProcessRules extends $Notifier<ProcessRules> {
   ProcessRules build();
@@ -581,7 +585,7 @@ final class VpnOptionsProvider
   }
 }
 
-String _$vpnOptionsHash() => r'315de3d7b9726236152b17e644491e6d6d2acbf6';
+String _$vpnOptionsHash() => r'246909d61a3c2518a40be023bfb486deffe4310d';
 
 @ProviderFor(AccessControlState)
 final accessControlStateProvider = AccessControlStateProvider._();
@@ -616,7 +620,7 @@ final class AccessControlStateProvider
 }
 
 String _$accessControlStateHash() =>
-    r'a496770f99975b1bcd7f3f50c55f50726971c749';
+    r'c094b5252d21f361b4a973f85c003cd8cf06aa65';
 
 abstract class _$AccessControlState extends $Notifier<AccessControlProps> {
   AccessControlProps build();
