@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.42",
+      "tag": "v1.0.42",
+      "date": "2026-11-10",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "ca93d09",
+              "scope": "dashboard",
+              "text": "Name the exit node only while the tunnel proxies"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.41",
       "tag": "v1.0.41",
       "date": "2026-11-10",

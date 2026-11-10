@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.42 (2026-11-10)
+
+**Bug Fixes**
+
+- **dashboard** Name the exit node only while the tunnel proxies (ca93d09)
+
 ## v1.0.41 (2026-11-10)
 
 **Features**
