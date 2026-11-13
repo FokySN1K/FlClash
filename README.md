@@ -1,26 +1,26 @@
 <div align="center">
 
-<img src="assets/images/icon.png" alt="FlClash" width="88">
+<img src="assets/images/icon.png" alt="SNKP" width="88">
 
-# FlClash
+# SNKP
 
 A multi-platform proxy client based on ClashMeta. Simple to use, open source and ad-free.
 
 **English** · [简体中文](README_zh_CN.md)
 
-[![Release](https://img.shields.io/github/v/release/chen08209/FlClash?style=flat-square&label=release)](https://github.com/chen08209/FlClash/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/chen08209/FlClash/total?style=flat-square&logo=github)](https://github.com/chen08209/FlClash/releases)
-[![License](https://img.shields.io/github/license/chen08209/FlClash?style=flat-square)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/FokySN1K/SNKP?style=flat-square&label=release)](https://github.com/FokySN1K/SNKP/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/FokySN1K/SNKP/total?style=flat-square&logo=github)](https://github.com/FokySN1K/SNKP/releases)
+[![License](https://img.shields.io/github/license/FokySN1K/SNKP?style=flat-square)](LICENSE)
 [![Telegram](https://img.shields.io/badge/Telegram-channel-26A5E4?style=flat-square&logo=telegram&logoColor=white)](https://t.me/FlClash)
 
-[Website](https://chen08209.github.io/FlClash) · [Download](#download) · [Changelog](CHANGELOG.md) · [Build from source](#build-from-source)
+[Download](#download) · [Changelog](CHANGELOG.md) · [Build from source](#build-from-source)
 
 </div>
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="snapshots/preview-dark.png">
-    <img alt="FlClash dashboard on a MacBook and a phone" src="snapshots/preview.png" width="92%">
+    <img alt="SNKP dashboard on a MacBook and a phone" src="snapshots/preview.png" width="92%">
   </picture>
 </p>
 
@@ -40,27 +40,19 @@ A multi-platform proxy client based on ClashMeta. Simple to use, open source and
 
 ## Download
 
-Get the latest build from [GitHub Releases](https://github.com/chen08209/FlClash/releases/latest), or open the
-[website](https://chen08209.github.io/FlClash#download), which picks the right file for your device.
+Get the latest build from [GitHub Releases](https://github.com/FokySN1K/SNKP/releases/latest); the table
+below shows which file fits which device.
 
 | Platform | Packages | Notes |
 | --- | --- | --- |
-| Android | APK for `arm64-v8a`, `armeabi-v7a` and `x86_64` | Most phones use `arm64-v8a`. Also on the F-Droid repository below. |
+| Android | APK for `arm64-v8a`, `armeabi-v7a` and `x86_64` | Most phones use `arm64-v8a`. |
 | Windows 10 and later | Installer (`.exe`) or portable `.zip`, for x64 and ARM64 | Pick ARM64 on Snapdragon and other ARM laptops. |
-| macOS 12 and later | DMG for Apple Silicon and Intel | Also on Homebrew. |
+| macOS 12 and later | DMG for Apple Silicon and Intel | |
 | Linux | `.deb`, `.rpm` and AppImage, for x64 and ARM64 | See the tray note below. |
 
 <p>
-  <a href="https://chen08209.github.io/FlClash-fdroid-repo/repo?fingerprint=789D6D32668712EF7672F9E58DEEB15FBD6DCEEC5AE7A4371EA72F2AAE8A12FD"><img alt="Get it on F-Droid" src="snapshots/get-it-on-fdroid.svg" height="56"></a>
-  <a href="https://github.com/chen08209/FlClash/releases/latest"><img alt="Get it on GitHub" src="snapshots/get-it-on-github.svg" height="56"></a>
+  <a href="https://github.com/FokySN1K/SNKP/releases/latest"><img alt="Get it on GitHub" src="snapshots/get-it-on-github.svg" height="56"></a>
 </p>
-
-**Homebrew**
-
-```bash
-brew tap chen08209/tap
-brew install --cask flclash
-```
 
 **Linux tray icon**
 
@@ -74,12 +66,12 @@ sudo dnf install libayatana-appindicator-gtk3     # Fedora
 
 **Unattended desktop**
 
-FlClash starts the core only after the disclaimer is accepted. Where nobody can click it, such as a container, set
+SNKP starts the core only after the disclaimer is accepted. Where nobody can click it, such as a container, set
 `FLCLASH_ACCEPT_DISCLAIMER=1` in the app's environment to accept it on first launch.
 
 ## Usage
 
-**Import a profile from a link.** Opening a link in this form imports the subscription into FlClash. The `clashmeta://`
+**Import a profile from a link.** Opening a link in this form imports the subscription into SNKP. The `clashmeta://`
 and `flclash://` schemes work the same way.
 
 ```text
@@ -108,8 +100,8 @@ You need [Flutter](https://docs.flutter.dev/get-started/install) 3.47 (release b
 host, except Android, which builds anywhere.
 
 ```bash
-git clone --recursive https://github.com/chen08209/FlClash.git
-cd FlClash
+git clone --recursive https://github.com/FokySN1K/SNKP.git
+cd SNKP
 flutter pub get
 dart setup.dart android   # or windows, macos, linux
 ```
@@ -129,15 +121,15 @@ Run `dart setup.dart --help` for the remaining options, such as `--targets` to b
 
 Starring the repository is the easiest way to support the project. Questions and announcements go to the
 [Telegram channel](https://t.me/FlClash); bugs and feature requests go to
-[GitHub Issues](https://github.com/chen08209/FlClash/issues).
+[GitHub Issues](https://github.com/FokySN1K/SNKP/issues).
 
-<a href="https://star-history.com/#chen08209/FlClash&Date">
+<a href="https://star-history.com/#FokySN1K/SNKP&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=chen08209/FlClash&type=Date&theme=dark">
-    <img alt="Star history" src="https://api.star-history.com/svg?repos=chen08209/FlClash&type=Date" width="640">
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=FokySN1K/SNKP&type=Date&theme=dark">
+    <img alt="Star history" src="https://api.star-history.com/svg?repos=FokySN1K/SNKP&type=Date" width="640">
   </picture>
 </a>
 
 ## License
 
-FlClash is released under the [GPL-3.0 license](LICENSE).
+SNKP is released under the [GPL-3.0 license](LICENSE).

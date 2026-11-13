@@ -100,11 +100,11 @@ void main() {
     // source archive sit on the same page and must not answer.
     const html = '''
 
-<a href="/FokySN1K/FlClash/releases/download/v1.0.9/FlClash-1.0.9-android-arm64-v8a.apk" rel="nofollow" data-turbo="false" class="wb-break-all">
-<a href="/FokySN1K/FlClash/releases/download/v1.0.9/FlClash-1.0.9-windows-amd64-setup.exe" rel="nofollow" data-turbo="false" class="wb-break-all">
-<a href="/FokySN1K/FlClash/releases/download/v1.0.9/FlClash-1.0.9-windows-amd64-setup.exe" rel="nofollow">
-<a href="/FokySN1K/FlClash/releases/download/v1.0.8/FlClash-1.0.8-windows-amd64-setup.exe" rel="nofollow">
-<a href="/FokySN1K/FlClash/archive/refs/tags/v1.0.9.zip" rel="nofollow">
+<a href="/FokySN1K/SNKP/releases/download/v1.0.9/FlClash-1.0.9-android-arm64-v8a.apk" rel="nofollow" data-turbo="false" class="wb-break-all">
+<a href="/FokySN1K/SNKP/releases/download/v1.0.9/FlClash-1.0.9-windows-amd64-setup.exe" rel="nofollow" data-turbo="false" class="wb-break-all">
+<a href="/FokySN1K/SNKP/releases/download/v1.0.9/FlClash-1.0.9-windows-amd64-setup.exe" rel="nofollow">
+<a href="/FokySN1K/SNKP/releases/download/v1.0.8/FlClash-1.0.8-windows-amd64-setup.exe" rel="nofollow">
+<a href="/FokySN1K/SNKP/archive/refs/tags/v1.0.9.zip" rel="nofollow">
 ''';
 
     test('reads the archives the page links to, one entry per archive', () {
@@ -119,7 +119,7 @@ void main() {
       );
       expect(
         assets.last['browser_download_url'],
-        'https://github.com/FokySN1K/FlClash/releases/download/v1.0.9/FlClash-1.0.9-windows-amd64-setup.exe',
+        'https://github.com/FokySN1K/SNKP/releases/download/v1.0.9/FlClash-1.0.9-windows-amd64-setup.exe',
       );
     });
 
@@ -132,7 +132,7 @@ void main() {
       expect(releaseAsset(release, suffix: '-windows-amd64-setup.exe'), (
         name: 'FlClash-1.0.9-windows-amd64-setup.exe',
         url:
-            'https://github.com/FokySN1K/FlClash/releases/download/v1.0.9/FlClash-1.0.9-windows-amd64-setup.exe',
+            'https://github.com/FokySN1K/SNKP/releases/download/v1.0.9/FlClash-1.0.9-windows-amd64-setup.exe',
         size: null,
         sha256: null,
       ));

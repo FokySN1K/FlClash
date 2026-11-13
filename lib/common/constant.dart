@@ -9,6 +9,10 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// What the app calls itself in the UI. The technical identity below stays
+/// [appName]: it names the TUN device, the autostart entry, the WebDAV
+/// backup folder and the user agent, so renaming it would move user data.
+const appDisplayName = 'SNKP';
 const appName = 'FlClash';
 const appHelperService = 'FlClashHelperService';
 const coreManifestName = 'manifest.json';
@@ -131,7 +135,7 @@ const systemDnsRecordKey = 'system_dns_record';
 const bootRecordKey = 'boot_record';
 const appliedConfigMd5Key = 'applied_config_md5';
 const defaultSystemDnsFallback = '223.5.5.5';
-const repository = 'FokySN1K/FlClash';
+const repository = 'FokySN1K/SNKP';
 const maxMobileWidth = 600;
 const maxLaptopWidth = 840;
 const defaultTestUrl = 'https://www.gstatic.com/generate_204';

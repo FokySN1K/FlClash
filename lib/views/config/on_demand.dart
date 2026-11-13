@@ -43,7 +43,7 @@ class _OnDemandViewState extends ConsumerState<OnDemandView>
         title: appLocalizations.locationPermissionRequired,
         message: TextSpan(
           style: AppTextStyle.subheadline.of(context),
-          text: appLocalizations.locationPermissionGuide(appName),
+          text: appLocalizations.locationPermissionGuide(appDisplayName),
         ),
       );
     } else if (_isAndroid) {
