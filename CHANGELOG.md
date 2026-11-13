@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.46 (2026-11-13)
+
+**Bug Fixes**
+
+- **update** The update strip now stops when the download ends, so the ready message and its install button appear once. (1be579f)
+
 ## v1.0.45 (2026-11-13)
 
 **Features**

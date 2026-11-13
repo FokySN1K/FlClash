@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.46",
+      "tag": "v1.0.46",
+      "date": "2026-11-13",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "1be579f",
+              "scope": "update",
+              "text": "The update strip now stops when the download ends, so the ready message and its install button appear once."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.45",
       "tag": "v1.0.45",
       "date": "2026-11-13",
