@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.44 (2026-11-13)
+
+**Features**
+
+- **update** Release downloads and installs report their progress in a thin strip at the top of the home screen. (32f9cac)
+- **icon** A new icon: the linked mark with the SNKP wordmark beneath it, on every platform and launcher size. (7861218)
+- **brand** The app is now SNKP: window titles, tray menu, notifications and package names follow the new name, while existing settings, proxies and backups stay where they are. (6011d5e)
+
 ## v1.0.43 (2026-11-10)
 
 **Features**
