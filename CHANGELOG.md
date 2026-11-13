@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.45 (2026-11-13)
+
+**Features**
+
+- **icon** A new icon, three concentric gates around a tunnel core, on the launcher, the Quick Settings tile and the notification. (18320b5)
+
 ## v1.0.44 (2026-11-13)
 
 **Features**

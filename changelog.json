@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.45",
+      "tag": "v1.0.45",
+      "date": "2026-11-13",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "18320b5",
+              "scope": "icon",
+              "text": "A new icon, three concentric gates around a tunnel core, on the launcher, the Quick Settings tile and the notification."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.44",
       "tag": "v1.0.44",
       "date": "2026-11-13",
