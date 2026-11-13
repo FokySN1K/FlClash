@@ -8,5 +8,6 @@ export 'palette.dart';
 export 'record.dart';
 export 'record_table.dart';
 export 'release_download.dart';
+export 'release_update_strip.dart';
 export 'subscription_info_view.dart';
 export 'package:fl_clash/ui/ui.dart';

@@ -71,43 +71,46 @@ class _HomeShell extends ConsumerWidget {
       child: Column(
         children: [
           Expanded(
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: FocusTraversalGroup(
-                    policy: PageTraversalPolicy(),
-                    child: BottomInsetScope(
-                      inset: isMobile && floating
-                          ? NavigationDock.insetOf(context)
-                          : 0,
-                      child: _BodyPadding(isMobile: isMobile, child: child),
-                    ),
-                  ),
-                ),
-                PositionedDirectional(
-                  start: 0,
-                  end: 0,
-                  bottom: 0,
-                  child: AnimatedVisibility.bottomNavigation(
-                    visible: isMobile && floating,
-                    child: _NavigationPadding(
-                      child: NavigationDock(
-                        destinations: [
-                          for (final item in navigationItems)
-                            NavigationDockDestination(
-                              glyph: item.glyph,
-                              label: item.label.label,
-                            ),
-                        ],
-                        selectedIndex: state.currentIndex,
-                        onSelected: (index) {
-                          _handleToPage(navigationItems[index].label, ref);
-                        },
+            child: ReleaseUpdateStrip(
+              isMobile: isMobile,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: FocusTraversalGroup(
+                      policy: PageTraversalPolicy(),
+                      child: BottomInsetScope(
+                        inset: isMobile && floating
+                            ? NavigationDock.insetOf(context)
+                            : 0,
+                        child: _BodyPadding(isMobile: isMobile, child: child),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  PositionedDirectional(
+                    start: 0,
+                    end: 0,
+                    bottom: 0,
+                    child: AnimatedVisibility.bottomNavigation(
+                      visible: isMobile && floating,
+                      child: _NavigationPadding(
+                        child: NavigationDock(
+                          destinations: [
+                            for (final item in navigationItems)
+                              NavigationDockDestination(
+                                glyph: item.glyph,
+                                label: item.label.label,
+                              ),
+                          ],
+                          selectedIndex: state.currentIndex,
+                          onSelected: (index) {
+                            _handleToPage(navigationItems[index].label, ref);
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           AnimatedVisibility.bottomNavigation(
