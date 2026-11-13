@@ -60,7 +60,7 @@ void main() {
     );
     expect(
       _androidAttribute(adaptiveIcon, 'background', 'drawable'),
-      '@color/ic_launcher_background',
+      '@drawable/ic_launcher_background',
     );
 
     final vector = File(
@@ -82,8 +82,9 @@ void main() {
       'viewportHeight',
     );
 
-    // Conservative bounds of the current logo, including the curved caps.
-    const logoBounds = ui.Rect.fromLTRB(54, 33, 179, 206.5);
+    // Bounds of the mark together with the wordmark, in the 1024 canvas
+    // of assets_source/images/icon/snkp.svg.
+    const logoBounds = ui.Rect.fromLTRB(273.77, 194.05, 750.23, 831);
     final transformedBounds = ui.Rect.fromLTRB(
       (logoBounds.left * scaleX + translateX) / viewportWidth * 108,
       (logoBounds.top * scaleY + translateY) / viewportHeight * 108,
