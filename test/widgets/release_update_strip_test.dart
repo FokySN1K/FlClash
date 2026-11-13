@@ -78,17 +78,12 @@ void main() {
     expect(find.byType(LinearProgressIndicator), findsOneWidget);
   });
 
-  testWidgets('offers the install action and closes on demand once ready', (
-    tester,
-  ) async {
+  testWidgets('leaves the ready row to the install toast', (tester) async {
     await _pumpStrip(
       tester,
       const ReleaseDownloadState(phase: ReleaseDownloadPhase.ready),
     );
-    expect(find.text(currentAppLocalizations.updateReady), findsOneWidget);
-    expect(find.text(currentAppLocalizations.installNow), findsOneWidget);
-    await tester.tap(find.byTooltip(currentAppLocalizations.close));
-    await tester.pumpAndSettle();
+    expect(find.byType(LinearProgressIndicator), findsNothing);
     expect(find.text(currentAppLocalizations.updateReady), findsNothing);
     expect(find.byType(TextButton), findsNothing);
   });
