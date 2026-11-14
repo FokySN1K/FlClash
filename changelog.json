@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.47",
+      "tag": "v1.0.47",
+      "date": "2026-11-14",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "8593bdf",
+              "scope": "core",
+              "text": "DNS now falls back after fallback-hedge-delay instead of waiting out a dead nameserver, and a nameserver that keeps failing is skipped for a while."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.46",
       "tag": "v1.0.46",
       "date": "2026-11-13",

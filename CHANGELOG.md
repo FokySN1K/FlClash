@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.47 (2026-11-14)
+
+**Features**
+
+- **core** DNS now falls back after fallback-hedge-delay instead of waiting out a dead nameserver, and a nameserver that keeps failing is skipped for a while. (8593bdf)
+
 ## v1.0.46 (2026-11-13)
 
 **Bug Fixes**
