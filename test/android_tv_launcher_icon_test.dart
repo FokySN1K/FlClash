@@ -82,9 +82,9 @@ void main() {
       'viewportHeight',
     );
 
-    // Bounds of the portal mark alone, in the 1024 canvas of
-    // assets_source/images/icon/portal.svg.
-    const logoBounds = ui.Rect.fromLTRB(202, 242.7, 822, 781.3);
+    // Bounds of the wreath mark alone, in the 1024 canvas of
+    // assets_source/images/icon/wreath.svg.
+    const logoBounds = ui.Rect.fromLTRB(192.4, 232.5, 831.6, 791.5);
     final transformedBounds = ui.Rect.fromLTRB(
       (logoBounds.left * scaleX + translateX) / viewportWidth * 108,
       (logoBounds.top * scaleY + translateY) / viewportHeight * 108,

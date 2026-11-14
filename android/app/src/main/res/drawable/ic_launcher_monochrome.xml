@@ -7,30 +7,27 @@
     android:viewportHeight="108"
     tools:ignore="VectorRaster">
     <group
-        android:scaleX="0.09677"
-        android:scaleY="0.09677"
-        android:translateX="4.45161"
-        android:translateY="4.45161">
+        android:scaleX="0.08449"
+        android:scaleY="0.08449"
+        android:translateX="10.74071"
+        android:translateY="10.74071">
         <path
-            android:pathData="M315.424,749.283A278,278 0 1 1 708.576,749.283"
-            android:strokeWidth="64"
+            android:pathData="M512.000,751.881 A248.000,248.000 0 0 1 388.000,289.106"
+            android:strokeWidth="36"
             android:strokeLineCap="round"
             android:strokeColor="#FFFFFF"
             android:fillColor="#00000000"/>
         <path
-            android:pathData="M376.235,688.472A192,192 0 1 1 647.765,688.472"
-            android:strokeWidth="56"
+            android:pathData="M636.000,289.106 A248.000,248.000 0 0 1 512.000,751.881"
+            android:strokeWidth="36"
             android:strokeLineCap="round"
             android:strokeColor="#FFFFFF"
             android:fillColor="#00000000"/>
         <path
-            android:pathData="M431.39,633.317A114,114 0 1 1 592.61,633.317"
-            android:strokeWidth="48"
-            android:strokeLineCap="round"
-            android:strokeColor="#FFFFFF"
-            android:fillColor="#00000000"/>
+            android:pathData="M478.000,493.881 A34.000,34.000 0 1 1 546.000,493.881 A34.000,34.000 0 1 1 478.000,493.881 Z"
+            android:fillColor="#FFFFFF"/>
         <path
-            android:pathData="M452,552.707A60,60 0 1 1 572,552.707A60,60 0 1 1 452,552.707Z"
+            android:pathData="M486.077,750.522 Q432.528,781.032 371.721,791.495 Q380.022,752.095 388.000,718.655 Z M364.484,703.237 Q302.860,702.347 245.157,680.500 Q272.306,650.765 296.152,626.002 Z M283.715,600.782 Q231.070,568.739 192.439,520.628 Q230.923,508.787 264.038,499.552 Z M266.122,471.510 Q237.024,417.181 228.157,356.121 Q267.326,365.451 300.545,374.301 Z M316.573,351.197 Q319.076,289.617 342.426,232.505 Q371.440,260.424 395.571,284.910 Z M537.923,750.522 Q591.472,781.032 652.279,791.495 Q643.978,752.095 636.000,718.655 Z M659.516,703.237 Q721.140,702.347 778.843,680.500 Q751.694,650.765 727.848,626.002 Z M740.285,600.782 Q792.930,568.739 831.561,520.628 Q793.077,508.787 759.962,499.552 Z M757.878,471.510 Q786.976,417.181 795.843,356.121 Q756.674,365.451 723.455,374.301 Z M707.427,351.197 Q704.924,289.617 681.574,232.505 Q652.560,260.424 628.429,284.910 Z"
             android:fillColor="#FFFFFF"/>
     </group>
 </vector>
