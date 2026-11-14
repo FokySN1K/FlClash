@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.49",
+      "tag": "v1.0.49",
+      "date": "2026-11-14",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "adc8b05",
+              "scope": "icon",
+              "text": "The app icon, the tray and the menu bar now share one wreath"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.48",
       "tag": "v1.0.48",
       "date": "2026-11-14",

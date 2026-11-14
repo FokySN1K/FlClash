@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.49 (2026-11-14)
+
+**Features**
+
+- **icon** The app icon, the tray and the menu bar now share one wreath (adc8b05)
+
 ## v1.0.48 (2026-11-14)
 
 **Features**
