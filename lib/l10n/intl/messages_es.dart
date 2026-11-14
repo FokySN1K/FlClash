@@ -783,18 +783,129 @@ class MessageLookup extends MessageLookupByLibrary {
     "discoverNewVersion": MessageLookupByLibrary.simpleMessage(
       "Nueva versión disponible",
     ),
+    "dnsCacheAlgorithmHint": MessageLookupByLibrary.simpleMessage(
+      "How the cache evicts answers: lru drops the least recently used one, arc balances recent and frequent names and keeps hot ones longer.\n\nExample: arc on a busy network with a small cache size.",
+    ),
     "dnsCacheCleared": MessageLookupByLibrary.simpleMessage(
       "Caché DNS borrada",
+    ),
+    "dnsCacheMaxSizeHint": MessageLookupByLibrary.simpleMessage(
+      "How many answers the cache holds. A larger cache rides out a longer outage of the upstreams.\n\nExample: 4096 is the default; 8192 suits a network with many devices.",
+    ),
+    "dnsDefaultNameserverHint": MessageLookupByLibrary.simpleMessage(
+      "Plain-IP servers that resolve the hostnames of the other servers here, such as DoH endpoints. Keep at least two.\n\nExample: 223.5.5.5 and 8.8.8.8 resolve dns.google before DoH can start.",
+    ),
+    "dnsDirectNameserverFollowPolicyHint": MessageLookupByLibrary.simpleMessage(
+      "Lets the direct nameservers follow the policy and its rule sets instead of being one flat list.\n\nExample: with a policy naming a local rule-set, direct connections resolve those names on the LAN server.",
+    ),
+    "dnsDirectNameserverHint": MessageLookupByLibrary.simpleMessage(
+      "Servers the DIRECT outbound resolves through, that is for hosts reached outside the tunnel.\n\nExample: 192.168.1.1 resolves LAN names for direct connections only.",
+    ),
+    "dnsEnableHint": MessageLookupByLibrary.simpleMessage(
+      "Turns the app\'s own resolver on. While it is off, the system resolver answers every query and the rest of this section has no effect.\n\nExample: keep it on to use Fake-IP, nameserver policies or the fallback.",
+    ),
+    "dnsEnhancedModeHint": MessageLookupByLibrary.simpleMessage(
+      "normal returns real addresses, redir-host resolves the real host of a sniffed connection, fake-ip answers at once with an address from its range and resolves the name only when a connection needs it.\n\nExample: fake-ip is what makes the first visit fast.",
+    ),
+    "dnsFakeIpFilterHint": MessageLookupByLibrary.simpleMessage(
+      "Names that keep real addresses. An entry is a domain (+.example.com), a geosite: set or a rule-set: name; in rule mode it is a full rule.\n\nExample: geosite:private keeps local names real.",
+    ),
+    "dnsFakeIpFilterModeHint": MessageLookupByLibrary.simpleMessage(
+      "blacklist keeps the listed names real, whitelist fakes only them, rule matches the entries as rules.\n\nExample: whitelist with geosite:gfw fakes only blocked sites.",
+    ),
+    "dnsFakeIpRange6Hint": MessageLookupByLibrary.simpleMessage(
+      "The IPv6 range for fake addresses, used only with IPv6 on. Left empty, fake-IP stays IPv4-only.\n\nExample: fc00::1/64.",
+    ),
+    "dnsFakeIpRangeHint": MessageLookupByLibrary.simpleMessage(
+      "The IPv4 range fake addresses come from, usually a /16. It must not overlap your LAN.\n\nExample: 198.18.0.1/16, the default; 10.7.0.1/16 when that subnet is free.",
+    ),
+    "dnsFakeIpTtlHint": MessageLookupByLibrary.simpleMessage(
+      "Seconds a fake address lives in the cache. Once it expires the next query gets a new address, which some apps read as a new host.\n\nExample: 1 is the default; 60 suits an app that reconnects when the address changes.",
+    ),
+    "dnsFallbackFilterDomainHint": MessageLookupByLibrary.simpleMessage(
+      "Extra names treated as censored, on top of the geosite sets.\n\nExample: +.twitter.com.",
+    ),
+    "dnsFallbackFilterGeoipCodeHint": MessageLookupByLibrary.simpleMessage(
+      "The country the GeoIP check uses.\n\nExample: CN, the default; RU on a Russian network.",
+    ),
+    "dnsFallbackFilterGeoipHint": MessageLookupByLibrary.simpleMessage(
+      "Treats a main answer that falls into the GeoIP country as censored and asks the fallback. It needs the GeoIP database.\n\nExample: with CN a Chinese answer for a blocked site goes to the fallback.",
+    ),
+    "dnsFallbackFilterGeositeHint": MessageLookupByLibrary.simpleMessage(
+      "Name sets whose answers always go to the fallback.\n\nExample: geosite:gfw.",
+    ),
+    "dnsFallbackFilterIpcidrHint": MessageLookupByLibrary.simpleMessage(
+      "Address ranges whose answers always go to the fallback.\n\nExample: 127.0.0.0/8 catches a hijacked local resolver.",
+    ),
+    "dnsFallbackHedgeDelay": MessageLookupByLibrary.simpleMessage(
+      "Fallback Hedge Delay (ms)",
+    ),
+    "dnsFallbackHedgeDelayHint": MessageLookupByLibrary.simpleMessage(
+      "Milliseconds to wait for the main group before the fallback is asked in parallel. 0 turns it off, and the fallback is asked only once the main group has answered badly or not at all.\n\nWhy: a nameserver that swallows packets never refuses the query, so the core used to wait out the whole exchange, up to five seconds, for every name. With a delay the fallback is asked early and whichever answers first wins, so a dead main server costs that delay plus one fallback round trip.\n\nExamples: 300 on a network whose main DNS often goes silent; 800 when the main server is merely slow; 0 to keep the fallback quiet. Without fallback servers it does nothing.",
+    ),
+    "dnsFallbackHint": MessageLookupByLibrary.simpleMessage(
+      "Servers asked when a main answer looks censored: empty, a server failure, or an address the fallback filter matches. They also serve when every main server is failing.\n\nExample: tls://8.8.4.4 answers the names a poisoned local server blanks out.",
+    ),
+    "dnsFallbackLazyQueryHint": MessageLookupByLibrary.simpleMessage(
+      "Off, the fallback is queried in parallel with the main group and its answer is used only when needed. On, it is queried only after a dirty main answer, which saves queries but adds a round trip.\n\nExample: keep it off for the fastest failover.",
     ),
     "dnsHijackDesc": MessageLookupByLibrary.simpleMessage(
       "Sin esta entrada, TUN secuestra todas las consultas DNS al puerto 53 (any:53).",
     ),
     "dnsHijacking": MessageLookupByLibrary.simpleMessage("Secuestro de DNS"),
+    "dnsIpv6Hint": MessageLookupByLibrary.simpleMessage(
+      "Lets the resolver ask upstreams for AAAA records. With it off only IPv4 answers come back, which hides a broken IPv6 setup.\n\nExample: turn it off when sites open slowly on a network with half-working IPv6.",
+    ),
+    "dnsIpv6TimeoutHint": MessageLookupByLibrary.simpleMessage(
+      "Milliseconds the resolver waits for an AAAA answer before it goes on with the A record. The default is 100.\n\nExample: 300 on a slow IPv6 uplink, so its answers are not dropped while they are still useful.",
+    ),
+    "dnsListenHint": MessageLookupByLibrary.simpleMessage(
+      "The address the resolver listens on for plain DNS, in host:port form. Left empty, the resolver stays internal and apps reach it only through TUN or redir.\n\nExample: 127.0.0.1:1053 answers queries from this device alone.",
+    ),
+    "dnsListenRoutingMarkHint": MessageLookupByLibrary.simpleMessage(
+      "Linux only. Sets the routing mark (fwmark) of the DNS listening socket, so policy routing sends its traffic through the table that mark names.\n\nExample: 233 keeps the resolver\'s replies on the physical interface while the tunnel carries everything else.",
+    ),
     "dnsMode": MessageLookupByLibrary.simpleMessage("Modo DNS"),
+    "dnsNameserverCooldown": MessageLookupByLibrary.simpleMessage(
+      "Nameserver Cooldown (s)",
+    ),
+    "dnsNameserverCooldownHint": MessageLookupByLibrary.simpleMessage(
+      "Seconds a failing nameserver is skipped for. Then it is tried again with a clean failure count. 0 means the default 30.\n\nExample: 60 when an upstream recovers slowly; 10 to retry a flapping one sooner.",
+    ),
+    "dnsNameserverHint": MessageLookupByLibrary.simpleMessage(
+      "The servers that answer everything the policy does not match. Each is an address or an encrypted URL.\n\nExample: https://doh.pub/dns-query together with tls://223.5.5.5:853.",
+    ),
+    "dnsNameserverMaxFails": MessageLookupByLibrary.simpleMessage(
+      "Nameserver Max Fails",
+    ),
+    "dnsNameserverMaxFailsHint": MessageLookupByLibrary.simpleMessage(
+      "How many failures in a row take a nameserver out of rotation. Every address is counted on its own and a success resets its count. 0 never takes a server out.\n\nExample: 3 is the default: after three silent or broken exchanges that address is skipped until its cooldown ends.",
+    ),
+    "dnsNameserverPolicyHint": MessageLookupByLibrary.simpleMessage(
+      "Per-domain server lists that win over the nameserver. A key is a domain, a geosite: set or a rule-set: name.\n\nExample: geosite:cn -> 223.5.5.5 and +.company.com -> tls://10.0.0.1.",
+    ),
     "dnsOverrideDesc": MessageLookupByLibrary.simpleMessage(
       "Las entradas añadidas aquí sustituyen el DNS de todos los perfiles de URL y de archivo; lo que no añadas conserva el ajuste del propio perfil. Los perfiles personalizados definen su DNS en su contenido.",
     ),
+    "dnsPreferH3Hint": MessageLookupByLibrary.simpleMessage(
+      "Asks DoH servers over HTTP/3 when they offer it, and over HTTP/2 otherwise.\n\nExample: tls://dns.google answers faster over QUIC on a lossy mobile network.",
+    ),
+    "dnsProxyServerNameserverHint": MessageLookupByLibrary.simpleMessage(
+      "Servers that resolve the hostnames of the proxy servers themselves, so a node named by a domain can be dialed before the tunnel exists.\n\nExample: 223.5.5.5 keeps the nodes reachable while the tunnel is starting.",
+    ),
+    "dnsProxyServerNameserverPolicyHint": MessageLookupByLibrary.simpleMessage(
+      "Per-domain servers for the proxy server lookup, in the same syntax as the nameserver policy.\n\nExample: +.node.example -> 10.0.0.1 when the nodes live in the LAN.",
+    ),
     "dnsQueries": MessageLookupByLibrary.simpleMessage("Consultas DNS"),
+    "dnsRespectRulesHint": MessageLookupByLibrary.simpleMessage(
+      "Sends the resolver\'s own connections through the proxy rules instead of DIRECT. It needs a Proxy Server Nameserver, otherwise the core rejects the config.\n\nExample: with a rule that sends DNS to a proxy, queries leave through the tunnel.",
+    ),
+    "dnsUseHostsHint": MessageLookupByLibrary.simpleMessage(
+      "Answers the names of the profile\'s hosts section locally instead of asking an upstream.\n\nExample: with a hosts entry for router.lan, that name resolves even in Fake-IP mode.",
+    ),
+    "dnsUseSystemHostsHint": MessageLookupByLibrary.simpleMessage(
+      "Also reads the system hosts file, /etc/hosts or C:\\Windows\\System32\\drivers\\etc\\hosts.\n\nExample: a name another program added there resolves without a profile entry.",
+    ),
     "docked": MessageLookupByLibrary.simpleMessage("Fija"),
     "domain": MessageLookupByLibrary.simpleMessage("Dominio"),
     "done": MessageLookupByLibrary.simpleMessage("Hecho"),

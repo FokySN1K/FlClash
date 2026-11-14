@@ -390,6 +390,9 @@ _Dns _$DnsFromJson(Map<String, dynamic> json) => _Dns(
       (json['fallback'] as List<dynamic>?)?.map((e) => e as String).toList() ??
       const [],
   fallbackLazyQuery: json['fallback-lazy-query'] as bool? ?? false,
+  fallbackHedgeDelay: (json['fallback-hedge-delay'] as num?)?.toInt() ?? 0,
+  nameserverMaxFails: (json['nameserver-max-fails'] as num?)?.toInt() ?? 3,
+  nameserverCooldown: (json['nameserver-cooldown'] as num?)?.toInt() ?? 30,
   proxyServerNameserver:
       (json['proxy-server-nameserver'] as List<dynamic>?)
           ?.map((e) => e as String)
@@ -437,6 +440,9 @@ Map<String, dynamic> _$DnsToJson(_Dns instance) => <String, dynamic>{
   'nameserver': instance.nameserver,
   'fallback': instance.fallback,
   'fallback-lazy-query': instance.fallbackLazyQuery,
+  'fallback-hedge-delay': instance.fallbackHedgeDelay,
+  'nameserver-max-fails': instance.nameserverMaxFails,
+  'nameserver-cooldown': instance.nameserverCooldown,
   'proxy-server-nameserver': instance.proxyServerNameserver,
   'proxy-server-nameserver-policy': instance.proxyServerNameserverPolicy,
   'direct-nameserver': instance.directNameserver,
@@ -636,6 +642,9 @@ const _$DnsOverrideKeyEnumMap = {
   DnsOverrideKey.nameserver: 'nameserver',
   DnsOverrideKey.fallback: 'fallback',
   DnsOverrideKey.fallbackLazyQuery: 'fallback-lazy-query',
+  DnsOverrideKey.fallbackHedgeDelay: 'fallback-hedge-delay',
+  DnsOverrideKey.nameserverMaxFails: 'nameserver-max-fails',
+  DnsOverrideKey.nameserverCooldown: 'nameserver-cooldown',
   DnsOverrideKey.proxyServerNameserver: 'proxy-server-nameserver',
   DnsOverrideKey.proxyServerNameserverPolicy: 'proxy-server-nameserver-policy',
   DnsOverrideKey.directNameserver: 'direct-nameserver',

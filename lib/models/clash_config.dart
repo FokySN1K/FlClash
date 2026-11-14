@@ -1241,6 +1241,9 @@ abstract class Dns with _$Dns {
     @Default(false)
     @JsonKey(name: 'fallback-lazy-query')
     bool fallbackLazyQuery,
+    @Default(0) @JsonKey(name: 'fallback-hedge-delay') int fallbackHedgeDelay,
+    @Default(3) @JsonKey(name: 'nameserver-max-fails') int nameserverMaxFails,
+    @Default(30) @JsonKey(name: 'nameserver-cooldown') int nameserverCooldown,
     @Default([])
     @JsonKey(name: 'proxy-server-nameserver')
     List<String> proxyServerNameserver,

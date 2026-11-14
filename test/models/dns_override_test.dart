@@ -76,6 +76,34 @@ void main() {
     );
   });
 
+  test('the failover defaults match the ones the core applies', () {
+    final source = File('core/Clash.Meta/config/config.go').readAsStringSync();
+    String applied(String field) =>
+        RegExp('dnsCfg\\.$field = (\\d+)').firstMatch(source)!.group(1)!;
+
+    expect(
+      defaultDns.nameserverMaxFails,
+      int.parse(applied('NameserverMaxFails')),
+    );
+    expect(
+      defaultDns.nameserverCooldown,
+      int.parse(applied('NameserverCooldown')),
+    );
+    // No hedge: the fallback is asked only after a dirty main answer.
+    expect(defaultDns.fallbackHedgeDelay, 0);
+  });
+
+  test('the failover keys reach subscription and file profiles', () {
+    expect(
+      DnsOverrideKey.normalProfileKeys,
+      containsAll([
+        DnsOverrideKey.fallbackHedgeDelay,
+        DnsOverrideKey.nameserverMaxFails,
+        DnsOverrideKey.nameserverCooldown,
+      ]),
+    );
+  });
+
   group('Dns.overrideJson', () {
     test('emits only the selected keys in model order', () {
       const dns = Dns(listen: ':53', nameserver: ['1.1.1.1']);
@@ -108,6 +136,21 @@ void main() {
 
     test('is empty without keys', () {
       expect(const Dns().overrideJson({}), isEmpty);
+    });
+
+    test('writes the failover keys it is asked for, a zero included', () {
+      expect(
+        const Dns().overrideJson({
+          DnsOverrideKey.fallbackHedgeDelay,
+          DnsOverrideKey.nameserverMaxFails,
+          DnsOverrideKey.nameserverCooldown,
+        }),
+        {
+          'fallback-hedge-delay': 0,
+          'nameserver-max-fails': 3,
+          'nameserver-cooldown': 30,
+        },
+      );
     });
   });
 
@@ -284,6 +327,27 @@ proxy-server-nameserver-policy:
             'node.example': ['1.1.1.1', '8.8.8.8'],
           },
         },
+      );
+    });
+
+    test('reads the failover keys the core added', () {
+      final result = dns.applyOverrideYaml('''
+fallback-hedge-delay: 300
+nameserver-max-fails: 5
+nameserver-cooldown: 120
+''');
+
+      expect(result.keys, {
+        DnsOverrideKey.fallbackHedgeDelay,
+        DnsOverrideKey.nameserverMaxFails,
+        DnsOverrideKey.nameserverCooldown,
+      });
+      expect(result.dns.fallbackHedgeDelay, 300);
+      expect(result.dns.nameserverMaxFails, 5);
+      expect(result.dns.nameserverCooldown, 120);
+      expect(
+        result.dns.overrideJson(result.keys),
+        containsPair('nameserver-cooldown', 120),
       );
     });
 

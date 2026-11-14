@@ -35,6 +35,9 @@ extension on DnsOverrideKey {
     DnsOverrideKey.nameserver => 'Nameserver',
     DnsOverrideKey.fallback => 'Fallback',
     DnsOverrideKey.fallbackLazyQuery => 'Fallback Lazy Query',
+    DnsOverrideKey.fallbackHedgeDelay => l.dnsFallbackHedgeDelay,
+    DnsOverrideKey.nameserverMaxFails => l.dnsNameserverMaxFails,
+    DnsOverrideKey.nameserverCooldown => l.dnsNameserverCooldown,
     DnsOverrideKey.proxyServerNameserver => 'Proxy Server Nameserver',
     DnsOverrideKey.proxyServerNameserverPolicy =>
       'Proxy Server Nameserver Policy',
@@ -55,6 +58,48 @@ extension on DnsOverrideKey {
     DnsOverrideKey.fakeIpFilterMode => (l) => l.fakeipFilterModeDesc,
     _ => null,
   };
+
+  /// What the info button in the add-entry sheet says about the key.
+  ConfigLabel get info =>
+      (l) => switch (this) {
+        DnsOverrideKey.enable => l.dnsEnableHint,
+        DnsOverrideKey.listen => l.dnsListenHint,
+        DnsOverrideKey.listenRoutingMark => l.dnsListenRoutingMarkHint,
+        DnsOverrideKey.useHosts => l.dnsUseHostsHint,
+        DnsOverrideKey.useSystemHosts => l.dnsUseSystemHostsHint,
+        DnsOverrideKey.ipv6 => l.dnsIpv6Hint,
+        DnsOverrideKey.ipv6Timeout => l.dnsIpv6TimeoutHint,
+        DnsOverrideKey.respectRules => l.dnsRespectRulesHint,
+        DnsOverrideKey.preferH3 => l.dnsPreferH3Hint,
+        DnsOverrideKey.cacheAlgorithm => l.dnsCacheAlgorithmHint,
+        DnsOverrideKey.cacheMaxSize => l.dnsCacheMaxSizeHint,
+        DnsOverrideKey.enhancedMode => l.dnsEnhancedModeHint,
+        DnsOverrideKey.fakeIpRange => l.dnsFakeIpRangeHint,
+        DnsOverrideKey.fakeIpRange6 => l.dnsFakeIpRange6Hint,
+        DnsOverrideKey.fakeIpFilter => l.dnsFakeIpFilterHint,
+        DnsOverrideKey.fakeIpFilterMode => l.dnsFakeIpFilterModeHint,
+        DnsOverrideKey.fakeIpTtl => l.dnsFakeIpTtlHint,
+        DnsOverrideKey.defaultNameserver => l.dnsDefaultNameserverHint,
+        DnsOverrideKey.nameserverPolicy => l.dnsNameserverPolicyHint,
+        DnsOverrideKey.nameserver => l.dnsNameserverHint,
+        DnsOverrideKey.fallback => l.dnsFallbackHint,
+        DnsOverrideKey.fallbackLazyQuery => l.dnsFallbackLazyQueryHint,
+        DnsOverrideKey.fallbackHedgeDelay => l.dnsFallbackHedgeDelayHint,
+        DnsOverrideKey.nameserverMaxFails => l.dnsNameserverMaxFailsHint,
+        DnsOverrideKey.nameserverCooldown => l.dnsNameserverCooldownHint,
+        DnsOverrideKey.proxyServerNameserver => l.dnsProxyServerNameserverHint,
+        DnsOverrideKey.proxyServerNameserverPolicy =>
+          l.dnsProxyServerNameserverPolicyHint,
+        DnsOverrideKey.directNameserver => l.dnsDirectNameserverHint,
+        DnsOverrideKey.directNameserverFollowPolicy =>
+          l.dnsDirectNameserverFollowPolicyHint,
+        DnsOverrideKey.fallbackFilterGeoip => l.dnsFallbackFilterGeoipHint,
+        DnsOverrideKey.fallbackFilterGeoipCode =>
+          l.dnsFallbackFilterGeoipCodeHint,
+        DnsOverrideKey.fallbackFilterGeosite => l.dnsFallbackFilterGeositeHint,
+        DnsOverrideKey.fallbackFilterIpcidr => l.dnsFallbackFilterIpcidrHint,
+        DnsOverrideKey.fallbackFilterDomain => l.dnsFallbackFilterDomainHint,
+      };
 
   String section(AppLocalizations l) => switch (this) {
     DnsOverrideKey.enable ||
@@ -79,6 +124,9 @@ extension on DnsOverrideKey {
     DnsOverrideKey.nameserver ||
     DnsOverrideKey.fallback ||
     DnsOverrideKey.fallbackLazyQuery ||
+    DnsOverrideKey.fallbackHedgeDelay ||
+    DnsOverrideKey.nameserverMaxFails ||
+    DnsOverrideKey.nameserverCooldown ||
     DnsOverrideKey.proxyServerNameserver ||
     DnsOverrideKey.proxyServerNameserverPolicy ||
     DnsOverrideKey.directNameserver ||
@@ -176,6 +224,9 @@ class _DnsOverrideSpec extends OverrideSpec<DnsOverrideKey, Dns> {
 
   @override
   ConfigLabel? description(DnsOverrideKey key) => key.description;
+
+  @override
+  ConfigLabel? info(DnsOverrideKey key) => key.info;
 
   @override
   OverrideField<Dns> fieldOf(DnsOverrideKey key) => switch (key) {
@@ -280,6 +331,24 @@ class _DnsOverrideSpec extends OverrideSpec<DnsOverrideKey, Dns> {
     DnsOverrideKey.fallbackLazyQuery => ToggleOverrideField(
       (dns) => dns.fallbackLazyQuery,
       (dns, value) => dns.copyWith(fallbackLazyQuery: value),
+    ),
+    DnsOverrideKey.fallbackHedgeDelay => NumberOverrideField(
+      (dns) => dns.fallbackHedgeDelay,
+      (dns, value) => dns.copyWith(fallbackHedgeDelay: value),
+      max: 5000,
+      maxLength: 4,
+    ),
+    DnsOverrideKey.nameserverMaxFails => NumberOverrideField(
+      (dns) => dns.nameserverMaxFails,
+      (dns, value) => dns.copyWith(nameserverMaxFails: value),
+      max: 10,
+      maxLength: 2,
+    ),
+    DnsOverrideKey.nameserverCooldown => NumberOverrideField(
+      (dns) => dns.nameserverCooldown,
+      (dns, value) => dns.copyWith(nameserverCooldown: value),
+      max: 3600,
+      maxLength: 4,
     ),
     DnsOverrideKey.proxyServerNameserver => ListOverrideField(
       (dns) => dns.proxyServerNameserver,

@@ -762,16 +762,127 @@ class MessageLookup extends MessageLookupByLibrary {
     "discoverNewVersion": MessageLookupByLibrary.simpleMessage(
       "Доступна новая версия",
     ),
+    "dnsCacheAlgorithmHint": MessageLookupByLibrary.simpleMessage(
+      "Как кэш вытесняет ответы: lru удаляет давно использованный, arc уравновешивает редкие и частые имена и дольше держит популярные.\n\nПример: arc в нагруженной сети с небольшим размером кэша.",
+    ),
     "dnsCacheCleared": MessageLookupByLibrary.simpleMessage("Кэш DNS очищен"),
+    "dnsCacheMaxSizeHint": MessageLookupByLibrary.simpleMessage(
+      "Сколько ответов хранит кэш. Больший кэш переживает более долгую недоступность серверов.\n\nПример: 4096 по умолчанию; 8192 — для сети с множеством устройств.",
+    ),
+    "dnsDefaultNameserverHint": MessageLookupByLibrary.simpleMessage(
+      "Серверы с обычными IP, которые разрешают имена остальных серверов раздела, например адресов DoH. Оставьте хотя бы два.\n\nПример: 223.5.5.5 и 8.8.8.8 разрешают dns.google, пока DoH ещё не запущен.",
+    ),
+    "dnsDirectNameserverFollowPolicyHint": MessageLookupByLibrary.simpleMessage(
+      "Разрешает серверам DIRECT следовать политике и её наборам правил, а не быть одним плоским списком.\n\nПример: если политика называет набор локальных имён, прямые соединения получат их от локального сервера.",
+    ),
+    "dnsDirectNameserverHint": MessageLookupByLibrary.simpleMessage(
+      "Серверы, через которые разрешает имена исходящий DIRECT, то есть хосты вне туннеля.\n\nПример: 192.168.1.1 разрешает локальные имена только для прямых соединений.",
+    ),
+    "dnsEnableHint": MessageLookupByLibrary.simpleMessage(
+      "Включает собственный резолвер приложения. Пока он выключен, отвечает системный DNS, и остальные настройки раздела ничего не меняют.\n\nПример: оставьте включённым, если нужны Fake-IP, политики nameserver или fallback.",
+    ),
+    "dnsEnhancedModeHint": MessageLookupByLibrary.simpleMessage(
+      "normal возвращает настоящие адреса, redir-host разрешает реальное имя перехваченного соединения, fake-ip сразу отвечает адресом из своего диапазона и разрешает имя только при подключении.\n\nПример: именно fake-ip делает первое открытие сайта быстрым.",
+    ),
+    "dnsFakeIpFilterHint": MessageLookupByLibrary.simpleMessage(
+      "Имена, которые сохраняют настоящие адреса. Запись — это домен (+.example.com), набор geosite: или имя rule-set:; в режиме rule это полное правило.\n\nПример: geosite:private оставляет локальные имена настоящими.",
+    ),
+    "dnsFakeIpFilterModeHint": MessageLookupByLibrary.simpleMessage(
+      "blacklist оставляет перечисленные имена настоящими, whitelist подделывает только их, rule проверяет записи как правила.\n\nПример: whitelist с geosite:gfw подделывает только заблокированные сайты.",
+    ),
+    "dnsFakeIpRange6Hint": MessageLookupByLibrary.simpleMessage(
+      "Диапазон IPv6 для поддельных адресов, работает только при включённом IPv6. Оставьте пустым, чтобы fake-IP оставался только IPv4.\n\nПример: fc00::1/64.",
+    ),
+    "dnsFakeIpRangeHint": MessageLookupByLibrary.simpleMessage(
+      "Диапазон IPv4 для поддельных адресов, обычно /16. Он не должен пересекаться с вашей локальной сетью.\n\nПример: 198.18.0.1/16 по умолчанию; 10.7.0.1/16, если эта подсеть свободна.",
+    ),
+    "dnsFakeIpTtlHint": MessageLookupByLibrary.simpleMessage(
+      "Сколько секунд поддельный адрес живёт в кэше. После этого следующий запрос получает новый адрес, и часть приложений считает это новым хостом.\n\nПример: 1 по умолчанию; 60 подходит приложению, которое переподключается при смене адреса.",
+    ),
+    "dnsFallbackFilterDomainHint": MessageLookupByLibrary.simpleMessage(
+      "Дополнительные имена, которые считаются подменёнными, сверх наборов geosite.\n\nПример: +.twitter.com.",
+    ),
+    "dnsFallbackFilterGeoipCodeHint": MessageLookupByLibrary.simpleMessage(
+      "Страна, по которой идёт проверка GeoIP.\n\nПример: CN по умолчанию; RU в российской сети.",
+    ),
+    "dnsFallbackFilterGeoipHint": MessageLookupByLibrary.simpleMessage(
+      "Считать ответ основных подменённым, если его адрес попадает в страну GeoIP, и спрашивать fallback. Нужна база GeoIP.\n\nПример: с кодом CN китайский ответ на заблокированный сайт уйдёт в fallback.",
+    ),
+    "dnsFallbackFilterGeositeHint": MessageLookupByLibrary.simpleMessage(
+      "Наборы имён, ответы на которые всегда идут в fallback.\n\nПример: geosite:gfw.",
+    ),
+    "dnsFallbackFilterIpcidrHint": MessageLookupByLibrary.simpleMessage(
+      "Диапазоны адресов, ответы с которыми всегда идут в fallback.\n\nПример: 127.0.0.0/8 ловит подменённый локальный резолвер.",
+    ),
+    "dnsFallbackHedgeDelay": MessageLookupByLibrary.simpleMessage(
+      "Задержка перехода на fallback (мс)",
+    ),
+    "dnsFallbackHedgeDelayHint": MessageLookupByLibrary.simpleMessage(
+      "Сколько миллисекунд ждать основные серверы, прежде чем параллельно спросить fallback. 0 — выключено: fallback спросят только после того, как основные ответили плохо или не ответили вовсе.\n\nЗачем: сервер, который молча теряет пакеты, не отвечает отказом, и ядро ждало весь обмен — до пяти секунд на каждое имя. С задержкой fallback спрашивают заранее, побеждает тот, кто ответил первым, и мёртвый основной сервер стоит только этой задержки плюс один обмен с fallback.\n\nПримеры: 300 — если основной DNS в вашей сети часто молчит; 800 — если он просто медленный; 0 — чтобы не тревожить fallback лишними запросами. Без серверов fallback ничего не делает.",
+    ),
+    "dnsFallbackHint": MessageLookupByLibrary.simpleMessage(
+      "Серверы, к которым обращаются, когда ответ основных выглядит подменённым: пустой, с ошибкой сервера или с адресом из fallback-фильтра. Они же спасают, когда падают все основные серверы.\n\nПример: tls://8.8.4.4 отвечает на имена, которые отравленный локальный сервер оставляет пустыми.",
+    ),
+    "dnsFallbackLazyQueryHint": MessageLookupByLibrary.simpleMessage(
+      "Выключено — fallback опрашивается параллельно с основными, а его ответ берётся только при необходимости. Включено — только после плохого ответа основных: меньше запросов, но лишний обмен.\n\nПример: оставьте выключенным для самого быстрого переключения.",
+    ),
     "dnsHijackDesc": MessageLookupByLibrary.simpleMessage(
       "Без этого параметра TUN перехватывает все DNS-запросы на порт 53 (any:53).",
     ),
     "dnsHijacking": MessageLookupByLibrary.simpleMessage("Перехват DNS"),
+    "dnsIpv6Hint": MessageLookupByLibrary.simpleMessage(
+      "Разрешает резолверу запрашивать у серверов записи AAAA. Без него приходят только ответы IPv4, что скрывает сломанный IPv6.\n\nПример: выключите, если сайты открываются медленно в сети с полурабочим IPv6.",
+    ),
+    "dnsIpv6TimeoutHint": MessageLookupByLibrary.simpleMessage(
+      "Сколько миллисекунд ждать ответ AAAA, прежде чем перейти к записи A. По умолчанию 100.\n\nПример: 300 в сети с медленным IPv6, чтобы его ответы не отбрасывались раньше времени.",
+    ),
+    "dnsListenHint": MessageLookupByLibrary.simpleMessage(
+      "Адрес, на котором резолвер принимает обычные DNS-запросы, в виде host:port. Пустое поле оставляет резолвер внутренним, и приложения обращаются к нему только через TUN или redir.\n\nПример: 127.0.0.1:1053 отвечает лишь запросам с этого же устройства.",
+    ),
+    "dnsListenRoutingMarkHint": MessageLookupByLibrary.simpleMessage(
+      "Только для Linux. Задаёт метку маршрутизации (fwmark) слушающего сокета DNS, чтобы policy routing отправлял его трафик через нужную таблицу.\n\nПример: 233 оставляет ответы резолвера на физическом интерфейсе, когда остальное идёт в туннель.",
+    ),
     "dnsMode": MessageLookupByLibrary.simpleMessage("Режим DNS"),
+    "dnsNameserverCooldown": MessageLookupByLibrary.simpleMessage(
+      "Пауза для сервера (с)",
+    ),
+    "dnsNameserverCooldownHint": MessageLookupByLibrary.simpleMessage(
+      "На сколько секунд сервер выводится из ротации. После паузы его пробуют снова с чистым счётчиком неудач. 0 — 30 секунд по умолчанию.\n\nПример: 60, если сервер восстанавливается медленно; 10, чтобы быстрее вернуть «мигающий» сервер.",
+    ),
+    "dnsNameserverHint": MessageLookupByLibrary.simpleMessage(
+      "Серверы, которые отвечают на всё, что не совпало с политикой. Каждый — адрес или зашифрованный URL.\n\nПример: https://doh.pub/dns-query вместе с tls://223.5.5.5:853.",
+    ),
+    "dnsNameserverMaxFails": MessageLookupByLibrary.simpleMessage(
+      "Неудач до отключения сервера",
+    ),
+    "dnsNameserverMaxFailsHint": MessageLookupByLibrary.simpleMessage(
+      "Сколько неудач подряд выводят сервер из ротации. Каждый адрес считается отдельно, а успех обнуляет счётчик. 0 — не выводить никогда.\n\nПример: 3 по умолчанию: после трёх молчаливых или неудачных обменов адрес пропускают до конца паузы.",
+    ),
+    "dnsNameserverPolicyHint": MessageLookupByLibrary.simpleMessage(
+      "Списки серверов для отдельных доменов, важнее nameserver. Ключ — это домен, набор geosite: или имя rule-set:.\n\nПример: geosite:cn -> 223.5.5.5 и +.company.com -> tls://10.0.0.1.",
+    ),
     "dnsOverrideDesc": MessageLookupByLibrary.simpleMessage(
       "Добавленные здесь параметры заменяют DNS всех профилей из URL и файлов; остальные остаются такими, как в профиле. DNS пользовательского профиля задаётся в его содержимом.",
     ),
+    "dnsPreferH3Hint": MessageLookupByLibrary.simpleMessage(
+      "Спрашивать DoH-серверы по HTTP/3, когда они его поддерживают, и по HTTP/2 в остальных случаях.\n\nПример: tls://dns.google в мобильной сети с потерями отвечает быстрее по QUIC.",
+    ),
+    "dnsProxyServerNameserverHint": MessageLookupByLibrary.simpleMessage(
+      "Серверы, которые разрешают имена самих прокси-серверов, чтобы узел, заданный доменом, можно было соединить до появления туннеля.\n\nПример: 223.5.5.5 держит узлы доступными, пока туннель запускается.",
+    ),
+    "dnsProxyServerNameserverPolicyHint": MessageLookupByLibrary.simpleMessage(
+      "Серверы для отдельных доменов при поиске прокси-серверов, синтаксис тот же, что у политики nameserver.\n\nПример: +.node.example -> 10.0.0.1, если узлы живут в локальной сети.",
+    ),
     "dnsQueries": MessageLookupByLibrary.simpleMessage("DNS-запросы"),
+    "dnsRespectRulesHint": MessageLookupByLibrary.simpleMessage(
+      "Пускать собственные соединения резолвера по правилам прокси, а не напрямую. Требует Proxy Server Nameserver, иначе ядро отклонит конфиг.\n\nПример: если правило отправляет DNS в прокси, запросы уходят через туннель.",
+    ),
+    "dnsUseHostsHint": MessageLookupByLibrary.simpleMessage(
+      "Отвечает по именам из секции hosts профиля, не спрашивая сервер.\n\nПример: если в hosts есть router.lan, это имя разрешается даже в режиме Fake-IP.",
+    ),
+    "dnsUseSystemHostsHint": MessageLookupByLibrary.simpleMessage(
+      "Дополнительно читает системный файл hosts: /etc/hosts или C:\\Windows\\System32\\drivers\\etc\\hosts.\n\nПример: имя, добавленное туда другой программой, разрешается без записи в профиле.",
+    ),
     "docked": MessageLookupByLibrary.simpleMessage("Закреплённая"),
     "domain": MessageLookupByLibrary.simpleMessage("Домен"),
     "done": MessageLookupByLibrary.simpleMessage("Готово"),

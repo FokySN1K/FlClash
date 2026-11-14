@@ -372,6 +372,10 @@ abstract class OverrideSpec<K extends OverrideKey, M> {
 
   ConfigLabel? description(K key);
 
+  /// The explanation the add-entry sheet puts behind an info button,
+  /// which stays out of the footer [description] fills.
+  ConfigLabel? info(K key) => null;
+
   OverrideField<M> fieldOf(K key);
 
   /// Also resets the values of [keys], so a profile with no keys is untouched.
@@ -434,6 +438,10 @@ void showOverrideAddSheet<K extends OverrideKey, M>(
           ),
       ],
       labelBuilder: (key) => spec.label(key, appLocalizations),
+      titleBuilder: (key, title) => _AddEntryTitle(
+        title: title,
+        info: spec.info(key)?.call(appLocalizations),
+      ),
       selectedOf: (_) => null,
       removeOnSelect: true,
       onSelected: (key) {
@@ -450,6 +458,29 @@ void showOverrideAddSheet<K extends OverrideKey, M>(
       },
     ),
   );
+}
+
+/// A key's label in the add-entry sheet, beside the info button that
+/// explains what picking it does.
+class _AddEntryTitle extends StatelessWidget {
+  const _AddEntryTitle({required this.title, required this.info});
+
+  final Widget title;
+  final String? info;
+
+  @override
+  Widget build(BuildContext context) {
+    final info = this.info;
+    if (info == null) {
+      return title;
+    }
+    return Row(
+      children: [
+        Flexible(child: title),
+        InfoMessageButton(message: info),
+      ],
+    );
+  }
 }
 
 class OverrideView<K extends OverrideKey, M> extends ConsumerWidget {

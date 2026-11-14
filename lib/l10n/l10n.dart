@@ -8297,6 +8297,376 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Fallback Hedge Delay (ms)`
+  String get dnsFallbackHedgeDelay {
+    return Intl.message(
+      'Fallback Hedge Delay (ms)',
+      name: 'dnsFallbackHedgeDelay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nameserver Max Fails`
+  String get dnsNameserverMaxFails {
+    return Intl.message(
+      'Nameserver Max Fails',
+      name: 'dnsNameserverMaxFails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nameserver Cooldown (s)`
+  String get dnsNameserverCooldown {
+    return Intl.message(
+      'Nameserver Cooldown (s)',
+      name: 'dnsNameserverCooldown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turns the app's own resolver on. While it is off, the system resolver answers every query and the rest of this section has no effect.\n\nExample: keep it on to use Fake-IP, nameserver policies or the fallback.`
+  String get dnsEnableHint {
+    return Intl.message(
+      'Turns the app\'s own resolver on. While it is off, the system resolver answers every query and the rest of this section has no effect.\n\nExample: keep it on to use Fake-IP, nameserver policies or the fallback.',
+      name: 'dnsEnableHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The address the resolver listens on for plain DNS, in host:port form. Left empty, the resolver stays internal and apps reach it only through TUN or redir.\n\nExample: 127.0.0.1:1053 answers queries from this device alone.`
+  String get dnsListenHint {
+    return Intl.message(
+      'The address the resolver listens on for plain DNS, in host:port form. Left empty, the resolver stays internal and apps reach it only through TUN or redir.\n\nExample: 127.0.0.1:1053 answers queries from this device alone.',
+      name: 'dnsListenHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Linux only. Sets the routing mark (fwmark) of the DNS listening socket, so policy routing sends its traffic through the table that mark names.\n\nExample: 233 keeps the resolver's replies on the physical interface while the tunnel carries everything else.`
+  String get dnsListenRoutingMarkHint {
+    return Intl.message(
+      'Linux only. Sets the routing mark (fwmark) of the DNS listening socket, so policy routing sends its traffic through the table that mark names.\n\nExample: 233 keeps the resolver\'s replies on the physical interface while the tunnel carries everything else.',
+      name: 'dnsListenRoutingMarkHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Answers the names of the profile's hosts section locally instead of asking an upstream.\n\nExample: with a hosts entry for router.lan, that name resolves even in Fake-IP mode.`
+  String get dnsUseHostsHint {
+    return Intl.message(
+      'Answers the names of the profile\'s hosts section locally instead of asking an upstream.\n\nExample: with a hosts entry for router.lan, that name resolves even in Fake-IP mode.',
+      name: 'dnsUseHostsHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Also reads the system hosts file, /etc/hosts or C:\Windows\System32\drivers\etc\hosts.\n\nExample: a name another program added there resolves without a profile entry.`
+  String get dnsUseSystemHostsHint {
+    return Intl.message(
+      'Also reads the system hosts file, /etc/hosts or C:\\Windows\\System32\\drivers\\etc\\hosts.\n\nExample: a name another program added there resolves without a profile entry.',
+      name: 'dnsUseSystemHostsHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Lets the resolver ask upstreams for AAAA records. With it off only IPv4 answers come back, which hides a broken IPv6 setup.\n\nExample: turn it off when sites open slowly on a network with half-working IPv6.`
+  String get dnsIpv6Hint {
+    return Intl.message(
+      'Lets the resolver ask upstreams for AAAA records. With it off only IPv4 answers come back, which hides a broken IPv6 setup.\n\nExample: turn it off when sites open slowly on a network with half-working IPv6.',
+      name: 'dnsIpv6Hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Milliseconds the resolver waits for an AAAA answer before it goes on with the A record. The default is 100.\n\nExample: 300 on a slow IPv6 uplink, so its answers are not dropped while they are still useful.`
+  String get dnsIpv6TimeoutHint {
+    return Intl.message(
+      'Milliseconds the resolver waits for an AAAA answer before it goes on with the A record. The default is 100.\n\nExample: 300 on a slow IPv6 uplink, so its answers are not dropped while they are still useful.',
+      name: 'dnsIpv6TimeoutHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sends the resolver's own connections through the proxy rules instead of DIRECT. It needs a Proxy Server Nameserver, otherwise the core rejects the config.\n\nExample: with a rule that sends DNS to a proxy, queries leave through the tunnel.`
+  String get dnsRespectRulesHint {
+    return Intl.message(
+      'Sends the resolver\'s own connections through the proxy rules instead of DIRECT. It needs a Proxy Server Nameserver, otherwise the core rejects the config.\n\nExample: with a rule that sends DNS to a proxy, queries leave through the tunnel.',
+      name: 'dnsRespectRulesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Asks DoH servers over HTTP/3 when they offer it, and over HTTP/2 otherwise.\n\nExample: tls://dns.google answers faster over QUIC on a lossy mobile network.`
+  String get dnsPreferH3Hint {
+    return Intl.message(
+      'Asks DoH servers over HTTP/3 when they offer it, and over HTTP/2 otherwise.\n\nExample: tls://dns.google answers faster over QUIC on a lossy mobile network.',
+      name: 'dnsPreferH3Hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How the cache evicts answers: lru drops the least recently used one, arc balances recent and frequent names and keeps hot ones longer.\n\nExample: arc on a busy network with a small cache size.`
+  String get dnsCacheAlgorithmHint {
+    return Intl.message(
+      'How the cache evicts answers: lru drops the least recently used one, arc balances recent and frequent names and keeps hot ones longer.\n\nExample: arc on a busy network with a small cache size.',
+      name: 'dnsCacheAlgorithmHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How many answers the cache holds. A larger cache rides out a longer outage of the upstreams.\n\nExample: 4096 is the default; 8192 suits a network with many devices.`
+  String get dnsCacheMaxSizeHint {
+    return Intl.message(
+      'How many answers the cache holds. A larger cache rides out a longer outage of the upstreams.\n\nExample: 4096 is the default; 8192 suits a network with many devices.',
+      name: 'dnsCacheMaxSizeHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `normal returns real addresses, redir-host resolves the real host of a sniffed connection, fake-ip answers at once with an address from its range and resolves the name only when a connection needs it.\n\nExample: fake-ip is what makes the first visit fast.`
+  String get dnsEnhancedModeHint {
+    return Intl.message(
+      'normal returns real addresses, redir-host resolves the real host of a sniffed connection, fake-ip answers at once with an address from its range and resolves the name only when a connection needs it.\n\nExample: fake-ip is what makes the first visit fast.',
+      name: 'dnsEnhancedModeHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The IPv4 range fake addresses come from, usually a /16. It must not overlap your LAN.\n\nExample: 198.18.0.1/16, the default; 10.7.0.1/16 when that subnet is free.`
+  String get dnsFakeIpRangeHint {
+    return Intl.message(
+      'The IPv4 range fake addresses come from, usually a /16. It must not overlap your LAN.\n\nExample: 198.18.0.1/16, the default; 10.7.0.1/16 when that subnet is free.',
+      name: 'dnsFakeIpRangeHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The IPv6 range for fake addresses, used only with IPv6 on. Left empty, fake-IP stays IPv4-only.\n\nExample: fc00::1/64.`
+  String get dnsFakeIpRange6Hint {
+    return Intl.message(
+      'The IPv6 range for fake addresses, used only with IPv6 on. Left empty, fake-IP stays IPv4-only.\n\nExample: fc00::1/64.',
+      name: 'dnsFakeIpRange6Hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Names that keep real addresses. An entry is a domain (+.example.com), a geosite: set or a rule-set: name; in rule mode it is a full rule.\n\nExample: geosite:private keeps local names real.`
+  String get dnsFakeIpFilterHint {
+    return Intl.message(
+      'Names that keep real addresses. An entry is a domain (+.example.com), a geosite: set or a rule-set: name; in rule mode it is a full rule.\n\nExample: geosite:private keeps local names real.',
+      name: 'dnsFakeIpFilterHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `blacklist keeps the listed names real, whitelist fakes only them, rule matches the entries as rules.\n\nExample: whitelist with geosite:gfw fakes only blocked sites.`
+  String get dnsFakeIpFilterModeHint {
+    return Intl.message(
+      'blacklist keeps the listed names real, whitelist fakes only them, rule matches the entries as rules.\n\nExample: whitelist with geosite:gfw fakes only blocked sites.',
+      name: 'dnsFakeIpFilterModeHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Seconds a fake address lives in the cache. Once it expires the next query gets a new address, which some apps read as a new host.\n\nExample: 1 is the default; 60 suits an app that reconnects when the address changes.`
+  String get dnsFakeIpTtlHint {
+    return Intl.message(
+      'Seconds a fake address lives in the cache. Once it expires the next query gets a new address, which some apps read as a new host.\n\nExample: 1 is the default; 60 suits an app that reconnects when the address changes.',
+      name: 'dnsFakeIpTtlHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Plain-IP servers that resolve the hostnames of the other servers here, such as DoH endpoints. Keep at least two.\n\nExample: 223.5.5.5 and 8.8.8.8 resolve dns.google before DoH can start.`
+  String get dnsDefaultNameserverHint {
+    return Intl.message(
+      'Plain-IP servers that resolve the hostnames of the other servers here, such as DoH endpoints. Keep at least two.\n\nExample: 223.5.5.5 and 8.8.8.8 resolve dns.google before DoH can start.',
+      name: 'dnsDefaultNameserverHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Per-domain server lists that win over the nameserver. A key is a domain, a geosite: set or a rule-set: name.\n\nExample: geosite:cn -> 223.5.5.5 and +.company.com -> tls://10.0.0.1.`
+  String get dnsNameserverPolicyHint {
+    return Intl.message(
+      'Per-domain server lists that win over the nameserver. A key is a domain, a geosite: set or a rule-set: name.\n\nExample: geosite:cn -> 223.5.5.5 and +.company.com -> tls://10.0.0.1.',
+      name: 'dnsNameserverPolicyHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The servers that answer everything the policy does not match. Each is an address or an encrypted URL.\n\nExample: https://doh.pub/dns-query together with tls://223.5.5.5:853.`
+  String get dnsNameserverHint {
+    return Intl.message(
+      'The servers that answer everything the policy does not match. Each is an address or an encrypted URL.\n\nExample: https://doh.pub/dns-query together with tls://223.5.5.5:853.',
+      name: 'dnsNameserverHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Servers asked when a main answer looks censored: empty, a server failure, or an address the fallback filter matches. They also serve when every main server is failing.\n\nExample: tls://8.8.4.4 answers the names a poisoned local server blanks out.`
+  String get dnsFallbackHint {
+    return Intl.message(
+      'Servers asked when a main answer looks censored: empty, a server failure, or an address the fallback filter matches. They also serve when every main server is failing.\n\nExample: tls://8.8.4.4 answers the names a poisoned local server blanks out.',
+      name: 'dnsFallbackHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Off, the fallback is queried in parallel with the main group and its answer is used only when needed. On, it is queried only after a dirty main answer, which saves queries but adds a round trip.\n\nExample: keep it off for the fastest failover.`
+  String get dnsFallbackLazyQueryHint {
+    return Intl.message(
+      'Off, the fallback is queried in parallel with the main group and its answer is used only when needed. On, it is queried only after a dirty main answer, which saves queries but adds a round trip.\n\nExample: keep it off for the fastest failover.',
+      name: 'dnsFallbackLazyQueryHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Milliseconds to wait for the main group before the fallback is asked in parallel. 0 turns it off, and the fallback is asked only once the main group has answered badly or not at all.\n\nWhy: a nameserver that swallows packets never refuses the query, so the core used to wait out the whole exchange, up to five seconds, for every name. With a delay the fallback is asked early and whichever answers first wins, so a dead main server costs that delay plus one fallback round trip.\n\nExamples: 300 on a network whose main DNS often goes silent; 800 when the main server is merely slow; 0 to keep the fallback quiet. Without fallback servers it does nothing.`
+  String get dnsFallbackHedgeDelayHint {
+    return Intl.message(
+      'Milliseconds to wait for the main group before the fallback is asked in parallel. 0 turns it off, and the fallback is asked only once the main group has answered badly or not at all.\n\nWhy: a nameserver that swallows packets never refuses the query, so the core used to wait out the whole exchange, up to five seconds, for every name. With a delay the fallback is asked early and whichever answers first wins, so a dead main server costs that delay plus one fallback round trip.\n\nExamples: 300 on a network whose main DNS often goes silent; 800 when the main server is merely slow; 0 to keep the fallback quiet. Without fallback servers it does nothing.',
+      name: 'dnsFallbackHedgeDelayHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How many failures in a row take a nameserver out of rotation. Every address is counted on its own and a success resets its count. 0 never takes a server out.\n\nExample: 3 is the default: after three silent or broken exchanges that address is skipped until its cooldown ends.`
+  String get dnsNameserverMaxFailsHint {
+    return Intl.message(
+      'How many failures in a row take a nameserver out of rotation. Every address is counted on its own and a success resets its count. 0 never takes a server out.\n\nExample: 3 is the default: after three silent or broken exchanges that address is skipped until its cooldown ends.',
+      name: 'dnsNameserverMaxFailsHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Seconds a failing nameserver is skipped for. Then it is tried again with a clean failure count. 0 means the default 30.\n\nExample: 60 when an upstream recovers slowly; 10 to retry a flapping one sooner.`
+  String get dnsNameserverCooldownHint {
+    return Intl.message(
+      'Seconds a failing nameserver is skipped for. Then it is tried again with a clean failure count. 0 means the default 30.\n\nExample: 60 when an upstream recovers slowly; 10 to retry a flapping one sooner.',
+      name: 'dnsNameserverCooldownHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Servers that resolve the hostnames of the proxy servers themselves, so a node named by a domain can be dialed before the tunnel exists.\n\nExample: 223.5.5.5 keeps the nodes reachable while the tunnel is starting.`
+  String get dnsProxyServerNameserverHint {
+    return Intl.message(
+      'Servers that resolve the hostnames of the proxy servers themselves, so a node named by a domain can be dialed before the tunnel exists.\n\nExample: 223.5.5.5 keeps the nodes reachable while the tunnel is starting.',
+      name: 'dnsProxyServerNameserverHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Per-domain servers for the proxy server lookup, in the same syntax as the nameserver policy.\n\nExample: +.node.example -> 10.0.0.1 when the nodes live in the LAN.`
+  String get dnsProxyServerNameserverPolicyHint {
+    return Intl.message(
+      'Per-domain servers for the proxy server lookup, in the same syntax as the nameserver policy.\n\nExample: +.node.example -> 10.0.0.1 when the nodes live in the LAN.',
+      name: 'dnsProxyServerNameserverPolicyHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Servers the DIRECT outbound resolves through, that is for hosts reached outside the tunnel.\n\nExample: 192.168.1.1 resolves LAN names for direct connections only.`
+  String get dnsDirectNameserverHint {
+    return Intl.message(
+      'Servers the DIRECT outbound resolves through, that is for hosts reached outside the tunnel.\n\nExample: 192.168.1.1 resolves LAN names for direct connections only.',
+      name: 'dnsDirectNameserverHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Lets the direct nameservers follow the policy and its rule sets instead of being one flat list.\n\nExample: with a policy naming a local rule-set, direct connections resolve those names on the LAN server.`
+  String get dnsDirectNameserverFollowPolicyHint {
+    return Intl.message(
+      'Lets the direct nameservers follow the policy and its rule sets instead of being one flat list.\n\nExample: with a policy naming a local rule-set, direct connections resolve those names on the LAN server.',
+      name: 'dnsDirectNameserverFollowPolicyHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Treats a main answer that falls into the GeoIP country as censored and asks the fallback. It needs the GeoIP database.\n\nExample: with CN a Chinese answer for a blocked site goes to the fallback.`
+  String get dnsFallbackFilterGeoipHint {
+    return Intl.message(
+      'Treats a main answer that falls into the GeoIP country as censored and asks the fallback. It needs the GeoIP database.\n\nExample: with CN a Chinese answer for a blocked site goes to the fallback.',
+      name: 'dnsFallbackFilterGeoipHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The country the GeoIP check uses.\n\nExample: CN, the default; RU on a Russian network.`
+  String get dnsFallbackFilterGeoipCodeHint {
+    return Intl.message(
+      'The country the GeoIP check uses.\n\nExample: CN, the default; RU on a Russian network.',
+      name: 'dnsFallbackFilterGeoipCodeHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name sets whose answers always go to the fallback.\n\nExample: geosite:gfw.`
+  String get dnsFallbackFilterGeositeHint {
+    return Intl.message(
+      'Name sets whose answers always go to the fallback.\n\nExample: geosite:gfw.',
+      name: 'dnsFallbackFilterGeositeHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address ranges whose answers always go to the fallback.\n\nExample: 127.0.0.0/8 catches a hijacked local resolver.`
+  String get dnsFallbackFilterIpcidrHint {
+    return Intl.message(
+      'Address ranges whose answers always go to the fallback.\n\nExample: 127.0.0.0/8 catches a hijacked local resolver.',
+      name: 'dnsFallbackFilterIpcidrHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Extra names treated as censored, on top of the geosite sets.\n\nExample: +.twitter.com.`
+  String get dnsFallbackFilterDomainHint {
+    return Intl.message(
+      'Extra names treated as censored, on top of the geosite sets.\n\nExample: +.twitter.com.',
+      name: 'dnsFallbackFilterDomainHint',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
