@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.48 (2026-11-14)
+
+**Features**
+
+- **dns** every DNS option has an explanation behind an info button, and the DNS section exposes fallback-hedge-delay, nameserver-max-fails and nameserver-cooldown. (f3649fb)
+
 ## v1.0.47 (2026-11-14)
 
 **Features**

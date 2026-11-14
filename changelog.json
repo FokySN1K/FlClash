@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "1.0.48",
+      "tag": "v1.0.48",
+      "date": "2026-11-14",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "f3649fb",
+              "scope": "dns",
+              "text": "every DNS option has an explanation behind an info button, and the DNS section exposes fallback-hedge-delay, nameserver-max-fails and nameserver-cooldown."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "1.0.47",
       "tag": "v1.0.47",
       "date": "2026-11-14",
